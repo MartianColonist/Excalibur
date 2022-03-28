@@ -683,6 +683,7 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
         ion_roman = ''
         for i in range(ionization_state):
             ion_roman += 'I'
+            
     
     if linelist == 'default':
         if database == 'exomol':
@@ -696,7 +697,7 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
             linelist = 'VALD'
             
     if database == 'vald':
-        tag = ion_roman
+        tag = '(' + ion_roman + ')'
     else:
         tag = isotope
             
@@ -704,7 +705,7 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
         input_directory = (input_dir + molecule + '  ~  (' + tag + ')/' +
                            'ExoMol' + '/' + linelist + '/')
     else:
-        input_directory = (input_dir + molecule + '  ~  (' + tag + ')/' + 
+        input_directory = (input_dir + molecule + '  ~  ' + tag + '/' + 
                            linelist + '/')
 
     if os.path.exists(input_directory):
