@@ -72,22 +72,22 @@ def get_default_iso(molecule):
                      'Ur' : 238}
     
     default_iso = ''
-    matches = re.findall('[A-Z][a-z]?[0-9]?(?:_p)?', molecule)
+    matches = re.findall('[A-Z][a-z]?[0-9]?(?:_p)?', molecule) # matches each separate atom in the molecule
     num_matches = len(matches)
     for match in matches:
-        num_matches -= 1
+        num_matches -= 1  # will continue this loop until no matches left
         letters = re.findall('[A-Za-z]+', match) # alphabetic characters in the molecule
         numbers = re.findall('\d', match) # numeric characters in the molecule
         ion = re.findall('(_p)', match)  # match the '_p' part if ion
         default_iso += str(most_abundant.get(letters[0])) + letters[0] 
 
-        if numbers:
+        if numbers: # Add on to the end of the atom, to signify how many of the atom are present
             default_iso += numbers[0]   
             
         if ion:
             default_iso += ion[0] 
             
-        if num_matches != 0:
+        if num_matches != 0: # Adds a dash to signify more atoms will be added to the isotopologue
             default_iso += '-'
 
     return default_iso
@@ -241,7 +241,7 @@ def process_files(input_dir):
     """
     
     for file in os.listdir(input_dir):
-        if file.endswith('.broad'):
+        if file.endswith('.broad'): # Takes relevant data (the three arrays below) from the .broad file and reformats it
             
             gamma_L_0 = []
             n_L = []
@@ -277,7 +277,7 @@ def process_files(input_dir):
             shutil.move(out_file, input_dir)
             
         
-        elif file.endswith('.pf'):
+        elif file.endswith('.pf'): # Takes relevant data (the two arrays below) from the .pf file and reformats it
         
             T_pf = []
             Q = []
