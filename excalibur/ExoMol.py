@@ -227,7 +227,7 @@ def determine_linelist():
         
 def process_files(input_dir):
     """
-    Processes the .broad and .pf files downloaded from ExoMol into a format that Cthulhu.py can read to create cross-sections
+    Processes the .broad and .pf files downloaded from ExoMol into a format that Excalibur can read to create cross-sections
 
     Parameters
     ----------
@@ -307,46 +307,8 @@ def process_files(input_dir):
         
             os.remove(in_file_path)
             shutil.move(out_file, input_dir)
-          
+            
 
-def summon_ExoMol(molecule, isotopologue, line_list, URL):
-    """
-    Main function, uses calls to other functions to perform the download
-
-    Parameters
-    ----------
-    molecule : TYPE
-        DESCRIPTION.
-    isotopologue : TYPE
-        DESCRIPTION.
-    line_list : TYPE
-        DESCRIPTION.
-    URL : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    None.
-
-    """
-    
-    line_list_folder = download.create_directories(molecule = molecule, isotopologue = isotopologue, 
-                                                   line_list = line_list, database = 'ExoMol')
-
-    host = "http://exomol.com" 
-    broad_URL = "http://exomol.com/data/molecules/" + molecule + '/' # URL where the broadening files are contained
-
-    tags = download.create_ExoMol_tag_array(URL, broad_URL)
-    
-    print("\n ***** Downloading requested data from ExoMol. You have chosen the following parameters: ***** ")
-    print("\nMolecule:", molecule, "\nIsotopologue:", isotopologue, "\nLine List:", line_list)
-    print("\nStarting by downloading the .broad, .pf, and .states files...")
-    
-    download.iterate_ExoMol_tags(tags, host, line_list_folder, line_list)
-    
-    process_files(line_list_folder)
-    
-    
 def load_states(input_directory):
     """
     Read in the '.states' file downloaded from ExoMol
@@ -378,3 +340,41 @@ def load_states(input_directory):
     del states_file  # Delete file to free up memory    
     
     return E, g, J
+          
+
+def summon_ExoMol(molecule, isotopologue, line_list, URL):
+    """
+    Main function, uses calls to other functions to perform the download
+
+    Parametersx`
+    ----------
+    molecule : TYPE
+        DESCRIPTION.
+    isotopologue : TYPE
+        DESCRIPTION.
+    line_list : TYPE
+        DESCRIPTION.
+    URL : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    line_list_folder = download.create_directories(molecule = molecule, isotopologue = isotopologue, 
+                                                   line_list = line_list, database = 'ExoMol')
+
+    host = "http://exomol.com" 
+    broad_URL = "http://exomol.com/data/molecules/" + molecule + '/' # URL where the broadening files are contained
+
+    tags = download.create_ExoMol_tag_array(URL, broad_URL)
+    
+    print("\n ***** Downloading requested data from ExoMol. You have chosen the following parameters: ***** ")
+    print("\nMolecule:", molecule, "\nIsotopologue:", isotopologue, "\nLine List:", line_list)
+    print("\nStarting by downloading the .broad, .pf, and .states files...")
+    
+    download.iterate_ExoMol_tags(tags, host, line_list_folder, line_list)
+    
+    process_files(line_list_folder)

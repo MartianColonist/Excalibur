@@ -7,10 +7,10 @@ from excalibur.core import compute_cross_section
 from excalibur.plot import plot_sigma_wl
 
 # Parameters
-species = 'Al'
-isotope = '50Ti-16O'
-ion = 2
-database = 'vald'
+species = 'CO'
+isotope = 'default'
+ion = 1
+database = 'hitemp'
 
 P = [1e-3]       # Pressure (bar)
 T = [2000]       # Temperature (K)
@@ -19,6 +19,7 @@ T = [2000]       # Temperature (K)
 summon(species = species, database = database, ionization_state=ion, 
        isotope = isotope, VALD_data_dir = './VALD Line Lists/')
 
+'''
 # Create cross section
 nu, sigma = compute_cross_section(input_dir = './input/', database = database, 
                                   species = species, log_pressure = np.log10(P), 
@@ -28,3 +29,4 @@ nu, sigma = compute_cross_section(input_dir = './input/', database = database,
 # Plot cross section
 plot_sigma_wl(nu_arr = nu, sigma_arr = sigma, species = species, ionization = ion, temperature = T, 
               log_pressure = np.log10(P), database = database, plot_dir = './plots/')
+'''

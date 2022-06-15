@@ -123,6 +123,7 @@ def replace_iso_name(iso_name):
         A differently formatted version of the isotopologue name passed in. Matches ExoMol format.
 
     """
+    
     # 'H' not followed by lower case letter needs to become '(1H)'
     iso_name = re.sub('H(?![a-z])', '(1H)', iso_name)
     
@@ -133,7 +134,7 @@ def replace_iso_name(iso_name):
         iso_name = re.sub('[)][0-9]{1}', number[0] + ')', iso_name)
     
     # replace all ')(' with '-'
-    iso_name = iso_name.replace(')(', '-')   
+    iso_name = iso_name.replace(')(', '-')    
     
     return iso_name
     
@@ -219,7 +220,6 @@ def create_air_broad(input_dir):
         f_out.write('%.1f %.4f %.4f \n' %(J_sorted[i], gamma_air_avg[i], n_air_avg[i]))
     
     f_out.close()
-   
     
 def summon_HITRAN(molecule, isotopologue):
     """
