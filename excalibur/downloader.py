@@ -382,8 +382,6 @@ def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False,
                     J_lower[i] -= 1/2
         
         hdf_file_path = os.path.splitext(file)[0] + '.h5'
-
-        print(J_lower)
         
         # Write the data to our HDF5 file
         with h5py.File(hdf_file_path, 'w') as hdf:
