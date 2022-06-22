@@ -664,14 +664,18 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
 
     """
     
-    if isotope == 'default':
-        if database == 'exomol':
-            isotope = ExoMol.get_default_iso(molecule)
-        if database in ['hitran', 'hitemp']:
-            molecule_dict = HITRAN.create_id_dict()
-            mol_id = molecule_dict.get(molecule)
+    if database in ['hitran', 'hitemp']:
+        molecule_dict = HITRAN.create_id_dict()
+        mol_id = molecule_dict.get(molecule)
+        if isotope == 'default':
             isotope = isotopologueName(mol_id, 1)
-            isotope = HITRAN.replace_iso_name(isotope)
+        else:
+            isotope = isotopologueName(mol_id, isotope)
+        isotope = HITRAN.replace_iso_name(isotope)
+
+    elif database == 'exomol':
+        if isotope == 'default':
+            isotope = ExoMol.get_default_iso(molecule)
     
     if database == 'vald':
         ion_roman = ''
