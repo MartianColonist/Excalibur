@@ -67,7 +67,10 @@ def plot_sigma_wl(species, temperature, log_pressure, nu_arr = [], sigma_arr = [
     wl_plt = 1.0e4/nu_plt
     sigma_plt = sigma_arr + 1.0e-250   # Add small value to avoid log(0) on log plots
     
-    
+    # If user provided a list or numpy array for log_P and T, convert into float
+    log_pressure = np.asarray(log_pressure).item()
+    temperature = np.asarray(temperature).item()
+
     pressure = np.power(10.0, log_pressure)
     
     if (ionization == 2):
