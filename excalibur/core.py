@@ -397,6 +397,12 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
             
             if isotope == 'default':
                 iso = 1
+            else:
+                if isinstance(isotope, str):
+                    print(isotope)
+                    print("----- Error: for HITRAN / HITEMP isotopes are specified by integers.\n")
+                    print("----- 1 = most common, 2 = 2nd most common etc. ----- ")
+                    sys.exit(0)
             
             spe = HITRAN.check(spe, iso)
             HITRAN.summon_HITRAN(spe, iso)
@@ -405,7 +411,13 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
             
             if isotope == 'default':
                 iso = 1
-                
+            else:
+                if isinstance(isotope, str):
+                    print(isotope)
+                    print("----- Error: for HITRAN / HITEMP isotopes are specified by integers.\n")
+                    print("----- 1 = most common, 2 = 2nd most common etc. ----- ")
+                    sys.exit(0)
+
             spe = HITEMP.check(spe, iso)
             HITEMP.summon_HITEMP(spe, iso)
             
