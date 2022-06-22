@@ -356,15 +356,9 @@ def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False,
             field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 1, 5, 1, 5, 6, 12, 1, 7, 7]
             J_col = 15
         
-        # OH has slightly different field widths between HITRAN and HITEMP
-        if (database == 'HITRAN'):
-            if mol_ID in {13}: # Group 6 - OH
-                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 5, 2, 5, 6, 12, 1, 7, 7]
-                J_col = 14
-        elif (database == 'HITEMP'):
-            if mol_ID in {13}: # Group 6 - OH
-                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 1, 5, 1, 5, 6, 12, 1, 7, 7]
-                J_col = 15
+        elif mol_ID in {13}: # Group 7 - OH
+            field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 5, 2, 5, 6, 12, 1, 7, 7]
+            J_col = 14
         
         trans_file = pd.read_fwf(file, widths=field_lengths, header=None)
             
@@ -388,6 +382,8 @@ def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False,
                     J_lower[i] -= 1/2
         
         hdf_file_path = os.path.splitext(file)[0] + '.h5'
+
+        print(J_lower)
         
         # Write the data to our HDF5 file
         with h5py.File(hdf_file_path, 'w') as hdf:
