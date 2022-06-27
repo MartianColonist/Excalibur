@@ -107,6 +107,25 @@ def create_pf_VALD(VALD_data_dir):
     
     
 def filter_pf(molecule, ionization_state, line_list_folder, VALD_data_dir):
+    '''
+    Needs documentation
+
+    Parameters
+    ----------
+    molecule : TYPE
+        DESCRIPTION.
+    ionization_state : TYPE
+        DESCRIPTION.
+    line_list_folder : TYPE
+        DESCRIPTION.
+    VALD_data_dir : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
     ionization_state_roman = ''
     
     for i in range(ionization_state):
@@ -312,6 +331,40 @@ def summon_VALD(molecule, ionization_state, VALD_data_dir):
   
     
 def load_line_list(input_directory, molecule):
+    '''
+    Needs documentation
+
+    Parameters
+    ----------
+    input_directory : TYPE
+        DESCRIPTION.
+    molecule : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    nu_0 : TYPE
+        DESCRIPTION.
+    gf : TYPE
+        DESCRIPTION.
+    E_low : TYPE
+        DESCRIPTION.
+    E_up : TYPE
+        DESCRIPTION.
+    J_low : TYPE
+        DESCRIPTION.
+    l_low : TYPE
+        DESCRIPTION.
+    l_up : TYPE
+        DESCRIPTION.
+    Gamma_nat : TYPE
+        DESCRIPTION.
+    Gamma_vdw : TYPE
+        DESCRIPTION.
+    alkali : TYPE
+        DESCRIPTION.
+
+    '''
     
     fname = [file for file in os.listdir(input_directory) if file.endswith('.h5')][0]  # The directory should only have one .h5 file containing the line list
     
@@ -354,5 +407,5 @@ def load_line_list(input_directory, molecule):
     
     return nu_0, gf, E_low, E_up, J_low, l_low, l_up, Gamma_nat, Gamma_vdw, alkali
         
-    return
+    return  ###What is this doing here?
     

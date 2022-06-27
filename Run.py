@@ -7,10 +7,10 @@ from excalibur.core import compute_cross_section
 from excalibur.plot import plot_sigma_wl
 
 # Parameters
-species = 'CO'
+species = 'O'
 isotope = 'default'
 ion = 1
-database = 'hitemp'
+database = 'vald'
 
 P = [1e-3]       # Pressure (bar)
 T = [2000]       # Temperature (K)

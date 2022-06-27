@@ -44,6 +44,8 @@ def test_process_files():
         
     Q = np.asarray(Q) 
     
+    # Not removing the input directory yet in case I want to test the load_states function below
+    
     assert Q.all() > 0
     assert np.isnan(np.sum(Q)) == False
     
