@@ -25,7 +25,7 @@ def det_broad(input_directory):
     if 'H2.broad' in os.listdir(input_directory) and 'He.broad' in os.listdir(input_directory):
         broadening = 'H2-He'
 
-    # If no H2 + He boradening files, search for an air boradening file
+    # If no H2 + He broadening files, search for an air broadening file
     elif 'air.broad' in os.listdir(input_directory):
         broadening = 'air'
 
