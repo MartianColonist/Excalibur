@@ -1,5 +1,0 @@
-VALD
-----
-
-.. automodule:: VALD
-   :members:

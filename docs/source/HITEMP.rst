@@ -1,5 +1,0 @@
-HITEMP
-------
-
-.. automodule:: HITEMP
-   :members:

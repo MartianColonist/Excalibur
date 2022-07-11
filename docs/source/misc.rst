@@ -1,5 +1,0 @@
-Miscellaneous
--------------
-
-.. automodule:: misc
-   :members:

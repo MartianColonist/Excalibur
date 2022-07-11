@@ -3,36 +3,23 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-
-.. logo image:: Excalibur_logo.png
-
 Welcome to Excalibur-alpha's documentation!
-===========================================
+=============================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :hidden:
 
-   introduction
-   installation
-   getting_started
-   broadening
-   calculate
-   constants
-   core
-   downloader
-   ExoMol
-   HITEMP
-   HITRAN
-   misc
-   plot
-   VALD
-   Voigt
+   content/installation
 
+.. toctree::
+  :maxdepth: 1
+  :caption: Guide:
 
+  content/getting_started
 
-Indices and tables
-==================
+.. toctree::
+ :maxdepth: 2
+ :caption: Code Documentation:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+ autoapi/index
