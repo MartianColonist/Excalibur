@@ -8,7 +8,7 @@ from excalibur.plot import plot_sigma_wl
 
 # Parameters
 
-species = 'OH'
+species = 'FeH'
 isotope = 'default'
 database = 'exomol'
 
@@ -26,8 +26,7 @@ nu, sigma = compute_cross_section(input_dir = './input/', database = database,
                                   temperature = T, isotope = isotope,
                                   N_cores = 1, nu_out_min = 200, nu_out_max = 50000, dnu_out = 0.01)
 
-'''
+
 # Plot cross section
 plot_sigma_wl(nu_arr = nu, sigma_arr = sigma, species = species, temperature = T, 
               log_pressure = np.log10(P), database = database, plot_dir = './plots/')
-'''

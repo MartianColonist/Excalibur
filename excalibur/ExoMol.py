@@ -11,23 +11,23 @@ import excalibur.downloader as download
 
 
 def check(molecule, isotope = '', linelist = ''):
-    """
+    '''
     Checks if the parameters passed into the summon() function by the user are valid to use with the ExoMol database.
 
     Parameters
     ----------
-    molecule : TYPE
-        DESCRIPTION.
-    isotope : TYPE
-        DESCRIPTION.
-    linelist : TYPE
-        DESCRIPTION.
+    molecule : String
+        Molecule name (e.g. H2O).
+    isotope : String, optional
+        Isotopologue of the molecule (e.g. 1H-16O). The default is ''.
+    linelist : String, optional
+        Line list to be downloaded. The default is ''.
 
     Returns
     -------
     None.
 
-    """
+    '''
 
     website = "http://exomol.com/data/molecules/" + molecule + '/' + isotope + '/' + linelist + '/'
 
@@ -47,12 +47,12 @@ def get_default_iso(molecule):
     Parameters
     ----------
     molecule : String
-        DESCRIPTION.
+        Molecule for which we find the most abundant isotopologue.
 
     Returns
     -------
     default_iso : String
-        DESCRIPTION.
+        Most abundant isotopologue of the given molecule.
 
     """
 
@@ -94,23 +94,23 @@ def get_default_iso(molecule):
 
 
 def get_default_linelist(molecule, isotopologue):
-    """
-    Returns a default line list for a given ExoMol molecule and isotopologue
-    These are sometimes changed as ExoMol releases better and more up-to-date line lists
+    '''
+    Returns a default line list for a given ExoMol molecule and isotopologue.
+    These are sometimes changed as ExoMol releases better and more up-to-date line lists.
 
     Parameters
     ----------
-    molecule : str
-        DESCRIPTION.
-    isotopologue : str
-        DESCRIPTION.
+    molecule : String
+        Molecule name (e.g. H2O).
+    isotopologue : String
+        Name of isotopologue.
 
     Returns
     -------
-    str
-        DESCRIPTION.
+    linelist : String
+        Default line list for given molecule and isotopologue.
 
-    """
+    '''
 
     structure = molecule + '(' + isotopologue + ')'
 
@@ -159,13 +159,13 @@ def determine_linelist():
     Returns
     -------
     molecule : String
-        DESCRIPTION.
+        Molecule name (e.g. H2O).
     isotopologue : String
-        DESCRIPTION.
+        Isotopologue of molecule (e.g. 1H-16O).
     linelist : String
-        DESCRIPTION.
+        Desired ExoMol line list for moleclue-isotopologue combination.
     website : String
-        DESCRIPTION.
+        ExoMol website URL containing download links for the line list.
 
     """
 
@@ -231,8 +231,8 @@ def process_files(input_dir):
 
     Parameters
     ----------
-    input_dir : TYPE
-        DESCRIPTION.
+    input_dir : String
+        Local directory where the .broad and .pf files are stored.
 
     Returns
     -------
@@ -348,14 +348,14 @@ def summon_ExoMol(molecule, isotopologue, line_list, URL):
 
     Parameters
     ----------
-    molecule : TYPE
-        DESCRIPTION.
-    isotopologue : TYPE
-        DESCRIPTION.
-    line_list : TYPE
-        DESCRIPTION.
-    URL : TYPE
-        DESCRIPTION.
+    molecule : String
+        Molecule to download line list for (e.g. H2O).
+    isotopologue : String
+        Isotopologue to download line list for (e.g. 1H-16O).
+    line_list : String
+        Line list to be downloaded. ExoMol has named lists for each molecule.
+    URL : String
+        ExoMol URL where the line list is located.
 
     Returns
     -------
@@ -366,7 +366,6 @@ def summon_ExoMol(molecule, isotopologue, line_list, URL):
     line_list_folder = download.create_directories(molecule = molecule, isotopologue = isotopologue,
                                                    line_list = line_list, database = 'ExoMol')
 
-    host = "http://exomol.com"
     broad_URL = "http://exomol.com/data/molecules/" + molecule + '/' # URL where the broadening files are contained
 
     tags = download.create_ExoMol_tag_array(URL, broad_URL)
@@ -375,6 +374,6 @@ def summon_ExoMol(molecule, isotopologue, line_list, URL):
     print("\nMolecule:", molecule, "\nIsotopologue:", isotopologue, "\nLine List:", line_list)
     print("\nStarting by downloading the .broad, .pf, and .states files...")
 
-    download.iterate_ExoMol_tags(tags, host, line_list_folder, line_list)
+    download.iterate_ExoMol_tags(tags, line_list_folder, line_list)
 
     process_files(line_list_folder)

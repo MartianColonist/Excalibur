@@ -36,7 +36,7 @@ def mass(species, isotopologue, linelist):
     species : String
         Molecule we are calculating the mass for.
     isotopologue : String
-        Isotopologue of this species we are calculating the mass for.
+        Isotopologue of the species we are calculating the mass for.
     linelist : String
         The line list this species' cross-section will later be calculated for. Used to 
         identify between ExoMol, HITRAN/HITEMP, and VALD
@@ -48,7 +48,7 @@ def mass(species, isotopologue, linelist):
 
     """
     
-    # For HITRAN or HITEMP line lists
+    # Determine the mass or HITRAN and HITEMP species by using built-in molecularMass() function in hapi.py
     if linelist == 'hitran' or linelist == 'hitemp':
         mol_ID = 1
         while moleculeName(mol_ID) != species:
@@ -67,7 +67,7 @@ def mass(species, isotopologue, linelist):
             else:
                 iso_ID += 1
       
-    # For VALD line lists
+    # For VALD atomic line lists, just use the weighted average atomic mass
     elif linelist == 'vald':   
         
         # Atomic masses - Weighted average based on isotopic natural abundances found here: 
@@ -95,7 +95,7 @@ def mass(species, isotopologue, linelist):
         
         return mass_dict.get(species)
 
-    # For ExoMol line lists
+    # For ExoMol line lists, get the mass contained within the molecule's .def file
     else:
         
         isotopologue = isotopologue.replace('(', '')
@@ -133,13 +133,13 @@ def load_pf(input_directory):
     Parameters
     ----------
     input_directory : String
-        DESCRIPTION.
+        Local directory where the .pf file is stored.
 
     Returns
     -------
-    T_pf_raw : TYPE
+    T_pf_raw : numpy array
         DESCRIPTION.
-    Q_raw : TYPE
+    Q_raw : numpy array
         DESCRIPTION.
 
     '''
@@ -211,6 +211,60 @@ def create_nu_grid_atom_OLD(atom, T, m, gamma, nu_0, Voigt_sub_spacing,
     
     Note: for atoms a single grid is used over the entire wavenumber range.
 
+    Parameters
+    ----------
+    atom : TYPE
+        DESCRIPTION.
+    T : TYPE
+        DESCRIPTION.
+    m : TYPE
+        DESCRIPTION.
+    gamma : TYPE
+        DESCRIPTION.
+    nu_0 : TYPE
+        DESCRIPTION.
+    Voigt_sub_spacing : TYPE
+        DESCRIPTION.
+    dnu_out : TYPE
+        DESCRIPTION.
+    nu_out_min : TYPE
+        DESCRIPTION.
+    nu_out_max : TYPE
+        DESCRIPTION.
+    Voigt_cutoff : TYPE
+        DESCRIPTION.
+    cut_max : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    sigma_fine : TYPE
+        DESCRIPTION.
+    sigma_out : TYPE
+        DESCRIPTION.
+    nu_detune : TYPE
+        DESCRIPTION.
+    N_points_fine : TYPE
+        DESCRIPTION.
+    N_Voigt_points : TYPE
+        DESCRIPTION.
+    alpha : TYPE
+        DESCRIPTION.
+    cutoffs : TYPE
+        DESCRIPTION.
+    nu_min : TYPE
+        DESCRIPTION.
+    nu_max : TYPE
+        DESCRIPTION.
+    nu_fine_start : TYPE
+        DESCRIPTION.
+    nu_fine_end : TYPE
+        DESCRIPTION.
+    nu_out : TYPE
+        DESCRIPTION.
+    N_points_out : TYPE
+        DESCRIPTION.
+
     '''
     
     # Define the minimum and maximum wavenumber on grid to go slightly beyond user's output limits
@@ -279,6 +333,24 @@ def create_nu_grid_atom_OLD(atom, T, m, gamma, nu_0, Voigt_sub_spacing,
             cutoffs, nu_min, nu_max, nu_fine_start, nu_fine_end, nu_out, N_points_out)
 
 def create_nu_grid(nu_out_min, nu_out_max, dnu_out):
+    '''
+    
+
+    Parameters
+    ----------
+    nu_out_min : TYPE
+        DESCRIPTION.
+    nu_out_max : TYPE
+        DESCRIPTION.
+    dnu_out : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    nu_compute : TYPE
+        DESCRIPTION.
+
+    '''
 
     # Define the minimum and maximum wavenumber on grid to go slightly beyond user's output limits
     nu_min = min(1, nu_out_min)
@@ -299,16 +371,19 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
 
     Parameters
     ----------
-    database : TYPE, optional
-        DESCRIPTION. The default is ''.
-    species : TYPE, optional
-        DESCRIPTION. The default is ''.
-    isotope : TYPE, optional
-        DESCRIPTION. The default is 'default'.
-    linelist : TYPE, optional
-        DESCRIPTION. The default is 'default'.
-    ionization_state : TYPE, optional
-        DESCRIPTION. The default is 1.
+    database : String, optional
+        The database from which to download the line list (ExoMol, HITRAN, HITEMP, VALD). The default is ''.
+    species : String, optional
+        Molecular or atomic species to . The default is ''.
+    isotope : String, optional
+        Isotopologue of the molecular species. For ExoMol, this is specified on the webpage. For HITRAN/HITEMP use 
+        1 for the most naturally abundant isotopologue, 2 for the next most abundant, etc. The default is 'default'.
+    linelist : String, optional
+        Species line list to download. Used mainly for ExoMol, where there are multiple line lists for the same species.
+        For HITRAN/HITEMP/VALD, the line list is just the name of the database. The default is 'default'.
+    ionization_state : int, optional
+        Ionization state to be used, in case of an atomic species. A neutral atom corresponds to an ionization state
+        of 1. The default is 1.
     **kwargs : TYPE
         DESCRIPTION.
 
@@ -318,13 +393,14 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
 
     '''
     
-    # Check if the user has specified a chemical species and line list database
+    # If the user has specified a chemical species and line list database, they do not want to be guided via the terminal
+    # and we set user_prompt = False
     if database != '' and species != '': 
         user_prompt = False
     else: 
         user_prompt = True
         
-    # If the user wants to be guided via terminal prompts
+    # The user does want to be guided via terminal prompts
     if user_prompt: 
         
         while True:
@@ -351,7 +427,7 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
             mol, ion = VALD.determine_linelist(VALD_data_dir)
             VALD.summon_VALD(mol, ion, VALD_data_dir)
             
-    # If the user calls summon with parameters directly passed in
+    # The user has already entered parameters
     if not user_prompt: 
         
         db = database.lower()
@@ -389,7 +465,6 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
                 iso = 1
             else:
                 if isinstance(isotope, str):
-                    print(isotope)
                     print("----- Error: for HITRAN / HITEMP isotopes are specified by integers.\n")
                     print("----- 1 = most common, 2 = 2nd most common etc. ----- ")
                     sys.exit(0)
@@ -403,7 +478,6 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
                 iso = 1
             else:
                 if isinstance(isotope, str):
-                    print(isotope)
                     print("----- Error: for HITRAN / HITEMP isotopes are specified by integers.\n")
                     print("----- 1 = most common, 2 = 2nd most common etc. ----- ")
                     sys.exit(0)
@@ -429,7 +503,65 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
                           X_H2 = 0.85, X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
                           N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, N_cores = 1, **kwargs):
     '''
-    Main function to calculate molecular and atomic cross sections.
+    
+    Main function to compute cross section, given that the requisite line list has already been downloaded.
+
+    Parameters
+    ----------
+    input_dir : String
+        Local directory where the line list is stored.
+    database : String
+        Database from which the line list was downloaded.
+    species : String
+        Molecule or atom for which the cross section is to be computed.
+    log_pressure : TYPE
+        DESCRIPTION.
+    temperature : TYPE
+        DESCRIPTION.
+    isotope : String, optional
+        Isotopologue of the species (if species is a molecule). For ExoMol, this is specified on the webpage. For HITRAN/HITEMP use 
+        1 for the most naturally abundant isotopologue, 2 for the next most abundant, etc. The default is 'default'.
+    ionization_state : int, optional
+        Ionization state to be used, in case of an atomic species. A neutral atom corresponds to an ionization state
+        of 1. The default is 1.
+    linelist : TYPE, optional
+        Species line list to download. For ExoMol there are often multiple line lists for the same species.
+        For HITRAN/HITEMP/VALD, the line list is just the name of the database. The default is 'default'.. The default is 'default'.
+    cluster_run : bool, optional
+        DESCRIPTION. The default is False.
+    nu_out_min : TYPE, optional
+        DESCRIPTION. The default is 200.
+    nu_out_max : TYPE, optional
+        DESCRIPTION. The default is 25000.
+    dnu_out : TYPE, optional
+        DESCRIPTION. The default is 0.01.
+    broad_type : TYPE, optional
+        DESCRIPTION. The default is 'default'.
+    X_H2 : TYPE, optional
+        DESCRIPTION. The default is 0.85.
+    X_He : TYPE, optional
+        DESCRIPTION. The default is 0.15.
+    Voigt_cutoff : TYPE, optional
+        DESCRIPTION. The default is 500.
+    Voigt_sub_spacing : TYPE, optional
+        DESCRIPTION. The default is (1.0/6.0).
+    N_alpha_samples : TYPE, optional
+        DESCRIPTION. The default is 500.
+    S_cut : TYPE, optional
+        DESCRIPTION. The default is 1.0e-100.
+    cut_max : TYPE, optional
+        DESCRIPTION. The default is 30.0.
+    N_cores : TYPE, optional
+        DESCRIPTION. The default is 1.
+    **kwargs : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    nu_out : TYPE
+        DESCRIPTION.
+    sigma_out : TYPE
+        DESCRIPTION.
 
     '''
     
@@ -460,7 +592,7 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
     # Locate the input_directory where the line list is stored
     input_directory = download.find_input_dir(input_dir, database, species, isotope, ionization_state, linelist)
     
-    # Use the input directory to define these right at the start
+    # Use the input directory to define parameters right at the start
     linelist, isotopologue = download.parse_directory(input_directory, database)
     
     # HITRAN, HITEMP, and VALD do not have seperate line list names
@@ -496,7 +628,7 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
     # Check if we have a molecule or an atom
     is_molecule = check_molecule(species)
     
-    # Store ionisation state as roman numeral for later (atoms only)
+    # Store ionization state as roman numeral for later (atoms only)
     roman_num = ''
     if is_molecule == False:
         for i in range(ionization_state):

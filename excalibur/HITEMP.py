@@ -13,8 +13,9 @@ def create_id_dict():
 
     Returns
     -------
-    molecule_dict : TYPE
-        DESCRIPTION.
+    molecule_dict : dict
+        Dictionary where the keys are HITRAN molecular names and the values are the respective HITRAN molecular IDs,
+        as seen on https://hitran.org/lbl/.
 
     '''
     mol_ID = []
@@ -37,21 +38,22 @@ def create_id_dict():
 
 
 def check(molecule, isotope):
-    """
-    Checks if the parameters passed into the summon() function by the user are valid to use with the HITEMP database
+    '''
+    Checks if the parameters passed into the summon() function by the user are valid to use with the HITEMP database.
 
     Parameters
     ----------
-    molecule : TYPE
-        DESCRIPTION.
-    isotope : TYPE
-        DESCRIPTION.
+    molecule : String
+        Molecule name (e.g. H2O).
+    isotope : int
+        Isotopologue number of the molecule (1 = most common isotopologue, 2 = second most common, etc.).
 
     Returns
     -------
-    None.
+    molecule_id_number : int
+        Molecule ID number of the given molecule, as given by the first column in HITEMP here: https://hitran.org/hitemp/.
 
-    """
+    '''
 
     molecule_dict = create_id_dict()
     molecule_id_number = molecule_dict.get(molecule)
@@ -62,6 +64,8 @@ def check(molecule, isotope):
         sys.exit(0)
     
     table = download.HITEMP_table()
+    
+    # Ensure that the given isotopologue number is less than or equal to the max number of isotopolgues stored by HITRAN
     if molecule_id_number in table['ID'].values:
         row = table.loc[table['ID'] == molecule_id_number]
         isotope_count = row.loc[row.index.values[0], 'Iso Count']
@@ -80,9 +84,9 @@ def determine_linelist():
     Returns
     -------
     molecule_ID : int
-        DESCRIPTION.
+        Molecule ID number of the given molecule, as given by the first column in HITEMP here: https://hitran.org/hitemp/.
     isotopologue_ID : int
-        DESCRIPTION.
+        Isotopologue number of the molecule (1 = most common isotopologue, 2 = second most common, etc.).
 
     """
     
@@ -118,18 +122,18 @@ def create_pf(mol_ID, iso_ID, folder, T_min = 70, T_max = 3001, step = 1.0):
 
     Parameters
     ----------
-    mol_ID : TYPE
-        DESCRIPTION.
-    iso_ID : TYPE
-        DESCRIPTION.
-    folder : TYPE
-        DESCRIPTION.
-    T_min : TYPE, optional
-        DESCRIPTION. The default is 70.
-    T_max : TYPE, optional
-        DESCRIPTION. The default is 3001.
-    step : TYPE, optional
-        DESCRIPTION. The default is 1.0.
+    mol_ID : int
+        Molecule ID number of the given molecule, as given by the first column in HITEMP here: https://hitran.org/hitemp/.
+    iso_ID : int
+        Isotopologue number of the molecule (1 = most common isotopologue, 2 = second most common, etc.).
+    folder : String
+        Local directory where the partition function file is to be stored.
+    T_min : int, optional
+        Minimum temperature (K) for which the partition function is computed by hapy.py. The default is 70.
+    T_max : int, optional
+        Maximum temperature (K) for which the partition function is computed by hapy.py. The default is 3001.
+    step : float, optional
+        Increment for temperature between T_min and T_max. The default is 1.0.
 
     Returns
     -------
@@ -148,12 +152,12 @@ def create_pf(mol_ID, iso_ID, folder, T_min = 70, T_max = 3001, step = 1.0):
     
 def create_air_broad(input_dir):
     """
-    Create an air broadening file using the downloaded line list
+    Create an air broadening file using the downloaded line list.
 
     Parameters
     ----------
-    input_dir : TYPE
-        DESCRIPTION.
+    input_dir : String
+        Local directory where the broadening file is to be stored.
 
     Returns
     -------
@@ -201,10 +205,10 @@ def summon_HITEMP(molecule, isotopologue):
 
     Parameters
     ----------
-    molecule : TYPE
-        DESCRIPTION.
-    isotopologue : TYPE
-        DESCRIPTION.
+    molecule : int
+        Molecule ID number of the given molecule, as given by the first column in HITEMP here: https://hitran.org/hitemp/.
+    isotopologue : int
+        Isotopologue number of the molecule (1 = most common isotopologue, 2 = second most common, etc.).
 
     Returns
     -------

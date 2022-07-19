@@ -10,7 +10,7 @@ def check_molecule(molecule):
     Parameters
     ----------
     molecule : String
-        Molecular formula.
+        Molecule name (e.g. H2O).
 
     Returns
     -------
@@ -27,15 +27,15 @@ def write_output(output_directory, species, roman_num, T, log_P, nu_out, sigma_o
     """
     Parameters
     ----------
-    output_directory : TYPE
-        DESCRIPTION.
-    species : TYPE
-        DESCRIPTION.
-    roman_num : TYPE
-        DESCRIPTION.
-    T : TYPE
-        DESCRIPTION.
-    log_P : TYPE
+    output_directory : String
+        Local directory where the output data is to be stored.
+    species : String
+        Name of molecule or atomc.
+    roman_num : String
+        Ionization state, in case the species is an atom. Depicted in Roman numeral form.
+    T : int
+        Temperature (K) the cross-section was computed at.
+    log_P : int
         DESCRIPTION.
     nu_out : TYPE
         DESCRIPTION.
@@ -67,10 +67,10 @@ def read_output(output_directory, molecule, T, log_P):
 
     Parameters
     ----------
-    output_directory : TYPE
-        DESCRIPTION.
-    molecule : TYPE
-        DESCRIPTION.
+    output_directory : String
+        Local directory where the computed cross section is stored.
+    molecule : String
+        Molecule name.
     T : TYPE
         DESCRIPTION.
     log_P : TYPE
@@ -85,7 +85,7 @@ def read_output(output_directory, molecule, T, log_P):
 
     '''
     
-    file_location = (output_directory + str(molecule) + '_T' + str(T) + 
+    file_location = (output_directory + molecule + '_T' + str(T) + 
                      'K_log_P' + str(log_P) + '_sigma_TMP.txt')
     
     file = pd.read_csv(file_location, sep = '\s+', header=None)
