@@ -598,7 +598,7 @@ def create_ExoMol_tag_array(url, broad_URL):
 
 def iterate_ExoMol_tags(tags, l_folder, line_list):
     """
-    Iterate through every html tag and download the file contained by the URL in the href
+    Iterate through every html tag and download the file contained by the URL in the href.
 
     Parameters
     ----------
