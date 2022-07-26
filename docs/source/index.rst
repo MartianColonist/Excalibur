@@ -3,13 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Excalibur-alpha's documentation!
+Excalibur-alpha's documentation.
 =============================================
+
+Welcome to Excalibur! This package allows users to effortlessly create molecular
+and atomic cross sections to aid in their own research, including for the creation of
+accurate atmospheric retrieval models. If this is your first time using Excalibur,
+please proceed to the Introduction page on the sidebar.
 
 .. toctree::
    :maxdepth: 1
    :hidden:
 
+   content/introduction
    content/installation
 
 .. toctree::
