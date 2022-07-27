@@ -10,7 +10,7 @@ from scipy.ndimage import gaussian_filter1d
 
 def plot_spectra(spectra, spectra_labels, filename, plot_dir = './plots/', 
                  x_min = None, x_max = None, y_min = None, y_max = None,
-                 color_list = [], smooth_data = False, **kwargs):
+                 color_list = [], smooth_data = True, std = 1000, **kwargs):
     """
     Generate a plot of a cross_section file, in both wavelength and wavenumber
 
@@ -62,7 +62,7 @@ def plot_spectra(spectra, spectra_labels, filename, plot_dir = './plots/',
         wl = 1.0e4/nu # Convert wavenumber (in cm^-1) to wavelength (in um)
         
         if smooth_data == True:
-            spec = gaussian_filter1d(spec, 5)
+            spec = gaussian_filter1d(spec, std)
         
         ax.loglog(wl, spec, lw=0.3, alpha = 0.5, color= colors[i], label = spectra_labels[i]) 
     
