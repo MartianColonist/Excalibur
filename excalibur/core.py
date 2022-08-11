@@ -497,7 +497,7 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
     print("\nLine list ready.\n")
     
     
-def compute_cross_section(input_dir, database, species, log_pressure, temperature, isotope = 'default', 
+def compute_cross_section(input_dir, database, species, temperature, pressure = None, log_pressure = None, isotope = 'default', 
                           ionization_state = 1, linelist = 'default', cluster_run = False, 
                           nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default', 
                           X_H2 = 0.85, X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
@@ -514,9 +514,11 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
         Database from which the line list was downloaded.
     species : String
         Molecule or atom for which the cross section is to be computed.
-    log_pressure : TYPE
-        DESCRIPTION.
     temperature : TYPE
+        DESCRIPTION.
+    pressure : TYPE
+        DESCRIPTION.
+    log_pressure : TYPE
         DESCRIPTION.
     isotope : String, optional
         Isotopologue of the species (if species is a molecule). For ExoMol, this is specified on the webpage. For HITRAN/HITEMP use 
@@ -570,19 +572,30 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
     # Start clock for timing program
     t_start = time.perf_counter()
     
-    # Configure numba to paralelise with the user specified number of cores
+    # Configure numba to parallelise with the user specified number of cores
     numba.set_num_threads(N_cores)
     
-    # Cast log_pressure and temperature to lists if they are not already
-    if not isinstance(log_pressure, list) and not isinstance(log_pressure, np.ndarray):  
-        log_pressure = [log_pressure]
+    if pressure == None and log_pressure == None:
+        print("\nYou need to specify a pressure to run the cross section computation. Please try again.")
+        sys.exit(0)
     
-    if not isinstance(temperature, list) and not isinstance(temperature, np.ndarray):  
+    # Cast pressure to np arrays
+    if log_pressure != None:
+        if not isinstance(log_pressure, list):  
+            log_pressure = [log_pressure]
+        log_pressure = np.array([log_pressure])
+        pressure = np.power(10, log_pressure)
+    else:
+        if not isinstance(pressure, list):  
+            pressure = [pressure]
+        pressure = np.array([pressure])
+    
+    if not isinstance(temperature, list):  
         temperature = [temperature]
         
     # Cast all temperatures and pressures to floats
-    for i in range(len(log_pressure) - 1):
-        log_pressure[i] = float(log_pressure[i])
+    for i in range(len(pressure) - 1):
+        pressure[i] = float(pressure[i])
     
     for i in range(len(temperature) - 1):
         temperature[i] = float(temperature[i])
@@ -687,9 +700,8 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
                                               Gamma_vdw, alkali, m)
     
     #***** Load pressure and temperature for this calculation *****#
-    P_arr = np.power(10.0, log_pressure)  # Pressure array (bar)
-    log_P_arr = np.array(log_pressure)    # log_10 (Pressure/bar) array
-    T_arr = np.array(temperature)         # Temperature array (K)
+    P_arr = pressure  # Pressure array (bar)
+    T_arr = np.array(temperature)  # Temperature array (K)
     
     # If conducting a batch run on a cluster
     if (cluster_run == True):
@@ -705,7 +717,7 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
             print("\n----- The command line argument needs to be an int. -----")
             sys.exit(0)
             
-        if idx_PT >= len(log_P_arr) * len(T_arr):
+        if idx_PT >= len(P_arr) * len(T_arr):
             print("\n----- You have provided a command line argument that is out of range for the specified pressure and temperature arrays. -----")
             sys.exit(0)
         
@@ -719,7 +731,7 @@ def compute_cross_section(input_dir, database, species, log_pressure, temperatur
     # If running on a single machine, compute a cross section for each (P,T) pair sequentially
     else:
         
-        N_P = len(log_P_arr)
+        N_P = len(P_arr)
         N_T = len(T_arr)
     
     # Compute cross section for each pressure and temperature point
