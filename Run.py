@@ -1,10 +1,5 @@
 #***** Example script to run EXCALIBUR *****#
 
-import numpy as np
-import sys
-print(sys.argv)
-
-'''
 from excalibur.core import summon, compute_cross_section
 
 species = 'CO'
@@ -15,11 +10,10 @@ summon(database=database, species = species)
 
 P = 1  # Pressure in bars
 T = 1000  # Temperature in Kelvin
-input_directory = './input' # Top level directory containing line lists
+input_directory = './input/' # Top level directory containing line lists
 
 compute_cross_section(species = species, database = database, temperature = T, input_dir = input_directory, 
                       pressure = P)
-'''
 
 '''
 
