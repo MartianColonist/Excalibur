@@ -8,11 +8,11 @@ from matplotlib.ticker import MultipleLocator, AutoLocator, FormatStrFormatter, 
 from scipy.ndimage import gaussian_filter1d
 
 
-def plot_spectra(spectra, spectra_labels, filename, plot_dir = './plots/', 
+def plot_cross_section(collection, labels, filename, plot_dir = './plots/', 
                  x_min = None, x_max = None, y_min = None, y_max = None,
-                 color_list = [], smooth_data = True, std = 1000, **kwargs):
+                 color_list = [], smooth_data = False, std = 1000, **kwargs):
     """
-    Generate a plot of a cross_section file, in both wavelength and wavenumber
+    Generate a plot of cross section file[s], in both wavelength and wavenumber
 
     Parameters
     ----------
@@ -43,10 +43,10 @@ def plot_spectra(spectra, spectra_labels, filename, plot_dir = './plots/',
     
     
     # Add small value to each computed cross-section to avoid log(0) on log plots
-    for spectrum in spectra:
-        spectrum[1] = spectrum[1] + 1.0e-250
+    for xs in collection:
+        xs[1] = xs[1] + 1.0e-250
     
-    nu_min, nu_max, sigma_min, sigma_max = find_min_max_nu_sigma(spectra)
+    nu_min, nu_max, sigma_min, sigma_max = find_min_max_nu_sigma(collection)
     
     fig, ax = plt.subplots()
     
@@ -57,14 +57,14 @@ def plot_spectra(spectra, spectra_labels, filename, plot_dir = './plots/',
         colors = color_list
     
     # plot each spectra in the array
-    for i in range(len(spectra)):
-        (nu, spec) = spectra[i]
+    for i in range(len(collection)):
+        (nu, spec) = collection[i]
         wl = 1.0e4/nu # Convert wavenumber (in cm^-1) to wavelength (in um)
         
         if smooth_data == True:
             spec = gaussian_filter1d(spec, std)
         
-        ax.loglog(wl, spec, lw=0.3, alpha = 0.5, color= colors[i], label = spectra_labels[i]) 
+        ax.loglog(wl, spec, lw=0.3, alpha = 0.5, color= colors[i], label = labels[i]) 
     
         # Set y range
     if (y_min == None):
@@ -89,9 +89,9 @@ def plot_spectra(spectra, spectra_labels, filename, plot_dir = './plots/',
     print("\nPlotting complete.")
 
 
-def spectra_collection(new_x, new_y, collection = []):
+def cross_section_collection(new_x, new_y, collection = []):
     '''
-    Add new spectrum (that is, wavelength and cross section) to the collection
+    Add new cross section (that is, wavelength and absorption cross section) to the collection
 
     Parameters
     ----------
