@@ -5,14 +5,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, AutoLocator, FormatStrFormatter, \
                               FuncFormatter, ScalarFormatter, NullFormatter
+from scipy.ndimage import gaussian_filter1d
 
 
-def plot_sigma_wl(species, temperature, log_pressure, nu_arr = [], sigma_arr = [], 
-                  file = '', database = '', plot_dir = './plots/', ionization = 1, 
-                  wl_min = None, wl_max = None, sigma_min = None, sigma_max = None, 
-                  **kwargs):
+def plot_cross_section(collection, labels, filename, plot_dir = './plots/', 
+                 x_min = None, x_max = None, y_min = None, y_max = None,
+                 color_list = [], smooth_data = False, std = 1000, **kwargs):
     """
-    Generate a plot of a cross_section file, in both wavelength and wavenumber
+    Generate a plot of cross section file[s], in both wavelength and wavenumber
 
     Parameters
     ----------
@@ -36,79 +36,47 @@ def plot_sigma_wl(species, temperature, log_pressure, nu_arr = [], sigma_arr = [
     None.
 
     """
+    
         
     if not os.path.exists('./plots/'):
         os.mkdir('./plots')
-       
     
-    nu_plt = nu_arr
-    wl_plt = 1.0e4/nu_plt
-    sigma_plt = sigma_arr + 1.0e-250   # Add small value to avoid log(0) on log plots
-
-    # Set x range
-    if (wl_min == None):
-        wl_min = np.min(wl_plt)
-    if (wl_max == None):
-        wl_max = np.max(wl_plt)
-
-    # Set y range
-    if (sigma_min == None):
-        sigma_min = 1.0e-30
-    if (sigma_max == None):
-        sigma_max = 10.0**(np.max(np.ceil(np.log10(sigma_plt) / 2.0) * 2.0))
-
-    # If user provided a list or numpy array for log_P and T, convert into float
-    log_pressure = np.asarray(log_pressure).item()
-    temperature = np.asarray(temperature).item()
-
-    pressure = np.power(10.0, log_pressure)
     
-    if (ionization == 2):
-        ion = '+'
+    # Add small value to each computed cross-section to avoid log(0) on log plots
+    for xs in collection:
+        xs[1] = xs[1] + 1.0e-250
+    
+    nu_min, nu_max, sigma_min, sigma_max = find_min_max_nu_sigma(collection)
+    
+    fig, ax = plt.subplots()
+    
+    # Define colors for plotted spectra (default or user choice)
+    if (color_list == []):   # If user did not specify a custom colour list
+        colors = ['green', 'crimson', 'black', 'darkgrey', 'navy', 'brown']
     else:
-        ion = ''
+        colors = color_list
     
-    print("Plotting the cross-section of", species, ion, "at", temperature, "K and", pressure, "bar")
+    # plot each spectra in the array
+    for i in range(len(collection)):
+        (nu, spec) = collection[i]
+        wl = 1.0e4/nu # Convert wavenumber (in cm^-1) to wavelength (in um)
         
-    #***** Make wavenumber plot *****#
-  #  fig = plt.figure()
-  #  ax = plt.gca()
+        if smooth_data == True:
+            spec = gaussian_filter1d(spec, std)
+        
+        ax.loglog(wl, spec, lw=0.3, alpha = 0.5, color= colors[i], label = labels[i]) 
     
-  #  ax.set_yscale("log")
-    
-  #  ax.plot(nu_plt, sigma_plt, lw=0.3, alpha = 0.5, color = 'crimson', label = (molecule + r' Cross Section'))   
-    
-  #  ax.set_ylim([1.0e-30, np.log10(np.max(sigma_plt)) + 2.0])
-  #  ax.set_xlim([200.0, 25000.0])
+        # Set y range
+    if (y_min == None):
+        y_min = 1.0e-30
+    if (y_max == None):
+        y_max = sigma_max
 
-  #  ax.set_ylabel(r'Cross Section (cm$^2$)', size = 14)
-  #  ax.set_xlabel(r'$\tilde{\nu}$ (cm$^{-1}$)', size = 14)
-
-  #  legend = plt.legend(loc='upper left', shadow=False, frameon=False, prop={'size':10})
-    
-  #  plt.tight_layout()
-    
-  #  plt.savefig('./plots/' + molecule + '_' + str(temperature) + 'K_' + str(pressure) + 'bar_nu.pdf')
-    
-  #  plt.close()
-    
-    
-    #***** Make wavelength plot *****#
-    fig = plt.figure()
-    ax = plt.gca()
-    
-    ax.loglog(wl_plt, sigma_plt, lw=0.3, alpha = 0.5, color= 'crimson', label = (species + ion + r' Cross Section')) 
-    
-    ax.set_xticks([0.2, 0.4, 0.6, 0.8, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0])
-    ax.set_xticklabels(['0.2', '0.4', '0.6', '0.8', '1', '2', '4', '6', '8', '10'])
-    
-    ax.set_ylim([sigma_min, sigma_max])
-    ax.set_xlim([wl_min, wl_max])
+    ax.set_ylim(y_min, y_max * 10)
+    ax.set_xlim(1e4/nu_max, 1e4/nu_min) # Convert wavenumber (in cm^-1) to wavelength (in um)
     
     ax.set_ylabel(r'Cross Section (cm$^2$)', size = 14)
     ax.set_xlabel(r'Wavelength (μm)', size = 14)
-    
-    ax.text(0.22, 10**(np.log10(sigma_max) - 1.0), (r'T = ' + str(temperature) + r' K, P = ' + str(pressure) + r' bar'), fontsize = 10)
     
     legend = plt.legend(loc='upper right', shadow=False, frameon=False, prop={'size':10})
     
@@ -116,11 +84,95 @@ def plot_sigma_wl(species, temperature, log_pressure, nu_arr = [], sigma_arr = [
         legline.set_linewidth(1.0)
         
     plt.tight_layout()
-
-    plt.savefig(plot_dir + species + ion + '_' + str(temperature) + 'K_' +
-                str(pressure) + 'bar_' + database + '.pdf')
+    plt.savefig('./plots/' + filename)
     
     print("\nPlotting complete.")
+
+
+def cross_section_collection(new_x, new_y, collection = []):
+    '''
+    Add new cross section (that is, wavelength and absorption cross section) to the collection
+
+    Parameters
+    ----------
+    new_x : list
+        DESCRIPTION.
+    new_y : list
+        DESCRIPTION.
+    collection : 2d list, optional
+        DESCRIPTION. The default is [].
+
+    Returns
+    -------
+    collection : TYPE
+        DESCRIPTION.
+
+    '''
+    
+    collection.append([new_x, new_y])
+    
+    return collection
+
+
+def find_min_max_nu_sigma(spectra):
+    '''
+    Find min and max wavenumber for which the cross sections were computed, and 
+    determine the min and max values that the cross section takes on in that range.
+
+    Parameters
+    ----------
+    spectra : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    wl_min : TYPE
+        DESCRIPTION.
+    wl_max : TYPE
+        DESCRIPTION.
+    sigma_min : TYPE
+        DESCRIPTION.
+    sigma_max : TYPE
+        DESCRIPTION.
+
+    '''
+        
+    nu_min = 1e10   # Dummy value
+    
+    # Loop over each model, finding the minimum wavenumber value 
+    for i in range(len(spectra)):
+        
+        nu_min_i = np.min(spectra[i][0])
+        nu_min = min(nu_min, nu_min_i)
+    
+    
+    nu_max = 1e-10  # Dummy value
+    
+    # Loop over each model, finding the maximum wavenumber value
+    for i in range(len(spectra)):
+        
+        nu_max_i = np.max(spectra[i][0])
+        nu_max = max(nu_max, nu_max_i)
+
+
+    sigma_min = 1e10   # Dummy value
+    
+    # Loop over each model, finding the minimum cross section value
+    for i in range(len(spectra)):
+        
+        sigma_min_i = np.min(spectra[i][1])
+        sigma_min = min(sigma_min, sigma_min_i)
+
+    
+    sigma_max = 1e-200  # Dummy value
+    
+    # Loop over each model, finding the maximum cross section value
+    for i in range(len(spectra)):
+        
+        sigma_max_i = np.max(spectra[i][1])
+        sigma_max = max(sigma_max, sigma_max_i)
+            
+    return nu_min, nu_max, sigma_min, sigma_max
 
 
 def compare_cross_sections(molecule, label_1, label_2, nu_arr_1 = [], nu_arr_2 = [], 
