@@ -583,12 +583,12 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     if log_pressure != None:
         if not isinstance(log_pressure, list):  
             log_pressure = [log_pressure]
-        log_pressure = np.array([log_pressure])
+        log_pressure = np.array(log_pressure)
         pressure = np.power(10, log_pressure)
     else:
         if not isinstance(pressure, list):  
             pressure = [pressure]
-        pressure = np.array([pressure])
+        pressure = np.array(pressure)
     
     if not isinstance(temperature, list):  
         temperature = [temperature]

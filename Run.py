@@ -8,19 +8,19 @@ database = 'ExoMol'
 # Download line list
 summon(database=database, species = species)
 
-P = 1  # Pressure in bars
-T = 1000  # Temperature in Kelvin
+P = [1, 2]  # Pressure in bars
+T = [1000, 2000]  # Temperature in Kelvin
 input_directory = './input/' # Top level directory containing line lists
 
 compute_cross_section(species = species, database = database, temperature = T, input_dir = input_directory, 
                       pressure = P)
+
 
 '''
 
 from excalibur.core import summon
 from excalibur.core import compute_cross_section
 from excalibur.plot import plot_sigma_wl
-
 # Parameters
 
 species = 'FeH'
