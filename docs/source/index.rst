@@ -3,36 +3,30 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+Excalibur-alpha's documentation.
+=============================================
 
-.. logo image:: Excalibur_logo.png
-
-Welcome to Excalibur-alpha's documentation!
-===========================================
+Welcome to Excalibur! This package allows users to effortlessly create molecular
+and atomic cross sections to aid in their own research, including for the creation of
+accurate atmospheric retrieval models. If this is your first time using Excalibur,
+please proceed to the Introduction page on the sidebar.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :hidden:
 
-   introduction
-   installation
-   getting_started
-   broadening
-   calculate
-   constants
-   core
-   downloader
-   ExoMol
-   HITEMP
-   HITRAN
-   misc
-   plot
-   VALD
-   Voigt
+   content/introduction
+   content/installation
 
+.. toctree::
+  :maxdepth: 1
+  :caption: Guide:
 
+  content/getting_started
+  content/tutorials
 
-Indices and tables
-==================
+.. toctree::
+ :maxdepth: 2
+ :caption: Code Documentation:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+ autoapi/index

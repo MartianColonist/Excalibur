@@ -434,7 +434,7 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
     total_calc = t_end_calc - t_begin_calc
 
     print('Calculation complete!')
-    print('Completed ' + str(nu_0_tot) + ' transitions in ' + str(total_calc) + ' s')
+    print('Completed ' + str(nu_0_tot) + ' transitions in ' + str(total_calc) + ' s\n')
     
 
 def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma, 
@@ -531,7 +531,7 @@ def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma,
     total_calc = t_end_calc - t_begin_calc
 
     print('Calculation complete!')
-    print('Completed ' + str(nu_0_tot) + ' transitions in ' + str(total_calc) + ' s')
+    print('Completed ' + str(nu_0_tot) + ' transitions in ' + str(total_calc) + ' s\n')
 
 def produce_total_cross_section_VALD_atom(nu_grid, sigma, nu_0_in, 
                                           E_low, gf, m, T, Q_T, N_Voigt, cutoffs,
@@ -572,7 +572,7 @@ def produce_total_cross_section_VALD_atom(nu_grid, sigma, nu_0_in,
     total_calc = t_end_calc - t_begin_calc
 
     print('Calculation complete!')
-    print('Completed ' + str(nu_0_tot) + ' transitions in ' + str(total_calc) + ' s')
+    print('Completed ' + str(nu_0_tot) + ' transitions in ' + str(total_calc) + ' s\n')
     
 
 @jit(nopython=True)

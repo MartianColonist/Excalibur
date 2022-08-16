@@ -1,5 +1,0 @@
-HITRAN
----------
-
-.. automodule:: HITRAN
-   :members:

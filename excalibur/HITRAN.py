@@ -46,10 +46,10 @@ def check(molecule, isotope):
 
     Parameters
     ----------
-    molecule : TYPE
-        DESCRIPTION.
-    isotope : TYPE
-        DESCRIPTION.
+    molecule : String
+        Name of molecule (e.g. H2O).
+    isotope : int
+        Isotopologue number of the molecule (1 = most common isotopologue, 2 = second most common, etc.).
 
     Returns
     -------
@@ -60,7 +60,7 @@ def check(molecule, isotope):
     molecule_dict = create_id_dict()
     molecule_id_number = molecule_dict.get(molecule)
     
-    try:
+    try: #If we can't create a partition function for the molecule-isotopologue combination, the combination must not exist
         partitionSum(molecule_id_number, isotope, [70, 80], step = 1.0)
     except KeyError:
         print("\n ----- This molecule/isotopologue ID combination is not valid in HITRAN. Please try calling the summon() function again. Make sure you enter the ID number of the molecule you want. ----- ")
@@ -79,7 +79,7 @@ def determine_linelist():
     molecule_ID : int
         Molecular ID number of the desired molecule (based on HITRAN conventions found at https://hitran.org/lbl/# ).
     isotopologue_ID : int
-        Isotopologue ID number of the desired molecule. 1 is the most abundant isotopologue of that molecule, 2 the next most abundant, and so on.
+        Isotopologue number of the molecule (1 = most common isotopologue, 2 = second most common, etc.).
 
     """
     
@@ -123,6 +123,7 @@ def replace_iso_name(iso_name):
         A differently formatted version of the isotopologue name passed in. Matches ExoMol format.
 
     """
+    
     # 'H' not followed by lower case letter needs to become '(1H)'
     iso_name = re.sub('H(?![a-z])', '(1H)', iso_name)
     
@@ -133,7 +134,7 @@ def replace_iso_name(iso_name):
         iso_name = re.sub('[)][0-9]{1}', number[0] + ')', iso_name)
     
     # replace all ')(' with '-'
-    iso_name = iso_name.replace(')(', '-')   
+    iso_name = iso_name.replace(')(', '-')    
     
     return iso_name
     
@@ -144,18 +145,18 @@ def create_pf(mol_ID, iso_ID, folder, T_min = 70, T_max = 3001, step = 1.0):
 
     Parameters
     ----------
-    mol_ID : TYPE
-        DESCRIPTION.
-    iso_ID : TYPE
-        DESCRIPTION.
-    folder : TYPE
-        DESCRIPTION.
-    T_min : TYPE, optional
-        DESCRIPTION. The default is 70.
-    T_max : TYPE, optional
-        DESCRIPTION. The default is 3001.
-    step : TYPE, optional
-        DESCRIPTION. The default is 1.0.
+    mol_ID : int
+        Molecule ID number of the given molecule, as given by the first column in HITRAN here: https://hitran.org/lbl/.
+    iso_ID : int
+        Isotopologue number of the molecule (1 = most common isotopologue, 2 = second most common, etc.).
+    folder : String
+        Local directory where the partition function file is to be stored.
+    T_min : int, optional
+        Minimum temperature (K) for which the partition function is computed by hapy.py. The default is 70.
+    T_max : int, optional
+        Maximum temperature (K) for which the partition function is computed by hapy.py. The default is 3001.
+    step : float, optional
+        Increment for temperature between T_min and T_max. The default is 1.0.
 
     Returns
     -------
@@ -178,8 +179,8 @@ def create_air_broad(input_dir):
 
     Parameters
     ----------
-    input_dir : TYPE
-        DESCRIPTION.
+    input_dir : String
+        Local directory where the broadening file is to be stored.
 
     Returns
     -------
@@ -219,18 +220,17 @@ def create_air_broad(input_dir):
         f_out.write('%.1f %.4f %.4f \n' %(J_sorted[i], gamma_air_avg[i], n_air_avg[i]))
     
     f_out.close()
-   
     
 def summon_HITRAN(molecule, isotopologue):
     """
-    Main function, uses calls to other functions to perform the download
+    Main function, uses calls to other functions to perform the line list download.
 
     Parameters
     ----------
-    molecule : TYPE
-        DESCRIPTION.
-    isotopologue : TYPE
-        DESCRIPTION.
+    molecule : int
+        Molecular ID number of species as specifed on HITRAN database.
+    isotopologue : int
+        Isotopologue ID number of species as specifed on HITRAN database.
 
     Returns
     -------
@@ -238,15 +238,11 @@ def summon_HITRAN(molecule, isotopologue):
 
     """
     
-    print("\nFetching data from HITRAN...\nMolecule:", moleculeName(molecule), "\nIsotopologue", isotopologueName(molecule, isotopologue), "\n")
+    print("\nFetching data from HITRAN. This could take [x amount of time] so do not stop the download. \nMolecule:", moleculeName(molecule), "\nIsotopologue", isotopologueName(molecule, isotopologue), "\n")
                        
     output_folder = download.create_directories(mol_ID = molecule, iso_ID = isotopologue,
                                                 database = 'HITRAN')
     create_pf(molecule, isotopologue, output_folder)
     download.download_HITRAN_line_list(molecule, isotopologue, output_folder)
-    for file in os.listdir(output_folder):
-        if file.endswith('.data'):
-            download.convert_to_hdf(file = (output_folder + file), mol_ID = molecule, 
-                                    iso_ID = isotopologue, database = 'HITRAN')
     create_air_broad(output_folder)
 

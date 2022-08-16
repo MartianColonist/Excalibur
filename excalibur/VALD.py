@@ -7,16 +7,16 @@ import h5py
 import excalibur.downloader as download
 
 
-def check(mol, ion, VALD_data_dir):
+def check(atom, ion, VALD_data_dir):
     '''
     Check if VALD has a line list for the specified atom and ionization state
 
     Parameters
     ----------
-    mol : TYPE
-        DESCRIPTION.
-    ion : TYPE
-        DESCRIPTION.
+    atom : String
+        Atomic name.
+    ion : int
+        Ionization state of atom. Neutral state corresponds to ion = 1.
 
     Returns
     -------
@@ -27,7 +27,7 @@ def check(mol, ion, VALD_data_dir):
     roman_num = ''
     for i in range(ion):
             roman_num += 'I'
-    fname = mol + '_' + roman_num + '.h5'
+    fname = atom + '_' + roman_num + '.h5'
     if fname not in os.listdir(VALD_data_dir): 
         print("\n ----- The VALD line list for this atom/isotope combination does not exist. Please try again. -----")
         sys.exit(0)
@@ -35,19 +35,19 @@ def check(mol, ion, VALD_data_dir):
         
 def determine_linelist(VALD_data_dir):
     '''
-    Use user prompts to determine which VALD line list to download
+    Use user prompts to determine which VALD line list to download.
 
     Parameters
     ----------
-    VALD_data_dir : TYPE
-        DESCRIPTION.
+    VALD_data_dir : String
+        Local directory where the pre-supplied VALD line lists are stored.
 
     Returns
     -------
-    molecule : TYPE
-        DESCRIPTION.
-    ionization_state : TYPE
-        DESCRIPTION.
+    molecule : String
+        Name of atom for which the line list is to be downloaded.
+    ionization_state : int
+        Ionization state of atom (neutral state is 1).
 
     '''
     
@@ -71,7 +71,7 @@ def determine_linelist(VALD_data_dir):
             for i in range(ionization_state):
                 roman_num += 'I'
         
-            fname = molecule + '_' + roman_num + '.h5'  # Check if at least the neutral version of this atom is supported (i.e. that we even provide the line list for this atom)
+            fname = molecule + '_' + roman_num + '.h5'  # Check that the requested ionization state for this atom is provided
             if fname in os.listdir(VALD_data_dir): 
                 return molecule, ionization_state
             else:
@@ -107,6 +107,26 @@ def create_pf_VALD(VALD_data_dir):
     
     
 def filter_pf(molecule, ionization_state, line_list_folder, VALD_data_dir):
+    '''
+    Read in specific atomic partition function from a pre-provided file that contains all atomic partition functions. Then
+    reformat the partition function into a more tractable form.
+
+    Parameters
+    ----------
+    molecule : String
+        Atomic name.
+    ionization_state : int
+        Ionization state of atom (neutral state is 1).
+    line_list_folder : String
+        Local directory where the partition function is to be stored.
+    VALD_data_dir : String
+        Local directory where all the pre-provided VALD line lists, and the file with all the atomic partition functions, is stored.
+
+    Returns
+    -------
+    None.
+
+    '''
     ionization_state_roman = ''
     
     for i in range(ionization_state):
@@ -139,19 +159,24 @@ def filter_pf(molecule, ionization_state, line_list_folder, VALD_data_dir):
     
     
 def process_VALD_file(species, ionization_state, VALD_data_dir):
-    """
+    '''
     Used on developers' end to get the necessary data from a VALD line list 
 
     Parameters
     ----------
-    species : TYPE
-        DESCRIPTION.
+    species : String
+        Nae fo atom.
+    ionization_state : int
+        Ionization state of atom (neutral state is 1).
+    VALD_data_dir : String
+        Local directory where the pre-provided VALD line lists are stored.
 
     Returns
     -------
     None.
 
-    """
+    '''
+    
     roman_ion = ''
     
     for i in range(ionization_state):
@@ -287,16 +312,16 @@ def process_VALD_file(species, ionization_state, VALD_data_dir):
     
 def summon_VALD(molecule, ionization_state, VALD_data_dir):
     '''
-    Retrieve the desired line list from VALD
+    Retrieve the desired line list from VALD.
 
     Parameters
     ----------
-    molecule : TYPE
-        DESCRIPTION.
-    ionization_state : TYPE
-        DESCRIPTION.
-    VALD_data_dir : TYPE
-        DESCRIPTION.
+    molecule : String
+        Atomic name.
+    ionization_state : String
+        Ionization state of atom (neutral state is 1).
+    VALD_data_dir : String
+        Local directory where the pre-provided VALD line lists are stored.
 
     Returns
     -------
@@ -312,6 +337,40 @@ def summon_VALD(molecule, ionization_state, VALD_data_dir):
   
     
 def load_line_list(input_directory, molecule):
+    '''
+    Needs documentation
+
+    Parameters
+    ----------
+    input_directory : String
+        Local directory where the line list is stored.
+    molecule : String
+        Atomic name.
+
+    Returns
+    -------
+    nu_0 : TYPE
+        DESCRIPTION.
+    gf : TYPE
+        DESCRIPTION.
+    E_low : TYPE
+        DESCRIPTION.
+    E_up : TYPE
+        DESCRIPTION.
+    J_low : TYPE
+        DESCRIPTION.
+    l_low : TYPE
+        DESCRIPTION.
+    l_up : TYPE
+        DESCRIPTION.
+    Gamma_nat : TYPE
+        DESCRIPTION.
+    Gamma_vdw : TYPE
+        DESCRIPTION.
+    alkali : TYPE
+        DESCRIPTION.
+
+    '''
     
     fname = [file for file in os.listdir(input_directory) if file.endswith('.h5')][0]  # The directory should only have one .h5 file containing the line list
     
@@ -354,5 +413,5 @@ def load_line_list(input_directory, molecule):
     
     return nu_0, gf, E_low, E_up, J_low, l_low, l_up, Gamma_nat, Gamma_vdw, alkali
         
-    return
+    return  ###What is this doing here?
     

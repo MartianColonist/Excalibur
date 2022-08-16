@@ -1,5 +1,0 @@
-downloader
-----------
-
-.. automodule:: downloader
-   :members:

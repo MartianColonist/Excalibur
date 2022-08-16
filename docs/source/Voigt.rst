@@ -1,5 +1,0 @@
-Voigt
------
-
-.. automodule:: Voigt
-   :members:

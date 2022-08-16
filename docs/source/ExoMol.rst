@@ -1,5 +1,0 @@
-ExoMol
-------
-
-.. automodule:: ExoMol
-   :members:

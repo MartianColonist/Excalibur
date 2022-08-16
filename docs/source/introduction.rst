@@ -1,4 +1,0 @@
-Introduction
-------------
-
-(What is Excalibur?)

@@ -1,5 +1,0 @@
-Plot
-----
-
-.. automodule:: plot
-   :members:
