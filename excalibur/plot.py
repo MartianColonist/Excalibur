@@ -15,7 +15,8 @@ from .hapi import isotopologueName
 
 def plot_cross_section(collection, labels, filename, plot_dir = './plots/', 
                  x_min = None, x_max = None, y_min = None, y_max = None,
-                 color_list = [], smooth_data = False, std = 1000, **kwargs):
+                 color_list = [], smooth_data = False, std = 1000, 
+                 wavenumber = False, **kwargs):
     """
     Generate a plot of cross section file[s], in both wavelength and wavenumber
 

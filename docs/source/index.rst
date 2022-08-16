@@ -23,6 +23,7 @@ please proceed to the Introduction page on the sidebar.
   :caption: Guide:
 
   content/getting_started
+  content/tutorials
 
 .. toctree::
  :maxdepth: 2
