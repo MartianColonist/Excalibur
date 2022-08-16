@@ -238,15 +238,11 @@ def summon_HITRAN(molecule, isotopologue):
 
     """
     
-    print("\nFetching data from HITRAN...\nMolecule:", moleculeName(molecule), "\nIsotopologue", isotopologueName(molecule, isotopologue), "\n")
+    print("\nFetching data from HITRAN. This could take [x amount of time] so do not stop the download. \nMolecule:", moleculeName(molecule), "\nIsotopologue", isotopologueName(molecule, isotopologue), "\n")
                        
     output_folder = download.create_directories(mol_ID = molecule, iso_ID = isotopologue,
                                                 database = 'HITRAN')
     create_pf(molecule, isotopologue, output_folder)
     download.download_HITRAN_line_list(molecule, isotopologue, output_folder)
-    for file in os.listdir(output_folder):
-        if file.endswith('.data'):
-            download.convert_to_hdf(file = (output_folder + file), mol_ID = molecule, 
-                                    iso_ID = isotopologue, database = 'HITRAN')
     create_air_broad(output_folder)
 

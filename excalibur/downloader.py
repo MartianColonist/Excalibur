@@ -91,7 +91,7 @@ def download_ExoMol_file(url, f, l_folder):
     
 def download_HITRAN_line_list(mol_ID, iso_ID, folder, nu_min = 1, nu_max = 100000):
     """
-    Download line list using the fetch() function already in HITRAN
+    Download line list using the fetch() function already in HITRAN. 
 
     Parameters
     ----------
@@ -112,8 +112,22 @@ def download_HITRAN_line_list(mol_ID, iso_ID, folder, nu_min = 1, nu_max = 10000
 
     """
     
+    ''' For future use to avoid downloading HITRAN line list again
+    # Check if the file was already downloaded
+    file_path = folder + moleculeName(mol_ID) + '.h5'
+    print(file_path)
+    if file_path in os.listdir(folder):
+        print("This file is already downloaded. Moving on.")
+        return
+    '''
+    
     db_begin(folder)
     fetch(moleculeName(mol_ID), mol_ID, iso_ID, nu_min, nu_max)
+    
+    for file in os.listdir(folder):
+        if file.endswith('.data'):
+            convert_to_hdf(file = (folder + file), mol_ID = mol_ID, 
+                                    iso_ID = iso_ID, database = 'HITRAN')
    
     
 def HITEMP_table():
@@ -276,7 +290,7 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
             
             # Decompress the file
             with zipfile.ZipFile(compressed_file, 'r', allowZip64 = True) as file:
-                print("Decompressing this file...")
+                print("\nDecompressing this file...")
                 file.extractall(out_folder)
                 
             counter += 1
