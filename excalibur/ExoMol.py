@@ -120,7 +120,7 @@ def get_default_linelist(molecule, isotopologue):
 
     # Dictionary that defines the default
     default_list = {'H2(1H2)': 'RACPPK', 'N2(14N2)': 'WCCRMT', 'C2(12C2)': '8states', 'CO(12C-16O)': 'Li2015',
-                    'NO(14N-16O)': 'NOname', 'PO(31P-16O)': 'POPS', 'VO(51V-16O)': 'VOMYT', 'YO(89Y-16O)': 'SSYT',
+                    'NO(14N-16O)': 'XABC', 'PO(31P-16O)': 'POPS', 'VO(51V-16O)': 'VOMYT', 'YO(89Y-16O)': 'SSYT',
                     'CN(12C-14N)': 'MoLLIST', 'NH(14N-1H)': 'MoLLIST', 'CH(12C-1H)': 'MoLLIST', 'OH(16O-1H)': 'MoLLIST',
                     'SH(32S-1H)': 'GYT', 'HF(1H-19F)': 'Coxon-Hajig', 'CS(12C-32S)': 'JnK', 'NS(14N-32S)': 'SNaSH',
                     'PS(31P-32S)': 'POPS', 'PH(31P-1H)': 'LaTY', 'PN(31P-14N)': 'YYLT', 'CP(12C-31P)': 'MoLLIST',
@@ -146,7 +146,7 @@ def get_default_linelist(molecule, isotopologue):
     linelist = default_list.get(structure)
 
     if linelist is None:
-        print("\n Looks like we haven't specified a default line list to use for this molecule. Try inputting the linelist you want to use as a parameter in the summon() function.")
+        print("\nLooks like we haven't specified a default line list to use for this molecule. Try inputting the linelist you want to use as a parameter in the summon() function.")
         sys.exit(0)
     else:
         return linelist

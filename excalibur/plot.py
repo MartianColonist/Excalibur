@@ -1,12 +1,17 @@
 import pandas as pd
 import os
 import sys
+import re
+import csv
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, AutoLocator, FormatStrFormatter, \
                               FuncFormatter, ScalarFormatter, NullFormatter
 from scipy.ndimage import gaussian_filter1d
 
+import excalibur.HITRAN as HITRAN
+import excalibur.ExoMol as ExoMol
+from .hapi import isotopologueName
 
 def plot_cross_section(collection, labels, filename, plot_dir = './plots/', 
                  x_min = None, x_max = None, y_min = None, y_max = None,
@@ -113,6 +118,114 @@ def cross_section_collection(new_x, new_y, collection = []):
     
     return collection
 
+def read_cross_section_file(molecule, database, filename, isotope = 'default', 
+                            ionization_state = 1, linelist = 'default', output_dir = './output/'):    
+    """
+    Find the directory on a user's machine that contains the computed cross section.
+    Then read the cross section and return the wavenumber and absorption cross section columns.
+
+    Parameters
+    ----------
+    output_dir : String
+        'Prefix' of the directory containing the cross section files. If the files were downloaded
+        using our script with no modifications, output_dir will end in '/output'
+    database : String
+        Database the line list was downloaded from.
+    molecule : String
+        Molecule for which the cross-section is to be created.
+    isotope : String
+        Isotopologue of the molecule for which the cross-section is to be created.
+    linelist : String
+        Line list that is being used. HITRAN/HITEMP/VALD used as the line list name for these 
+        databases respectively. ExoMol has its own named line lists.
+
+    Returns
+    -------
+    output_directory : String
+        Local directory containing cross section file.
+
+    """
+    database = database.lower()
+    
+    if database in ['hitran', 'hitemp']:
+        molecule_dict = HITRAN.create_id_dict()
+        mol_id = molecule_dict.get(molecule)
+        if isotope == 'default':
+            isotope = isotopologueName(mol_id, 1)
+        else:
+            isotope = isotopologueName(mol_id, isotope)
+        isotope = HITRAN.replace_iso_name(isotope)
+        
+    if database == 'exomol':
+        if isotope == 'default':
+            isotope = ExoMol.get_default_iso(molecule)
+    
+    if database == 'vald':
+        ion_roman = ''
+        for i in range(ionization_state):
+            ion_roman += 'I'
+            
+    
+    if linelist == 'default':
+        if database == 'exomol':
+            temp_isotope = re.sub('[(]|[)]', '', isotope)
+            linelist = ExoMol.get_default_linelist(molecule, temp_isotope)
+        if database == 'hitran':
+            linelist = 'HITRAN'
+        if database == 'hitemp':
+            linelist = 'HITEMP'
+        if database == 'vald':
+            linelist = 'VALD'
+            
+    if database == 'vald':
+        tag = '(' + ion_roman + ')'
+    else:
+        tag = isotope
+            
+    if (database == 'exomol'):
+        output_directory = (output_dir + molecule + '  ~  (' + tag + ')/' +
+                           'ExoMol' + '/' + linelist + '/')
+    else:
+        output_directory = (output_dir + molecule + '  ~  ' + tag + '/' + 
+                           linelist + '/')
+
+    if os.path.exists(output_directory):
+        file  = output_directory + filename
+        with open(file, 'r') as f:
+            contents = csv.reader(f, delimiter=' ')
+            nu = []
+            sigma = []
+            for cols in contents:
+                nu.append(float(cols[0]))
+                sigma.append(float(cols[1]))
+        
+        nu = np.asarray(nu)
+        sigma = np.asarray(sigma)
+        return  nu, sigma
+    
+    else:
+        print("You don't seem to have a local folder with the parameters you entered.\n") 
+        
+        if not os.path.exists(output_dir + '/'):
+            print("----- You entered an invalid output directory into the cross_section() function. Please try again. -----")
+            sys.exit(0)
+        
+        elif not os.path.exists(output_dir + '/' + molecule + '  ~  (' + tag + ')/'):
+            print("----- There was an error with the molecule + isotope you entered. Here are the available options: -----\n")
+            for folder in os.listdir(output_dir + '/'):
+                if not folder.startswith('.'):
+                    print(folder)
+            sys.exit(0)
+        
+        else:
+            print("There was an error with the line list. These are the linelists available: \n")
+            for folder in os.listdir(output_dir + '/' + molecule + '  ~  (' + tag + ')/'):
+                if not folder.startswith('.'):
+                    print(folder)
+            sys.exit(0)
+
+    
+    
 
 def find_min_max_nu_sigma(spectra):
     '''
