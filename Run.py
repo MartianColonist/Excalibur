@@ -6,7 +6,7 @@ from excalibur.plot import cross_section_collection, plot_cross_section
 
 
 species = 'H2O'
-database = 'HITRAN'
+database = 'HITEMP'
 
 # Download line list
 summon(database=database, species = species)

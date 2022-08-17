@@ -62,7 +62,7 @@ def download_ExoMol_file(url, f, l_folder):
                         pbar.update(len(chunk))
                         output_file.write(decompressor.decompress(chunk))
                 
-                print("Converting this .trans file to HDF to save storage space...")
+                print("\nConverting this .trans file to HDF to save storage space...")
                 convert_to_hdf(file = decompressed_file, database = 'ExoMol')
                         
             else:
@@ -112,17 +112,10 @@ def download_HITRAN_line_list(mol_ID, iso_ID, folder, nu_min = 1, nu_max = 10000
 
     """
     
-    ''' For future use to avoid downloading HITRAN line list again
-    # Check if the file was already downloaded
-    file_path = folder + moleculeName(mol_ID) + '.h5'
-    print(file_path)
-    if file_path in os.listdir(folder):
-        print("This file is already downloaded. Moving on.")
-        return
-    '''
-    
     db_begin(folder)
     fetch(moleculeName(mol_ID), mol_ID, iso_ID, nu_min, nu_max)
+    
+    print("\nLine list downloaded. Converting file to HDF to save storage space...")
     
     for file in os.listdir(folder):
         if file.endswith('.data'):
@@ -231,13 +224,17 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
     
     if download_link.endswith('.bz2'):
         
-        # Create directory location to prepare for reading compressed file
+        # Check if file already exists
+        if os.path.exists(out_folder + moleculeName(mol_ID) + '.h5'):
+            print("This file is already downloaded.")
+            return
+        
+        # Create file name to prepare for reading compressed file
         compressed_file = out_folder + moleculeName(mol_ID) + '.par.bz2'
         
         # Create a decompresser object and a directory location for the decompressed file
         decompressor = bz2.BZ2Decompressor()
         decompressed_file = out_folder + moleculeName(mol_ID) + '.par' #Keep the file name but get rid of the .bz2 extension to make it .par
-    
         
         # Download file from the given URL in chunks and then decompress that chunk immediately
         with requests.get(download_link, stream=True) as request:
@@ -249,7 +246,7 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
                      
         
         # Convert line list to hdf5 file format
-        print("Converting this .par file to HDF to save storage space...")
+        print("\nConverting this .par file to HDF to save storage space...")
         convert_to_hdf(file = decompressed_file, mol_ID = mol_ID,
                        iso_ID = iso_ID, database = 'HITEMP')
 
@@ -278,6 +275,29 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
             print("\nDownloading .zip file", counter + 1, "of", num_links)
     
             fname = fnames[counter]
+            
+            # Remove leading 0s from parts of the file name in preparation to checking if it's already downloaded
+            matches = re.search('\_([^_]*)', fname)  # Everything in between 2 underscores, including the first underscore
+            match = matches.group() # Retrieve the match from match object
+            match = match[1:] # Get rid of the first underscore
+            
+            min_range = re.search('[0-9]*', match).group()  # Minimum wavenumber for this line list file
+            max_range = re.search('-[0-9]*', match).group()[1:] # Maximum wavenumber for this line list file
+            
+            if min_range == '00000':
+                min_range = '0'
+            else:
+                min_range = re.search('[1-9][0-9]*', min_range)
+            
+            max_range = re.search('[1-9][0-9]*', max_range)
+            
+            print("min: ", min_range)
+            print("max: ", max_range)
+            
+            #using this file name, check if .par exists without the leading 0s, if it does, exit out of this if statement
+            print(match)
+            
+            
             compressed_file = out_folder + fname
             
             # Download compressed version of file
@@ -451,7 +471,7 @@ def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False,
                 hdf.create_dataset('l upper', data = l_up, dtype = 'f8') #store as 32-bit float
 
     
-    print("This .trans file took", round(time.time() - start_time, 1), "seconds to reformat to HDF.")
+    print("This file took", round(time.time() - start_time, 1), "seconds to reformat to HDF.")
     
 
 def create_directories(molecule = '', isotopologue = '', line_list = '', database = '',
@@ -518,9 +538,10 @@ def create_directories(molecule = '', isotopologue = '', line_list = '', databas
         
         if os.path.exists(molecule_folder) == False:
             os.mkdir(molecule_folder)
-            
+                
         # If we don't remove an existing HITRAN folder, we encounter a Lonely Header exception from hapi.py
         if (database == 'HITRAN'):
+            print('yes')
             if os.path.exists(line_list_folder):   
                 shutil.rmtree(line_list_folder)
             os.mkdir(line_list_folder)
