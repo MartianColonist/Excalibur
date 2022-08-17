@@ -1,4 +1,4 @@
-sphinx=4.4.0
+sphinx==4.4.0
 nbsphinx
 sphinx-autoapi
 sphinx_rtd_theme>=0.3.1
