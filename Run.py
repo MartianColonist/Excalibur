@@ -6,6 +6,7 @@
 from excalibur.core import summon
 
 species = 'NO'
+
 database = 'ExoMol'
 
 summon(database=database, species = species)  # Download line list
