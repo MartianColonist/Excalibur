@@ -276,28 +276,16 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
     
             fname = fnames[counter]
             
-            # Remove leading 0s from parts of the file name in preparation to checking if it's already downloaded
-            matches = re.search('\_([^_]*)', fname)  # Everything in between 2 underscores, including the first underscore
-            match = matches.group() # Retrieve the match from match object
-            match = match[1:] # Get rid of the first underscore
-            
-            min_range = re.search('[0-9]*', match).group()  # Minimum wavenumber for this line list file
-            max_range = re.search('-[0-9]*', match).group()[1:] # Maximum wavenumber for this line list file
-            
-            if min_range == '00000':
-                min_range = '0'
-            else:
-                min_range = re.search('[1-9][0-9]*', min_range)
-            
-            max_range = re.search('[1-9][0-9]*', max_range)
-            
-            print("min: ", min_range)
-            print("max: ", max_range)
-            
-            #using this file name, check if .par exists without the leading 0s, if it does, exit out of this if statement
-            print(match)
-            
-            
+            if check_HITEMP_file_exists(out_folder, fname) == ' par':
+                print("This file is already downloaded. Moving on.")
+                counter += 1
+                continue
+
+            if check_HITEMP_file_exists(out_folder, fname) == 'hdf':
+                print("This file is already downloaded and has already been converted to HDF. Moving on.")
+                counter += 1
+                continue
+        
             compressed_file = out_folder + fname
             
             # Download compressed version of file
@@ -317,14 +305,54 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
             os.remove(compressed_file)
             
         counter = 0    
+
+        num_h5 = 0
+        for file in os.listdir(out_folder):
+            if file.endswith('.h5'):
+                num_h5 += 1
+
+        new_num_links = num_links - num_h5 
+
         for file in os.listdir(out_folder): # Convert all downloaded files to HDF5
             if file.endswith('.par'):
-                print("\nConverting .par file", counter + 1, "of", num_links, "to HDF to save storage space.")
+                print("\nConverting .par file", counter + 1, "of", new_num_links, "to HDF to save storage space.")
+                if os.path.exists(out_folder + os.path.splitext(file)[0] + '.h5'):  # Check if file has already been converted to HDF
+                    print("This file has already been converted to HDF. Moving on.")
+                    counter += 1
+                    continue
                 convert_to_hdf(file = (out_folder + file), mol_ID = mol_ID, 
                                iso_ID = iso_ID, database = 'HITEMP')
                 counter += 1
         
-    
+def check_HITEMP_file_exists(folder, file):
+    matches = re.search('\_([^_]*)', file)  # Everything in between the first 2 underscores (inclusive of the first underscore)
+    match = matches.group() # Retrieve the match from match object
+    match = match[1:] # Get rid of the first underscore
+
+    min_range = re.search('[0-9]*', match).group()  # Minimum wavenumber for this line list file
+    max_range = re.search('-[0-9]*', match).group()[1:] # Maximum wavenumber for this line list file
+
+    if min_range == '00000':  # Edge case
+        min_range = '0'
+    else:
+        min_range = re.search('[1-9][0-9]*', min_range).group()  # Get rid of leading 0s
+
+    max_range = re.search('[1-9][0-9]*', max_range).group() # Get rid of leading 0s
+
+    new_substring = min_range + '-' + max_range
+
+    renamed_file = file.replace(match, new_substring)
+
+    renamed_par_file = os.path.splitext(renamed_file)[0] + '.par'  # Change the file extension from .zip to .par
+    renamed_h5_file = os.path.splitext(renamed_file)[0] + '.h5'   # Change the file extension from .zip to .h5
+
+    if os.path.exists(folder + renamed_par_file):
+        return 'par' 
+    elif os.path.exists(folder + renamed_h5_file):
+        return 'hdf'
+    else:
+        return 'neither'
+
 def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False, 
                    database = '', **kwargs):
     """
