@@ -55,8 +55,15 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
     nu_min, nu_max, sigma_min, sigma_max = find_min_max_nu_sigma(collection)
 
     '''WRITE THIS BETTER'''
+'''
+    if x_min != None:
+        if (x_unit == 'micron'):
+            nu_max = 1.0e4/x_min
+        else:
+            nu_min = x_min
 
-    if (x_unit == 'micron') and x_min != None:
+'''
+    if (x_unit == 'micron'): and x_min != None:
         nu_max = 1.0e4/x_min
 
     if (x_unit == 'micron') and x_max != None:
