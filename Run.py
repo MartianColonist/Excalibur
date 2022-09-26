@@ -1,6 +1,5 @@
 #***** Example script to run EXCALIBUR *****#
 
-
 '''Download main isotopologue of NO from ExoMol'''
 
 from excalibur.core import summon
