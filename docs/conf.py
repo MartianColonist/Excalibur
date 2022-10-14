@@ -24,7 +24,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'Excalibur-alpha'
-copyright = '2020, Arnav Agrawal, Ryan MacDonald'
+copyright = '2022, Arnav Agrawal, Ryan MacDonald'
 author = 'Arnav Agrawal, Ryan MacDonald'
 master_doc = 'index'
 
@@ -65,8 +65,13 @@ nbsphinx_allow_errors = True
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+html_logo = "_static/Excalibur_logo.png"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+nbsphinx_prolog = """
+{% set docname = env.doc2path(env.docname, base=None) %}
+.. note::  `Download full notebook here <https://github.com/arnav-agrawal/excalibur-alpha/tree/main/docs/{{ docname }}>`_
+"""

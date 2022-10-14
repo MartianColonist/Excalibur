@@ -59,5 +59,4 @@ User-Friendly
 High-performance
 """"""""""""""""
   * Scalability - Cluster runs
-  * Speed, including GPU support
   * Storage space - file compression makes it possible to download and store multiple line lists and cross section on just a personal laptop
