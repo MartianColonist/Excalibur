@@ -569,7 +569,6 @@ def create_directories(molecule = '', isotopologue = '', line_list = '', databas
                 
         # If we don't remove an existing HITRAN folder, we encounter a Lonely Header exception from hapi.py
         if (database == 'HITRAN'):
-            print('yes')
             if os.path.exists(line_list_folder):   
                 shutil.rmtree(line_list_folder)
             os.mkdir(line_list_folder)

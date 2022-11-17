@@ -499,7 +499,7 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
     
 def compute_cross_section(input_dir, database, species, temperature, pressure = None, log_pressure = None, isotope = 'default', 
                           ionization_state = 1, linelist = 'default', cluster_run = False, 
-                          nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default', 
+                          nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default', broadening_file = '',
                           X_H2 = 0.85, X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
                           N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, N_cores = 1, **kwargs):
     '''
@@ -528,7 +528,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         of 1. The default is 1.
     linelist : TYPE, optional
         Species line list to download. For ExoMol there are often multiple line lists for the same species.
-        For HITRAN/HITEMP/VALD, the line list is just the name of the database. The default is 'default'.. The default is 'default'.
+        For HITRAN/HITEMP/VALD, the line list is just the name of the database. The default is 'default'.
     cluster_run : bool, optional
         DESCRIPTION. The default is False.
     nu_out_min : TYPE, optional
@@ -675,8 +675,8 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             broadening.create_SB07(input_directory)
             J_max, gamma_0_SB07 = broadening.read_SB07(input_directory)
             
-        elif broad_type == 'custom' and 'custom.broad' in os.listdir(input_directory):
-            J_max, gamma_0_air, n_L_air = broadening.read_custom(input_directory)
+        elif broad_type == 'custom' and broadening_file in os.listdir(input_directory):
+            J_max, gamma_0_air, n_L_air = broadening.read_custom(input_directory, broadening_file)
         
         elif broad_type == 'fixed':
             J_max = 0
@@ -862,12 +862,10 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     
             # Write cross section to file
             write_output(output_directory, species, roman_num, 
-                         T, np.log10(P), nu_out, sigma_out)
+                         T, np.log10(P), broad_type, broadening_file, nu_out, sigma_out)
     
     # Print final runtime
     t_final = time.perf_counter()
     total_final = t_final-t_start
     
     print('Total runtime: ' + str(total_final) + ' s')
-    
-    return nu_out, sigma_out

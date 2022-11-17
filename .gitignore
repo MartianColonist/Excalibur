@@ -132,3 +132,6 @@ dmypy.json
 input/
 output/
 plots/
+docs/content/notebooks/input/
+docs/content/notebooks/output/
+docs/content/notebooks/plots/

@@ -91,9 +91,6 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
     if (y_max == None):
         y_max = sigma_max
 
-    print(nu_max)
-    print(nu_min)
-
     ax.set_ylim(y_min, y_max * 10)
     ax.set_xlim(1e4/nu_max, 1e4/nu_min) # Convert wavenumber (in cm^-1) to wavelength (in um)
 
@@ -106,7 +103,7 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
         legline.set_linewidth(1.0)
 
     plt.tight_layout()
-    plt.savefig('./plots/' + filename)
+    plt.savefig('./plots/' + filename, dpi = 300)
 
     print("\nPlotting complete.")
 
@@ -135,38 +132,45 @@ def cross_section_collection(new_x, new_y, collection = []):
 
     return collection
 
-def read_cross_section_file(molecule, database, filename, isotope = 'default',
+def read_cross_section_file(species, database, filename, isotope = 'default',
                             ionization_state = 1, linelist = 'default', output_dir = './output/'):
+
     """
-    Find the directory on a user's machine that contains the computed cross section.
-    Then read the cross section and return the wavenumber and absorption cross section columns.
+    Read in a previously computed cross section on a user's machine, and return the 
+    wavenumber and absorption cross section columns.
 
     Parameters
     ----------
-    output_dir : String
-        'Prefix' of the directory containing the cross section files. If the files were downloaded
-        using our script with no modifications, output_dir will end in '/output'
+    species : String
+        Molecule for which the cross section was computed.
     database : String
         Database the line list was downloaded from.
-    molecule : String
-        Molecule for which the cross-section is to be created.
+    filename : String
+        Full file name of the cross section file(eg. 'this_is_my_file.txt').
     isotope : String
-        Isotopologue of the molecule for which the cross-section is to be created.
+        Isotopologue of the molecule for which the cross-section is to be created. The default is 'default'.
+    ionization_state : int
+        Ionization state, in case of an atomic species. The default is 1. 
     linelist : String
         Line list that is being used. HITRAN/HITEMP/VALD used as the line list name for these
-        databases respectively. ExoMol has its own named line lists.
+        databases respectively. ExoMol has its own named line lists. The default is 'default'. 
+    output_dir = String
+        'Prefix' of the directory containing the cross section files. If the files were downloaded
+        using our script with no modifications, output_dir will end in '/output'. The default is './output/'. 
 
     Returns
     -------
-    output_directory : String
-        Local directory containing cross section file.
+    nu : numpy array
+        Wavenumber column of cross section file.
+    sigma : numpy array
+        Absorption cross section column of cross section file.
 
     """
     database = database.lower()
 
     if database in ['hitran', 'hitemp']:
         molecule_dict = HITRAN.create_id_dict()
-        mol_id = molecule_dict.get(molecule)
+        mol_id = molecule_dict.get(species)
         if isotope == 'default':
             isotope = isotopologueName(mol_id, 1)
         else:
@@ -175,7 +179,7 @@ def read_cross_section_file(molecule, database, filename, isotope = 'default',
 
     if database == 'exomol':
         if isotope == 'default':
-            isotope = ExoMol.get_default_iso(molecule)
+            isotope = ExoMol.get_default_iso(species)
 
     if database == 'vald':
         ion_roman = ''
@@ -186,7 +190,7 @@ def read_cross_section_file(molecule, database, filename, isotope = 'default',
     if linelist == 'default':
         if database == 'exomol':
             temp_isotope = re.sub('[(]|[)]', '', isotope)
-            linelist = ExoMol.get_default_linelist(molecule, temp_isotope)
+            linelist = ExoMol.get_default_linelist(species, temp_isotope)
         if database == 'hitran':
             linelist = 'HITRAN'
         if database == 'hitemp':
@@ -200,10 +204,10 @@ def read_cross_section_file(molecule, database, filename, isotope = 'default',
         tag = isotope
 
     if (database == 'exomol'):
-        output_directory = (output_dir + molecule + '  ~  (' + tag + ')/' +
+        output_directory = (output_dir + species + '  ~  (' + tag + ')/' +
                            'ExoMol' + '/' + linelist + '/')
     else:
-        output_directory = (output_dir + molecule + '  ~  ' + tag + '/' +
+        output_directory = (output_dir + species + '  ~  ' + tag + '/' +
                            linelist + '/')
 
     if os.path.exists(output_directory):
@@ -227,7 +231,7 @@ def read_cross_section_file(molecule, database, filename, isotope = 'default',
             print("----- You entered an invalid output directory into the cross_section() function. Please try again. -----")
             sys.exit(0)
 
-        elif not os.path.exists(output_dir + '/' + molecule + '  ~  (' + tag + ')/'):
+        elif not os.path.exists(output_dir + '/' + species + '  ~  (' + tag + ')/'):
             print("----- There was an error with the molecule + isotope you entered. Here are the available options: -----\n")
             for folder in os.listdir(output_dir + '/'):
                 if not folder.startswith('.'):
@@ -236,7 +240,7 @@ def read_cross_section_file(molecule, database, filename, isotope = 'default',
 
         else:
             print("There was an error with the line list. These are the linelists available: \n")
-            for folder in os.listdir(output_dir + '/' + molecule + '  ~  (' + tag + ')/'):
+            for folder in os.listdir(output_dir + '/' + species + '  ~  (' + tag + ')/'):
                 if not folder.startswith('.'):
                     print(folder)
             sys.exit(0)
