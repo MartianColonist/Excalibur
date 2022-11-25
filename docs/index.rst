@@ -6,10 +6,23 @@
 Excalibur-alpha's documentation.
 =============================================
 
-Welcome to Excalibur! This package allows users to effortlessly create molecular
+Welcome to Excalibur! 
+
+Excalibur is a Python package that allows users to effortlessly create molecular
 and atomic cross sections to aid in their own research, including for the creation of
-accurate atmospheric retrieval models. If this is your first time using Excalibur,
-please proceed to the Introduction page on the sidebar.
+accurate atmospheric retrieval models. 
+
+Excalibur's features currently include:
+
+* Capability to download line lists from online databases, including ExoMol, HITRAN, HITEMP, and VALD
+* Cross section computations performed at high speeds (≈ 10,000 transition per second)
+* Plotting scripts to create beautiful, organized graphs to include in research papers and presentations
+* Completely written in Python, making it easy for researchers to use and adapt the code
+* Designed to be used from a personal laptop, no supercomputers needed
+
+If this is your first time using Excalibur, please proceed to the Introduction page on the sidebar.
+
+Excalibur is available under the BSD 3-Clause License. If you use Excalibur in your own work, please cite [INSERT CITATION].
 
 .. toctree::
    :maxdepth: 1
