@@ -24,7 +24,7 @@ setuptools.setup(
                         'scipy',
                         'matplotlib',
                         'h5py',
-                        'numba',
+                        'numba>=0.56',
                         'requests',
                         'bs4',
                         'tqdm',

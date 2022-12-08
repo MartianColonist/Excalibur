@@ -71,7 +71,9 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
 
     # Define colors for plotted spectra (default or user choice)
     if len(color_list) == 0:   # If user did not specify a custom colour list
-        colors = ['green', 'crimson', 'black', 'darkgrey', 'navy', 'brown']
+        colors = ['#377eb8', '#ff7f00', '#4daf4a',
+                  '#f781bf', '#a65628', '#984ea3',
+                  '#999999', '#e41a1c', '#dede00']
     else:
         colors = color_list
 

@@ -501,7 +501,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                           ionization_state = 1, linelist = 'default', cluster_run = False, 
                           nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default', broadening_file = '',
                           X_H2 = 0.85, X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
-                          N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, N_cores = 1, **kwargs):
+                          N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, N_cores = 1, verbose = True, **kwargs):
     '''
     
     Main function to compute cross section, given that the requisite line list has already been downloaded.
@@ -792,7 +792,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                 print('Voigt profiles computed in ' + str(time_precompute) + ' s')  
                 
             # Handle pressure broadening and wavenumber grid creation for atoms
-            elif is_molecule == False: 
+            elif is_molecule == False:
                 
                 # Compute Lorentzian HWHM line-by-line for atoms
                 gamma = broadening.compute_H2_He(gamma_0_H2, T_ref, T, n_L_H2, 
@@ -837,13 +837,15 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                 calculate.cross_section_EXOMOL(linelist_files, input_directory, 
                                                nu_compute, sigma_compute, alpha_sampled, 
                                                m, T, Q_T, g, E, J, J_max, N_Voigt, cutoffs,
-                                               Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut)
+                                               Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut,
+                                               verbose)
                 
             elif database in ['hitran', 'hitemp']:
                 calculate.cross_section_HITRAN(linelist_files, input_directory, 
                                                nu_compute, sigma_compute, alpha_sampled, 
                                                m, T, Q_T, Q_T_ref, J_max, N_Voigt, cutoffs,
-                                               Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut)
+                                               Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut,
+                                               verbose)
                 
             elif database == 'vald':
                 produce_total_cross_section_VALD_atom(nu_compute, sigma_compute, nu_0, 
