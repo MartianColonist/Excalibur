@@ -67,5 +67,5 @@ User-Friendly
 High-performance
 """"""""""""""""
 
-* Cross section computations are performed at ≈10,000 transitions per second (COMPARE TO OTHER CODES OUT THERE?)
+* Cross section computations are performed at ≈100,000 transitions per second on a single core
 * File compression makes it possible to download and store multiple line lists and cross sections on just a personal laptop
