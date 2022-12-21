@@ -734,6 +734,9 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         N_P = len(P_arr)
         N_T = len(T_arr)
     
+    # Bool which is used to see if more than one (P,T) pair is 
+    grid = True if N_P * N_T > 1 else False
+
     # Compute cross section for each pressure and temperature point
     for p in range(N_P):
         for t in range(N_T):
@@ -828,7 +831,12 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             print("Pre-computation steps complete")
             
             if is_molecule:
-                print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
+                if grid:
+                    index = (N_P - 1) * 10 + N_T
+                    print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + 
+                          ' K' + '   [' + str(index) + ' of ' + str(N_P * N_T))
+                else:
+                    print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
             else:
                 print('Generating cross section for ' + species + ' ' + roman_num + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
 
