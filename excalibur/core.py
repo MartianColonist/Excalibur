@@ -832,9 +832,10 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             
             if is_molecule:
                 if grid:
-                    index = (N_P - 1) * 10 + N_T
+                    index = p * N_T + (t + 1)
+                    
                     print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + 
-                          ' K' + '   [' + str(index) + ' of ' + str(N_P * N_T))
+                          ' K' + '   [' + str(index) + ' of ' + str(N_P * N_T) + ']')
                 else:
                     print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
             else:

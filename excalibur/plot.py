@@ -16,7 +16,7 @@ from .hapi import isotopologueName
 def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
                  x_min = None, x_max = None, y_min = None, y_max = None,
                  color_list = [], smooth_data = False, std = 1000,
-                 x_unit = 'micron', **kwargs):
+                 x_unit = 'micron', x_axis_scale = 'log', **kwargs):
     """
     Generate a plot of cross section file[s], in both wavelength and wavenumber
 
@@ -95,6 +95,9 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
 
     ax.set_ylim(y_min, y_max * 10)
     ax.set_xlim(1e4/nu_max, 1e4/nu_min) # Convert wavenumber (in cm^-1) to wavelength (in um)
+
+    x_ticks = set_x_axis_ticks(1e4/nu_max, 1e4/nu_min, x_axis_scale)
+    ax.set_xticks(x_ticks)
 
     ax.set_ylabel(r'Cross Section (cm$^2$)', size = 14)
     ax.set_xlabel(r'Wavelength (μm)', size = 14)
@@ -309,6 +312,86 @@ def find_min_max_nu_sigma(spectra):
         sigma_max = max(sigma_max, sigma_max_i)
 
     return nu_min, nu_max, sigma_min, sigma_max
+
+def round_sig_figs(value, sig_figs):
+    ''' 
+    Round a quantity to a specified number of significant figures.
+    '''
+    
+    return round(value, sig_figs - int(np.floor(np.log10(abs(value)))) - 1)
+
+def set_x_axis_ticks(wl_min, wl_max, wl_axis):
+    '''
+    Calculates default x axis tick spacing for spectra plots in POSEIDON.
+    '''
+
+    wl_range = wl_max - wl_min
+
+    wl_ticks_1, wl_ticks_2, wl_ticks_3, wl_ticks_4 = np.array([]), np.array([]), np.array([]), np.array([])
+
+    # For plots over a wide wavelength range
+    if (wl_range > 0.2):
+        if (wl_max <= 1.0):
+            wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), round_sig_figs(wl_max, 2)+0.01, 0.1)
+        elif (wl_max <= 2.0):
+            if (wl_min < 1.0):
+                wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
+            wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
+        elif (wl_max <= 3.0):
+            if (wl_min < 1.0):
+                wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
+                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 3)+0.01, 0.5)
+            else:
+                wl_ticks_2 = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 3)+0.01, 0.5)
+        elif (wl_max <= 5.0):
+            if (wl_min < 1.0):
+                wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
+                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 3)+0.01, 0.2)
+                wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
+            elif (wl_min < 3.0):
+                wl_ticks_2 = np.arange(round_sig_figs(wl_min, 2), 3, 0.2)
+                wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
+            else:
+                wl_ticks_3 = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 2)+0.01, 0.2)
+        elif (wl_max <= 10.0):
+            if (wl_min < 1.0):
+                wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
+                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 3)+0.01, 0.5)
+                wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 1.0)
+            elif (wl_min < 3.0):
+                wl_ticks_2 = np.arange(round_sig_figs(wl_min, 2), 3, 0.2)
+                if (wl_axis == 'log'):
+                    wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.5)
+                elif (wl_axis == 'linear'):
+                    wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
+            else:
+                wl_ticks_3 = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 2)+0.01, 1.0)
+        else:
+            if (wl_min < 1.0):
+                wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
+            wl_ticks_2 = np.arange(1.0, 3.0, 0.5)
+            wl_ticks_3 = np.arange(3.0, 10.0, 1.0)
+            wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 2)+0.01, 2.0)
+
+        wl_ticks = np.concatenate((wl_ticks_1, wl_ticks_2, wl_ticks_3, wl_ticks_4))
+
+    # For high-resolution (zoomed in) spectra
+    else:
+
+        # Aim for 10 x-axis labels
+        wl_spacing = round_sig_figs((wl_max - wl_min), 1)/10
+        
+        major_exponent = round_sig_figs(np.floor(np.log10(np.abs(wl_spacing))), 1)
+        
+        # If last digit of x labels would be 3,6,7,8,or 9, bump up to 10
+        if (wl_spacing > 5*np.power(10, major_exponent)):
+            wl_spacing = 1*np.power(10, major_exponent+1)
+        elif (wl_spacing == 3*np.power(10, major_exponent)):
+            wl_spacing = 2*np.power(10, major_exponent)
+
+        wl_ticks = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 2)+0.01, wl_spacing)
+
+    return wl_ticks
 
 
 def compare_cross_sections(molecule, label_1, label_2, nu_arr_1 = [], nu_arr_2 = [],
