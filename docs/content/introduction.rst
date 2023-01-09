@@ -25,21 +25,21 @@ is what we refer to as the 'cross section' of an atom. See the image below for a
 Notice how the Na cross section, which is the only atom plotted, has fewer intricacies and detail to the plot. This comes from the fact 
 that atomic line lists are generally much smaller than molecular line lists.
 
-.. image:: ./images/Example_cross_section.pdf
+.. image:: ./images/Excalibur_logo.png
   :width: 600
   :alt: Image overplotting 3 example cross sections for TiO, Na, and CH:subscript:`4`
 
 There are a couple of other parameters that are important to the creation of cross sections. First of all, line lists can be
 very temperature dependent, so a line list that was calculated in the laboratory at 300 Kelvin (K) may not be suitable to calculate
-a cross-section for an atom at 1000K `Hargreaves & Gordon<https://meetingorganizer.copernicus.org/EPSC-DPS2019/EPSC-DPS2019-919-1.pdf>`_. 
+a cross-section for an atom at 1000K `Hargreaves & Gordon <https://meetingorganizer.copernicus.org/EPSC-DPS2019/EPSC-DPS2019-919-1.pdf>`_. 
 Secondly, it is vital to keep in mind that the wavelengths at which electron transitions take place are not quite 
 singular values as may appear in a line list, but a small range centered around those values.
 There are thus many factors that can lead to broadening of the atomic spectra; the two biggest causes of spectral broadening are
 pressure and temperature, which is why Excalibur computes cross sections at a certain pressure and temperature 
-`NIST<https://www.nist.gov/pml/atomic-spectroscopy-compendium-basic-ideas-notation-data-and-formulas/atomic-spectroscopy-6>`_.
+`NIST <https://www.nist.gov/pml/atomic-spectroscopy-compendium-basic-ideas-notation-data-and-formulas/atomic-spectroscopy-6>`_.
 
 Cross sections are used extensively, especially in atmospheric and climate science. Their most prominent purpose in astronomy
-is to interpret spectra obtained from observations of exoplanets `Gordon<https://hitran.org/media/refs/HITRAN-2020.pdf>`_. As an exoplanet
+is to interpret spectra obtained from observations of exoplanets `Gordon <https://hitran.org/media/refs/HITRAN-2020.pdf>`_. As an exoplanet
 crosses in front of its host star, part of the star's light is blocked by the exoplanet's atmosphere. By measuring exactly
 how much light is blocked at different wavelengths and comparing that to molecular cross section models, scientists can determine the
 molecular composition of the exoplanet's atmosphere.
