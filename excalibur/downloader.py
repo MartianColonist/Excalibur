@@ -789,7 +789,7 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
         
         else:
             print("There was an error with the line list. These are the linelists available: \n")
-            for folder in os.listdir(input_dir + '/' + molecule + '  ~  (' + tag + ')/'):
+            for folder in os.listdir(input_dir + '/' + molecule + '  ~  (' + tag + ')/' + database + '/'):
                 if not folder.startswith('.'):
                     print(folder)
             sys.exit(0)

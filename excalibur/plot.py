@@ -85,7 +85,7 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
         if smooth_data == True:
             spec = gaussian_filter1d(spec, std)
 
-        ax.loglog(wl, spec, lw=0.3, alpha = 0.5, color= colors[i], label = labels[i])
+        ax.loglog(wl, spec, lw=0.5, alpha = 0.5, color= colors[i], label = labels[i])
 
         # Set y range
     if (y_min == None):

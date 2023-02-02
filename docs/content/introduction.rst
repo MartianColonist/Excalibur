@@ -25,7 +25,7 @@ is what we refer to as the 'cross section' of an atom. See the image below for a
 Notice how the Na cross section, which is the only atom plotted, has fewer intricacies and detail to the plot. This comes from the fact 
 that atomic line lists are generally much smaller than molecular line lists.
 
-.. image:: ./images/Excalibur_logo.png
+.. image:: ./images/Example_Cross_Section.png
   :width: 600
   :alt: Image overplotting 3 example cross sections for TiO, Na, and CH:subscript:`4`
 
