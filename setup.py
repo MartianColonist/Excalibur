@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="excalibur-alpha", # Replace with your own username
-    version="0.1.1",
+    version="0.1.2",
     author="Ryan MacDonald, Arnav Agrawal",
     author_email="rmacdonald@astro.cornell.edu, aa687@cornell.edu",
     description="A python package to calculate atomic and molecular cross sections for exoplanet atmospheres.",
@@ -24,7 +24,7 @@ setuptools.setup(
                         'scipy',
                         'matplotlib',
                         'h5py',
-                        'numba',
+                        'numba>=0.56',
                         'requests',
                         'bs4',
                         'tqdm',

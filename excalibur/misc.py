@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import re
+import os
 
 
 def check_molecule(molecule):
@@ -23,7 +24,7 @@ def check_molecule(molecule):
     else: return True        # We did not get a match, therefore must have a molecule
 
     
-def write_output(output_directory, species, roman_num, T, log_P, nu_out, sigma_out):
+def write_output(output_directory, species, roman_num, T, log_P, broad_type, broadening_file, nu_out, sigma_out):
     """
     Parameters
     ----------
@@ -37,6 +38,8 @@ def write_output(output_directory, species, roman_num, T, log_P, nu_out, sigma_o
         Temperature (K) the cross-section was computed at.
     log_P : int
         DESCRIPTION.
+    broad_type : String
+        The type of broadening used in computing the cross section.
     nu_out : TYPE
         DESCRIPTION.
     sigma_out : TYPE
@@ -52,8 +55,11 @@ def write_output(output_directory, species, roman_num, T, log_P, nu_out, sigma_o
     if (roman_num != ''):
         species = species + '_' + roman_num
         
-    f = open((output_directory + species + '_T' + str(T) + 
-              'K_log_P' + str(log_P) + '_sigma.txt'),'w')
+    if broadening_file == '':
+        f = open((output_directory + species + '_T' + str(T) + 'K_log_P' + str(log_P) + '_' + broad_type + '_sigma.txt'),'w')
+    else:
+        f = open((output_directory + species + '_T' + str(T) + 'K_log_P' + str(log_P) + '_' + broad_type + 
+                    '_' + os.path.splitext(broadening_file)[0] + '_sigma.txt'),'w')
                     
     for i in range(len(nu_out)):
         f.write('%.8f %.8e \n' %(nu_out[i], sigma_out[i]))

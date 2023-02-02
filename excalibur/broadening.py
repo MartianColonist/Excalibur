@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 
 from excalibur.constants import Ryd, u
+from excalibur.downloader import find_input_dir
 
 def det_broad(input_directory):
     '''
@@ -36,6 +37,45 @@ def det_broad(input_directory):
             create_SB07(input_directory)
 
     return broadening
+
+def write_broadening_file(broadening_file, data, input_dir, species, database, isotope = 'default', 
+                          ionization_state = 1, linelist = 'default'):
+    '''
+    Write a custom broadening file to the input directory containing line list data.
+
+    Parameters
+    ----------
+    broadening_file : String
+        Name of the custom broadening file.
+    data : list
+        3-d list or array containing the information (J, gamma_L_0, n_L) needed to create a broadening file.
+    input_dir : String
+        Local directory containing all line list data (for all species).
+    species : String
+        Name of molecule or atom.
+    database : String
+        Database line list was downloaded from.
+    isotope : String
+       Isotopologue of the species, if a molecule. The default is `default`. 
+    ionization_state : int
+        Ionization state of the species, if an atom. The default is 1. 
+    linelist : String
+        Line list of the species. ExoMol has named line lists, the other databases do not. The default is `default`. 
+
+    Returns
+    -------
+    None.
+    '''
+    input_directory = find_input_dir(input_dir, database.lower(), species, isotope, ionization_state, linelist)
+    f_out = open(input_directory + broadening_file, 'w')
+
+    f_out.write('J | gamma_L_0 | n_L \n')
+
+    for i in range(len(data[0])):
+        f_out.write('%.1f %.4f %.3f \n' %(data[0][i], data[1][i], data[2][i]))
+
+    f_out.close()
+
 
 
 def create_SB07(input_directory):
@@ -196,7 +236,7 @@ def read_SB07(input_directory):
     return J_max, gamma_0_SB07
 
 
-def read_custom(input_directory):
+def read_custom(input_directory, broadening_file):
     '''
     Read a user-provided broadening file from the input directory
 
@@ -217,7 +257,7 @@ def read_custom(input_directory):
     '''
 
     # Read in custom broadening file
-    broad_file_custom = pd.read_csv(input_directory + 'custom.broad',
+    broad_file_custom = pd.read_csv(input_directory + broadening_file,
                                     sep = ' ', header=None, skiprows = 1)
     J_max = int(np.max(np.array(broad_file_custom[0])))
     gamma_0_air = np.array(broad_file_custom[1])

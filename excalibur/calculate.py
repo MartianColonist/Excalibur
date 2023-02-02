@@ -335,7 +335,7 @@ def compute_cross_section_atom_OLD(sigma, N_grid, nu_0, nu_detune, nu_fine_start
     
 def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma, 
                          alpha_sampled, m, T, Q_T, g_arr, E_arr, J_arr, J_max, 
-                         N_Voigt, cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut):
+                         N_Voigt, cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut, verbose):
     
     
     # Initialise counters for number of completed transitions
@@ -357,8 +357,9 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         # Load HDF5 file containing this portion of the line list
         trans_file = h5py.File(input_directory + linelist_files[n], 'r')
     
-        print('Computing transitions from ' + linelist_files[n] + ' | ' + 
-              str((100.0*n/len(linelist_files))) + '% complete')
+        if (verbose):
+            print('Computing transitions from ' + linelist_files[n] + ' | ' + 
+                str((100.0*n/len(linelist_files))) + '% complete')
         
         # Start running timer of computation time for terminal output
         t_running = time.perf_counter()
@@ -420,8 +421,9 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         t_end_running = time.perf_counter()
         total_running = t_end_running - t_running
         
-        print('Completed ' + str(nu_0_tot - nu_0_completed) + 
-              ' transitions in ' + str(total_running) + ' s')
+        if (verbose):
+            print('Completed ' + str(nu_0_tot - nu_0_completed) + 
+                ' transitions in ' + str(total_running) + ' s')
         
         # Update running tally of completed transitions
         nu_0_completed = nu_0_tot   
@@ -439,7 +441,7 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
 
 def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma, 
                          alpha_sampled, m, T, Q_T, Q_ref, J_max, N_Voigt, 
-                         cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut):
+                         cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut, verbose):
     
     # Initialise counters for number of completed transitions
     nu_0_tot = 0
@@ -460,8 +462,9 @@ def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma,
         # Load HDF5 file containing this portion of the line list
         trans_file = h5py.File(input_directory + linelist_files[n], 'r')
         
-        print('Computing transitions from ' + linelist_files[n] + ' | ' + 
-              str((100.0*n/len(linelist_files))) + '% complete')
+        if (verbose):
+            print('Computing transitions from ' + linelist_files[n] + ' | ' + 
+                str((100.0*n/len(linelist_files))) + '% complete')
         
         # Start running timer for transition computation time terminal output
         t_running = time.perf_counter()
@@ -517,8 +520,9 @@ def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma,
         t_end_running = time.perf_counter()
         total_running = t_end_running - t_running
         
-        print('Completed ' + str(nu_0_tot - nu_0_completed) + 
-              ' transitions in ' + str(total_running) + ' s')
+        if (verbose):
+            print('Completed ' + str(nu_0_tot - nu_0_completed) + 
+                ' transitions in ' + str(total_running) + ' s')
         
         # Update running tally of completed transitions
         nu_0_completed = nu_0_tot   
