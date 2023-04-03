@@ -56,11 +56,6 @@ The recent launch of JWST has with it the goal of discovering hundreds of new ex
 
 There are other codes that compute cross sections (CITE), but there are a couple of key features that are unique to Excalibur. Primarily, Excalibur is intended to be used as an educational stepping stone for scientists to begin to use cross sections in their own research. While the focus of cross sections in this paper has been around their use in studying exoplanets, there are applications in LIST 2-3 OTHER FIELDS. Excalibur is written completely in Python, making it easier for users to run the code, and even analyze certain algorithms or scripts if they choose. Thorough documentation and in-depth tutorials are provided on the website, showing users how to customize parameters and other variables to their preference.
 
-PARAGRAPH ON VERIFYING THAT EXCALIBUR WORKS BY COMPARING TO OTHER CODES?
-
-- fully in Python not a Python wrapper around C code or anything
-- Excellent tutorials, and very easy to use. Meant to be an educational tool so that people can understand how to create cross sections, and then do it on their own.
-
 # Future Developments
 
 ANY FUTURE DEVELOPMENTS TO MENTION?
