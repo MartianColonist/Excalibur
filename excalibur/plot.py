@@ -16,7 +16,7 @@ from .hapi import isotopologueName
 def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
                  x_min = None, x_max = None, y_min = None, y_max = None,
                  color_list = [], smooth_data = False, std = 1000,
-                 x_unit = 'micron', x_axis_scale = 'log', **kwargs):
+                 x_unit = 'micron', x_axis_scale = 'log', linewidth = 1.0, **kwargs):
     """
     Generate a plot of cross section file[s], in both wavelength and wavenumber
 
@@ -85,7 +85,7 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
         if smooth_data == True:
             spec = gaussian_filter1d(spec, std)
 
-        ax.loglog(wl, spec, lw=0.5, alpha = 0.5, color= colors[i], label = labels[i])
+        ax.loglog(wl, spec, lw=linewidth, alpha = 0.5, color= colors[i], label = labels[i])
 
         # Set y range
     if (y_min == None):
