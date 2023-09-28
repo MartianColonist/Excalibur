@@ -102,12 +102,12 @@ def mass(species, isotopologue, linelist):
         isotopologue = isotopologue.replace(')', '')
 
         url = 'http://exomol.com/data/molecules/' + species + '/' + isotopologue + '/' + linelist + '/'
-        
+
         # Parse the webpage to find the .def file and read it
         web_content = requests.get(url).text
         soup = BeautifulSoup(web_content, "lxml")
         def_tag = soup.find('a', href = re.compile("def"))
-        new_url = 'http://exomol.com' + def_tag.get('href')
+        new_url = url + def_tag.get('href')
         
         out_file = './def'
         with requests.get(new_url, stream=True) as request:
