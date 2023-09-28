@@ -4,7 +4,7 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="excalibur-alpha", # Replace with your own username
+    name="excalibur", # Replace with your own username
     version="0.1.2",
     author="Ryan MacDonald, Arnav Agrawal",
     author_email="rmacdonald@astro.cornell.edu, aa687@cornell.edu",
@@ -20,7 +20,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7.6',
-    install_requires = ['numpy<=1.21',
+    install_requires = ['numpy',
                         'scipy',
                         'matplotlib',
                         'h5py',
