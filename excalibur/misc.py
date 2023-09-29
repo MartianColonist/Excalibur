@@ -81,6 +81,43 @@ def round_sig_figs(value, sig_figs):
     return round(value, sig_figs - int(np.floor(np.log10(abs(value)))) - 1)
 
 
+def int_to_roman(num):
+    '''
+    Convert an integer to the corresponding Roman numeral.
+    '''
+
+    # Define the values and symbols for Roman numerals
+    val = [
+        1000, 900, 500, 400,
+        100, 90, 50, 40,
+        10, 9, 5, 4,
+        1
+    ]
+    syb = [
+        "M", "CM", "D", "CD",
+        "C", "XC", "L", "XL",
+        "X", "IX", "V", "IV",
+        "I"
+    ]
+    
+    # Initialize an empty string to store the Roman numeral representation
+    roman_num = ''
+    
+    # Start with the largest value and work our way down
+    i = 0
+
+    while num > 0:
+
+        # For each value, determine the number of times it can be subtracted from the input number
+        for _ in range(num // val[i]):
+            roman_num += syb[i]  # Add the corresponding Roman numeral symbol
+            num -= val[i]        # Subtract the value from the input number
+
+        i += 1                   # Move to the next value
+    
+    return roman_num  # Return the Roman numeral representation
+
+
 def cross_section_collection(new_x, new_y, collection = []):
     '''
     Add new cross section (that is, wavelength and absorption cross section) to the collection
@@ -156,10 +193,7 @@ def read_cross_section_file(species, database, filename, isotope = 'default',
             isotope = ExoMol.get_default_iso(species)
 
     if database == 'vald':
-        ion_roman = ''
-        for i in range(ionization_state):
-            ion_roman += 'I'
-
+        ion_roman = int_to_roman(ionization_state)
 
     if linelist == 'default':
         if database == 'exomol':
