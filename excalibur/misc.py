@@ -1,8 +1,14 @@
+import sys
 import numpy as np
 import pandas as pd
 import re
 import os
+import csv
 
+import excalibur.HITRAN as HITRAN
+import excalibur.ExoMol as ExoMol
+
+from .hapi import isotopologueName
 
 def check_molecule(molecule):
     """
@@ -31,7 +37,7 @@ def write_output(output_directory, species, roman_num, T, log_P, broad_type, bro
     output_directory : String
         Local directory where the output data is to be stored.
     species : String
-        Name of molecule or atomc.
+        Name of molecule or atomic.
     roman_num : String
         Ionization state, in case the species is an atom. Depicted in Roman numeral form.
     T : int
@@ -67,37 +73,148 @@ def write_output(output_directory, species, roman_num, T, log_P, broad_type, bro
     f.close()
 
     
-def read_output(output_directory, molecule, T, log_P):
+def round_sig_figs(value, sig_figs):
+    ''' 
+    Round a quantity to a specified number of significant figures.
     '''
-    Read in wavenumber and cross-section from  file
+    
+    return round(value, sig_figs - int(np.floor(np.log10(abs(value)))) - 1)
+
+
+def cross_section_collection(new_x, new_y, collection = []):
+    '''
+    Add new cross section (that is, wavelength and absorption cross section) to the collection
 
     Parameters
     ----------
-    output_directory : String
-        Local directory where the computed cross section is stored.
-    molecule : String
-        Molecule name.
-    T : TYPE
+    new_x : list
         DESCRIPTION.
-    log_P : TYPE
+    new_y : list
         DESCRIPTION.
+    collection : 2d list, optional
+        DESCRIPTION. The default is [].
 
     Returns
     -------
-    nu : TYPE
-        DESCRIPTION.
-    sigma : TYPE
+    collection : TYPE
         DESCRIPTION.
 
     '''
-    
-    file_location = (output_directory + molecule + '_T' + str(T) + 
-                     'K_log_P' + str(log_P) + '_sigma_TMP.txt')
-    
-    file = pd.read_csv(file_location, sep = '\s+', header=None)
-    
-    nu = np.array(file[0])
-    sigma = np.array(file[1])
 
-    return nu, sigma
+    collection.append([new_x, new_y])
 
+    return collection
+
+
+def read_cross_section_file(species, database, filename, isotope = 'default',
+                            ionization_state = 1, linelist = 'default', output_dir = './output/'):
+
+    """
+    Read in a previously computed cross section on a user's machine, and return the 
+    wavenumber and absorption cross section columns.
+
+    Parameters
+    ----------
+    species : String
+        Molecule for which the cross section was computed.
+    database : String
+        Database the line list was downloaded from.
+    filename : String
+        Full file name of the cross section file(eg. 'this_is_my_file.txt').
+    isotope : String
+        Isotopologue of the molecule for which the cross-section is to be created. The default is 'default'.
+    ionization_state : int
+        Ionization state, in case of an atomic species. The default is 1. 
+    linelist : String
+        Line list that is being used. HITRAN/HITEMP/VALD used as the line list name for these
+        databases respectively. ExoMol has its own named line lists. The default is 'default'. 
+    output_dir = String
+        'Prefix' of the directory containing the cross section files. If the files were downloaded
+        using our script with no modifications, output_dir will end in '/output'. The default is './output/'. 
+
+    Returns
+    -------
+    nu : numpy array
+        Wavenumber column of cross section file.
+    sigma : numpy array
+        Absorption cross section column of cross section file.
+
+    """
+    database = database.lower()
+
+    if database in ['hitran', 'hitemp']:
+        molecule_dict = HITRAN.create_id_dict()
+        mol_id = molecule_dict.get(species)
+        if isotope == 'default':
+            isotope = isotopologueName(mol_id, 1)
+        else:
+            isotope = isotopologueName(mol_id, isotope)
+        isotope = HITRAN.replace_iso_name(isotope)
+
+    if database == 'exomol':
+        if isotope == 'default':
+            isotope = ExoMol.get_default_iso(species)
+
+    if database == 'vald':
+        ion_roman = ''
+        for i in range(ionization_state):
+            ion_roman += 'I'
+
+
+    if linelist == 'default':
+        if database == 'exomol':
+            temp_isotope = re.sub('[(]|[)]', '', isotope)
+            linelist = ExoMol.get_default_linelist(species, temp_isotope)
+        if database == 'hitran':
+            linelist = 'HITRAN'
+        if database == 'hitemp':
+            linelist = 'HITEMP'
+        if database == 'vald':
+            linelist = 'VALD'
+
+    if database == 'vald':
+        tag = '(' + ion_roman + ')'
+    else:
+        tag = isotope
+
+    if (database == 'exomol'):
+        output_directory = (output_dir + species + '  ~  (' + tag + ')/' +
+                           'ExoMol' + '/' + linelist + '/')
+    else:
+        output_directory = (output_dir + species + '  ~  ' + tag + '/' +
+                           linelist + '/')
+
+    if os.path.exists(output_directory):
+        file  = output_directory + filename
+        with open(file, 'r') as f:
+            contents = csv.reader(f, delimiter=' ')
+            nu = []
+            sigma = []
+            for cols in contents:
+                nu.append(float(cols[0]))
+                sigma.append(float(cols[1]))
+
+        nu = np.asarray(nu)
+        sigma = np.asarray(sigma)
+        return  nu, sigma
+
+    else:
+        print("You don't seem to have a local folder with the parameters you entered.\n")
+
+        if not os.path.exists(output_dir + '/'):
+            print("----- You entered an invalid output directory into the cross_section() function. Please try again. -----")
+            sys.exit(0)
+
+        elif not os.path.exists(output_dir + '/' + species + '  ~  (' + tag + ')/'):
+            print("----- There was an error with the molecule + isotope you entered. Here are the available options: -----\n")
+            for folder in os.listdir(output_dir + '/'):
+                if not folder.startswith('.'):
+                    print(folder)
+            sys.exit(0)
+
+        else:
+            print("There was an error with the line list. These are the linelists available: \n")
+            for folder in os.listdir(output_dir + '/' + species + '  ~  (' + tag + ')/'):
+                if not folder.startswith('.'):
+                    print(folder)
+            sys.exit(0)
