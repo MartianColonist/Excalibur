@@ -4,19 +4,27 @@ import sys
 import re
 import csv
 import numpy as np
+import matplotlib
+import matplotlib.style
 import matplotlib.pyplot as plt
-from matplotlib.ticker import MultipleLocator, AutoLocator, FormatStrFormatter, \
-                              FuncFormatter, ScalarFormatter, NullFormatter
+from matplotlib.ticker import MultipleLocator, FormatStrFormatter, \
+                              ScalarFormatter, NullFormatter, LogLocator
 from scipy.ndimage import gaussian_filter1d
 
 import excalibur.HITRAN as HITRAN
 import excalibur.ExoMol as ExoMol
 from .hapi import isotopologueName
 
+plt.style.use('classic')
+plt.rc('font', family = 'serif')
+matplotlib.rcParams['svg.fonttype'] = 'none'
+matplotlib.rcParams['figure.facecolor'] = 'white'
+
+
 def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
-                 x_min = None, x_max = None, y_min = None, y_max = None,
-                 color_list = [], smooth_data = False, std = 1000,
-                 x_unit = 'micron', x_axis_scale = 'log', **kwargs):
+                       x_min = None, x_max = None, y_min = None, y_max = None,
+                       color_list = [], smooth_data = False, std = 1000,
+                       x_unit = 'micron', x_axis_scale = 'log', **kwargs):
     """
     Generate a plot of cross section file[s], in both wavelength and wavenumber
 
@@ -60,14 +68,51 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
             nu_max = 1.0e4/x_min
         else:
             nu_min = x_min
+    else:
+        x_min = 1e4/nu_max
 
     if x_max != None:
         if (x_unit == 'micron'):
             nu_min = 1.0e4/x_max
         else:
             nu_max = x_max
+    else:
+        x_max = 1e4/nu_min
 
-    fig, ax = plt.subplots()
+    #***** Format x ticks *****#
+
+    x_range = x_max - x_min
+
+    # Create x formatting objects
+    if (x_range >= 0.2):                      
+        if (x_max < 1.0):                         # Plotting the optical range
+            xmajorLocator = MultipleLocator(0.1)
+            xminorLocator = MultipleLocator(0.02)
+        else:                                      # Plot extends into the infrared
+            xmajorLocator = MultipleLocator(1.0)
+            xminorLocator = MultipleLocator(0.1)
+    elif ((x_range < 0.2) and (x_range >= 0.02)):   # High-resolution zoomed plots
+        xmajorLocator = MultipleLocator(0.01)
+        xminorLocator = MultipleLocator(0.002)
+    else:                                             # Super high-resolution
+        xmajorLocator = MultipleLocator(0.001)
+        xminorLocator = MultipleLocator(0.0002)
+
+    xmajorFormatter = FormatStrFormatter('%g')
+    xminorFormatter = NullFormatter()
+
+    fig = plt.figure()
+    ax = plt.gca()
+
+    # Set x axis to be linear or logarithmic
+    ax.set_yscale('log')
+    ax.set_xscale(x_axis_scale)
+
+    # Assign formatter objects to axes
+    ax.xaxis.set_major_locator(xmajorLocator)
+    ax.xaxis.set_major_formatter(xmajorFormatter)
+    ax.xaxis.set_minor_locator(xminorLocator)
+    ax.xaxis.set_minor_formatter(xminorFormatter)
 
     # Define colors for plotted spectra (default or user choice)
     if color_list == []:   # If user did not specify a custom colour list
@@ -85,24 +130,25 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
         if smooth_data == True:
             spec = gaussian_filter1d(spec, std)
 
-        ax.loglog(wl, spec, lw=0.5, alpha = 0.5, color= colors[i], label = labels[i])
+        ax.plot(wl, spec, lw=0.5, alpha = 0.5, color= colors[i], label = labels[i])
 
-        # Set y range
+    # Set y range
     if (y_min == None):
         y_min = 1.0e-30
     if (y_max == None):
         y_max = sigma_max
 
-    ax.set_ylim(y_min, y_max * 10)
-    ax.set_xlim(1e4/nu_max, 1e4/nu_min) # Convert wavenumber (in cm^-1) to wavelength (in um)
+    ax.set_xlim([1e4/nu_max, 1e4/nu_min]) # Convert wavenumber (in cm^-1) to wavelength (in um)
+    ax.set_ylim([y_min, y_max * 10])
 
-    x_ticks = set_x_axis_ticks(1e4/nu_max, 1e4/nu_min, x_axis_scale)
-    ax.set_xticks(x_ticks)
+    ax.set_xlabel(r'Wavelength (μm)', fontsize = 14)
+    ax.set_ylabel(r'Cross Section (cm$^2$)', fontsize = 14)
 
-    ax.set_ylabel(r'Cross Section (cm$^2$)', size = 14)
-    ax.set_xlabel(r'Wavelength (μm)', size = 14)
+    # Decide at which wavelengths to place major tick labels
+    wl_ticks = set_wl_ticks((1e4/nu_max), (1e4/nu_min), x_axis_scale)
+    ax.set_xticks(wl_ticks)
 
-    legend = plt.legend(loc='upper right', shadow=False, frameon=False, prop={'size':10})
+    legend = ax.legend(loc='upper right', shadow=False, frameon=False, prop={'size':10})
 
     for legline in legend.legendHandles:
         legline.set_linewidth(1.0)
@@ -313,6 +359,7 @@ def find_min_max_nu_sigma(spectra):
 
     return nu_min, nu_max, sigma_min, sigma_max
 
+
 def round_sig_figs(value, sig_figs):
     ''' 
     Round a quantity to a specified number of significant figures.
@@ -320,58 +367,136 @@ def round_sig_figs(value, sig_figs):
     
     return round(value, sig_figs - int(np.floor(np.log10(abs(value)))) - 1)
 
-def set_x_axis_ticks(wl_min, wl_max, wl_axis):
+
+def set_wl_ticks(wl_min, wl_max, wl_axis = 'log'):
     '''
-    Calculates default x axis tick spacing for spectra plots in POSEIDON.
+    Calculates default x axis tick spacing for cross section plots.
+    
+    Args:
+        wl_min (float):
+            The minimum wavelength to plot.
+        wl_max (float):
+            The maximum wavelength to plot.
+        wl_axis (str, optional):
+            The type of x-axis to use ('log' or 'linear').
+            
+    Returns:
+        np.array:
+            The x axis tick values for the given wavelength range.
+
     '''
 
     wl_range = wl_max - wl_min
 
-    wl_ticks_1, wl_ticks_2, wl_ticks_3, wl_ticks_4 = np.array([]), np.array([]), np.array([]), np.array([])
+    if (wl_max < wl_min):
+        raise Exception("Error: max wavelength must be greater than min wavelength.")
 
     # For plots over a wide wavelength range
     if (wl_range > 0.2):
         if (wl_max <= 1.0):
             wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), round_sig_figs(wl_max, 2)+0.01, 0.1)
+            wl_ticks_2 = np.array([])
+            wl_ticks_3 = np.array([])
+            wl_ticks_4 = np.array([])
         elif (wl_max <= 2.0):
             if (wl_min < 1.0):
                 wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
-            wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
+                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
+            else:
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*5)/5.0, round_sig_figs(wl_max, 2)+0.01, 0.2)))
+            wl_ticks_3 = np.array([])
+            wl_ticks_4 = np.array([])
         elif (wl_max <= 3.0):
             if (wl_min < 1.0):
                 wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
-                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 3)+0.01, 0.5)
+                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 2)+0.01, 0.5)
             else:
-                wl_ticks_2 = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 3)+0.01, 0.5)
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*5)/5.0, round_sig_figs(wl_max, 2)+0.01, 0.2)))
+            wl_ticks_3 = np.array([])
+            wl_ticks_4 = np.array([])
         elif (wl_max <= 5.0):
             if (wl_min < 1.0):
                 wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
-                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 3)+0.01, 0.2)
-                wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
-            elif (wl_min < 3.0):
-                wl_ticks_2 = np.arange(round_sig_figs(wl_min, 2), 3, 0.2)
-                wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
-            else:
-                wl_ticks_3 = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 2)+0.01, 0.2)
-        elif (wl_max <= 10.0):
-            if (wl_min < 1.0):
-                wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
-                wl_ticks_2 = np.arange(1.0, round_sig_figs(wl_max, 3)+0.01, 0.5)
+                wl_ticks_2 = np.arange(1.0, 3.0, 0.5)
                 wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 1.0)
             elif (wl_min < 3.0):
-                wl_ticks_2 = np.arange(round_sig_figs(wl_min, 2), 3, 0.2)
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*5)/5.0, 3.0, 0.2)))
                 if (wl_axis == 'log'):
                     wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.5)
                 elif (wl_axis == 'linear'):
                     wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.2)
             else:
-                wl_ticks_3 = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 2)+0.01, 1.0)
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.array([])
+                wl_ticks_3 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*5)/5.0, round_sig_figs(wl_max, 2)+0.01, 0.2)))
+            wl_ticks_4 = np.array([])
+        elif (wl_max <= 10.0):
+            if (wl_min < 1.0):
+                if (wl_axis == 'log'):
+                    wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
+                    wl_ticks_2 = np.arange(1.0, 3.0, 0.5)
+                    wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 1.0)
+                elif (wl_axis == 'linear'):
+                    wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 1.0)
+                    wl_ticks_2 = np.arange(1.0, 3.0, 1.0)            
+                    wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 1.0)
+            elif (wl_min < 3.0):
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*2)/2.0, 3.0, 0.5)))
+                if (wl_axis == 'log'):
+                    wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 1.0)
+                elif (wl_axis == 'linear'):
+                    wl_ticks_3 = np.arange(3.0, round_sig_figs(wl_max, 2)+0.01, 0.5)
+            else:
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.array([])
+                if (wl_axis == 'log'):
+                    wl_ticks_3 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*2)/2.0, round_sig_figs(wl_max, 2)+0.01, 0.5)))
+                elif (wl_axis == 'linear'):
+                    wl_ticks_3 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*2)/2.0, round_sig_figs(wl_max, 2)+0.01, 0.5)))
+            wl_ticks_4 = np.array([])
         else:
             if (wl_min < 1.0):
-                wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
-            wl_ticks_2 = np.arange(1.0, 3.0, 0.5)
-            wl_ticks_3 = np.arange(3.0, 10.0, 1.0)
-            wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 2)+0.01, 2.0)
+                if (wl_axis == 'log'):
+                    wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 0.2)
+                    wl_ticks_2 = np.arange(1.0, 4.0, 1.0)
+                    wl_ticks_3 = np.arange(4.0, 10.0, 2.0)
+                    wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 2)+0.01, 10.0)
+                elif (wl_axis == 'linear'):
+                    wl_ticks_1 = np.arange(round_sig_figs(wl_min, 1), 1.0, 1.0)
+                    wl_ticks_2 = np.arange(1.0, 4.0, 1.0)            
+                    wl_ticks_3 = np.arange(4.0, 10.0, 2.0)
+                    wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 3)+0.01, 10.0)
+            elif (wl_min < 3.0):
+                wl_ticks_1 = np.array([])
+                if (wl_axis == 'log'): 
+                    wl_ticks_2 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min*2)/2.0, 4.0, 0.5)))
+                    wl_ticks_3 = np.arange(4.0, 10.0, 2.0)
+                    wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 2)+0.01, 10.0)
+                elif (wl_axis == 'linear'):
+                    wl_ticks_2 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min), 4.0, 1.0)))
+                    wl_ticks_3 = np.arange(4.0, 10.0, 2.0)
+                    wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 3)+0.01, 10.0)
+            elif (wl_min < 10.0):
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.array([])
+                if (wl_axis == 'log'):
+                    wl_ticks_3 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min), 10.0, 1.0)))
+                    wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 3)+0.01, 10.0)
+                elif (wl_axis == 'linear'):
+                    wl_ticks_3 = np.concatenate(([round_sig_figs(wl_min, 2)], np.arange(np.ceil(wl_min), 10.0, 1.0)))
+                    wl_ticks_4 = np.arange(10.0, round_sig_figs(wl_max, 3)+0.01, 10.0)
+            else:
+                wl_ticks_1 = np.array([])
+                wl_ticks_2 = np.array([])
+                wl_ticks_3 = np.array([])
+                if (wl_axis == 'log'):
+                    wl_ticks_4 = np.concatenate(([round_sig_figs(wl_min, 3)], np.arange(np.ceil(wl_min), round_sig_figs(wl_max, 3)+0.01, 10.0)))
+                elif (wl_axis == 'linear'):
+                    wl_ticks_4 = np.concatenate(([round_sig_figs(wl_min, 3)], np.arange(np.ceil(wl_min*2)/2.0, round_sig_figs(wl_max, 3)+0.01, 0.5)))
 
         wl_ticks = np.concatenate((wl_ticks_1, wl_ticks_2, wl_ticks_3, wl_ticks_4))
 
@@ -389,7 +514,7 @@ def set_x_axis_ticks(wl_min, wl_max, wl_axis):
         elif (wl_spacing == 3*np.power(10, major_exponent)):
             wl_spacing = 2*np.power(10, major_exponent)
 
-        wl_ticks = np.arange(round_sig_figs(wl_min, 2), round_sig_figs(wl_max, 2)+0.01, wl_spacing)
+        wl_ticks = np.arange(round_sig_figs(wl_min, 3), round_sig_figs(wl_max, 3)+0.0001, wl_spacing)
 
     return wl_ticks
 
