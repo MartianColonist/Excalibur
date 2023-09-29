@@ -78,6 +78,7 @@ def make_single_species_HDF5(species, database, linelist, log_P, T,
         species_no_charge = species[:-1]   # Remove charge from string
     else:
         ionization_state = 1
+        species_no_charge = species
 
     # Get current date (for file metadata)
     today = date.today()
