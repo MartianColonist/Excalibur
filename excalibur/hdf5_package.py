@@ -147,13 +147,12 @@ def extend_HDF5_database(species):
         # Delete old dataset
         del HDF5_database_all[species]
 
-    # Create new group to host the new species
-    dest_group = HDF5_database_all.create_group(species)
-
     # Copy the individual species HDF5 file contents in the composite database
-    HDF5_database_species.copy(HDF5_database_species[species], dest_group)
+    HDF5_database_species.copy(HDF5_database_species[species], HDF5_database_all)
 
     # Close both HDF5 files
     HDF5_database_all.close()
     HDF5_database_species.close()
+
+    print(species + " done")
 
