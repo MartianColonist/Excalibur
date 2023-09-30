@@ -647,9 +647,6 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     T_pf_raw, Q_raw = load_pf(input_directory)
     
     # Find mass of the species
-    print(species)
-    print(isotopologue)
-    print(linelist)
     m = mass(species, isotopologue, linelist) * u
     
     # Check if we have a molecule or an atom
