@@ -587,7 +587,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     # Configure numba to parallelise with the user specified number of cores
     numba.set_num_threads(N_cores)
     
-    if pressure == None and log_pressure == None:
+    if pressure is None and log_pressure is None:
         print("\nYou need to specify a pressure to run the cross section computation. Please try again.")
         sys.exit(0)
     
@@ -598,12 +598,13 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         log_pressure = np.array(log_pressure)
         pressure = np.power(10, log_pressure)
     else:
-        if not isinstance(pressure, list):  
+        if not isinstance(pressure, np.ndarray) and not isinstance(pressure, list):  
             pressure = [pressure]
         pressure = np.array(pressure)
+        log_pressure = np.log10(pressure)
     
-    if not isinstance(temperature, list):  
-        temperature = [temperature]
+    if not isinstance(pressure, np.ndarray) and not isinstance(temperature, list):  
+        temperature = np.array([temperature])
         
     # Cast all temperatures and pressures to floats
     for i in range(len(pressure) - 1):
@@ -715,8 +716,8 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                                               Gamma_vdw, alkali, m)
     
     #***** Load pressure and temperature for this calculation *****#
-    P_arr = pressure  # Pressure array (bar)
-    T_arr = np.array(temperature)  # Temperature array (K)
+    P_arr = pressure     # Pressure array (bar)
+    T_arr = temperature  # Temperature array (K)
     
     # If conducting a batch run on a cluster
     if (cluster_run == True):
