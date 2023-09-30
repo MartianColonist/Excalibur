@@ -507,10 +507,11 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
     
 def compute_cross_section(input_dir, database, species, temperature, pressure = None, 
                           log_pressure = None, isotope = 'default', ionization_state = 1, 
-                          linelist = 'default', cluster_run = False, nu_out_min = 200, 
-                          nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default',
-                          broadening_file = '', gamma_0_fixed = 0.07, n_L_fixed = 0.50,
-                          X_H2 = 0.85, X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
+                          linelist = 'default', cluster_run = False, set_mass = None,
+                          nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, 
+                          broad_type = 'default', broadening_file = '',
+                          gamma_0_fixed = 0.07, n_L_fixed = 0.50, X_H2 = 0.85, 
+                          X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
                           N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, 
                           N_cores = 1, verbose = True, **kwargs):
     '''
@@ -647,7 +648,10 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     T_pf_raw, Q_raw = load_pf(input_directory)
     
     # Find mass of the species
-    m = mass(species, isotopologue, linelist) * u
+    if (set_mass is None):
+        m = mass(species, isotopologue, linelist) * u
+    else:
+        m = set_mass * u
     
     # Check if we have a molecule or an atom
     is_molecule = check_molecule(species)
