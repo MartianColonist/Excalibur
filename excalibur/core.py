@@ -506,11 +506,14 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
     print("\nLine list ready.\n")
     
     
-def compute_cross_section(input_dir, database, species, temperature, pressure = None, log_pressure = None, isotope = 'default', 
-                          ionization_state = 1, linelist = 'default', cluster_run = False, 
-                          nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default', broadening_file = '',
+def compute_cross_section(input_dir, database, species, temperature, pressure = None, 
+                          log_pressure = None, isotope = 'default', ionization_state = 1, 
+                          linelist = 'default', cluster_run = False, nu_out_min = 200, 
+                          nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default',
+                          broadening_file = '', gamma_0_fixed = 0.07, n_L_fixed = 0.50,
                           X_H2 = 0.85, X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
-                          N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, N_cores = 1, verbose = True, **kwargs):
+                          N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, 
+                          N_cores = 1, verbose = True, **kwargs):
     '''
     
     Main function to compute cross section, given that the requisite line list has already been downloaded.
