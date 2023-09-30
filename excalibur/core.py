@@ -10,10 +10,9 @@ from bs4 import BeautifulSoup
 from scipy.interpolate import UnivariateSpline as Interp
 from .hapi import molecularMass, moleculeName, isotopologueName
 
-from .calculate import produce_total_cross_section_VALD_atom, bin_cross_section_atom
+from .calculate import produce_total_cross_section_VALD_atom
 
-from excalibur.constants import c, kb, u, P_ref, T_ref, \
-                                gamma_0_fixed, n_L_fixed
+from excalibur.constants import c, kb, u, P_ref, T_ref
 
 import excalibur.ExoMol as ExoMol
 import excalibur.HITRAN as HITRAN
