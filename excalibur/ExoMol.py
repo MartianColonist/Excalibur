@@ -130,7 +130,7 @@ def get_default_linelist(molecule, isotopologue):
                     'KF(39K-19F)': 'MoLLIST', 'AlF(27Al-19F)': 'MoLLIST', 'LiF(7Li-19F)': 'MoLLIST',
                     'CaF(40Ca-19F)': 'MoLLIST', 'MgF(24Mg-19F)': 'MoLLIST', 'TiO(48Ti-16O)': 'Toto',
                     'TiO(49Ti-16O)': 'Toto', 'TiO(50Ti-16O)': 'Toto', 'TiO(46Ti-16O)': 'Toto', 'TiO(47Ti-16O)': 'Toto',
-                    'AlO(27Al-16O)': 'ATP', 'SiO(28Si-16O)': 'EBJT', 'CaO(40Ca-16O)': 'VBATHY', 'MgO(24Mg-16O)': 'LiTY',
+                    'AlO(27Al-16O)': 'ATP', 'SiO(28Si-16O)': 'SiOUVenIR', 'CaO(40Ca-16O)': 'VBATHY', 'MgO(24Mg-16O)': 'LiTY',
                     'NaH(23Na-1H)': 'Rivlin', 'AlH(27Al-1H)': 'AlHambra', 'CrH(52Cr-1H)': 'MoLLIST',
                     'BeH(9Be-1H)': 'Darby-Lewis', 'TiH(48Ti-1H)': 'MoLLIST', 'FeH(56Fe-1H)': 'MoLLIST',
                     'LiH(7Li-1H)': 'CLT', 'ScH(45Sc-1H)': 'LYT', 'NaH(23Na-19F)': 'MoLLIST', 'SiH(28Si-1H)': 'SiGHTLY',
