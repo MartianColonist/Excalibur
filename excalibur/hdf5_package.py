@@ -19,6 +19,11 @@ def read_cross_section_grid(species, database, log_P, T, ionization_state,
 
     N_PT = len(log_P) * len(T)
 
+    if (database.lower() == 'vald'):
+        ion_append = + '_' + int_to_roman(ionization_state)
+    else:
+        ion_append = ''
+
     # Create progress bar
     with tqdm(total=N_PT, desc = "Progress") as pbar:
 
@@ -28,8 +33,8 @@ def read_cross_section_grid(species, database, log_P, T, ionization_state,
         
                 # Extract cross sections for this P,T
                 nu, sigma = read_cross_section_file(species, database, 
-                                                    filename = (species + '_' + 
-                                                                int_to_roman(ionization_state) + 
+                                                    filename = (species + 
+                                                                ion_append + 
                                                                 '_T' + str(T[j]) + 'K_log_P' + 
                                                                 str(log_P[i]) + '_' + 
                                                                 broadening + '_sigma.txt'),
