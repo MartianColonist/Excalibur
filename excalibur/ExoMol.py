@@ -119,29 +119,36 @@ def get_default_linelist(molecule, isotopologue):
         sys.exit(0)
 
     # Dictionary that defines the default
-    default_list = {'H2(1H2)': 'RACPPK', 'N2(14N2)': 'WCCRMT', 'C2(12C2)': '8states', 'CO(12C-16O)': 'Li2015',
-                    'NO(14N-16O)': 'XABC', 'PO(31P-16O)': 'POPS', 'VO(51V-16O)': 'VOMYT', 'YO(89Y-16O)': 'SSYT',
-                    'CN(12C-14N)': 'MoLLIST', 'NH(14N-1H)': 'MoLLIST', 'CH(12C-1H)': 'MoLLIST', 'OH(16O-1H)': 'MoLLIST',
-                    'SH(32S-1H)': 'GYT', 'HF(1H-19F)': 'Coxon-Hajig', 'CS(12C-32S)': 'JnK', 'NS(14N-32S)': 'SNaSH',
-                    'PS(31P-32S)': 'POPS', 'PH(31P-1H)': 'LaTY', 'PN(31P-14N)': 'YYLT', 'CP(12C-31P)': 'MoLLIST',
-                    'H2_p(1H-2H_p)': 'ADJSAAM', 'H3_p(1H3_p)': 'MiZATeP', 'OH_p(16O-1H_p)': 'MoLLIST',
+    default_list = {'H2(1H2)': 'RACPPK', 'N2(14N2)': 'WCCRMT', 'C2(12C2)': '8states', 
+                    'CO(12C-16O)': 'Li2015', 'NO(14N-16O)': 'XABC', 'PO(31P-16O)': 'POPS',
+                    'VO(51V-16O)': 'VOMYT', 'YO(89Y-16O)': 'SSYT', 'CN(12C-14N)': 'MoLLIST',
+                    'NH(14N-1H)': 'MoLLIST', 'CH(12C-1H)': 'MoLLIST', 'OH(16O-1H)': 'MoLLIST',
+                    'SH(32S-1H)': 'GYT', 'HF(1H-19F)': 'Coxon-Hajig', 'CS(12C-32S)': 'JnK', 
+                    'NS(14N-32S)': 'SNaSH', 'PS(31P-32S)': 'POPS', 'PH(31P-1H)': 'LaTY', 
+                    'PN(31P-14N)': 'YYLT', 'CP(12C-31P)': 'MoLLIST', 'H2_p(1H-2H_p)': 'ADJSAAM', 
+                    'H3_p(1H3_p)': 'MiZATeP', 'OH_p(16O-1H_p)': 'MoLLIST', 'H3O_p(1H3-16O_p)': 'eXeL',
                     'HeH_p(4He-1H_p)': 'ADJSAAM', 'LiH_p(7Li-1H_p)': 'CLT', 'KCl(39K-35Cl)': 'Barton',
                     'NaCl(23Na-35Cl)': 'Barton', 'LiCl(7Li-35Cl)': 'MoLLIST', 'AlCl(27Al-35Cl)': 'MoLLIST',
                     'KF(39K-19F)': 'MoLLIST', 'AlF(27Al-19F)': 'MoLLIST', 'LiF(7Li-19F)': 'MoLLIST',
                     'CaF(40Ca-19F)': 'MoLLIST', 'MgF(24Mg-19F)': 'MoLLIST', 'TiO(48Ti-16O)': 'Toto',
-                    'TiO(49Ti-16O)': 'Toto', 'TiO(50Ti-16O)': 'Toto', 'TiO(46Ti-16O)': 'Toto', 'TiO(47Ti-16O)': 'Toto',
-                    'AlO(27Al-16O)': 'ATP', 'SiO(28Si-16O)': 'SiOUVenIR', 'CaO(40Ca-16O)': 'VBATHY', 'MgO(24Mg-16O)': 'LiTY',
+                    'TiO(49Ti-16O)': 'Toto', 'TiO(50Ti-16O)': 'Toto', 'TiO(46Ti-16O)': 'Toto', 
+                    'TiO(47Ti-16O)': 'Toto', 'AlO(27Al-16O)': 'ATP', 'SiO(28Si-16O)': 'SiOUVenIR', 
+                    'CaO(40Ca-16O)': 'VBATHY', 'MgO(24Mg-16O)': 'LiTY', 'LaO(139La-16O)': 'BDL', 
+                    'ZrO(90Zr-16O)': 'ZorrO', 'YO(89Y-16O)': 'BRYTS', 'NaO(23Na-16O)': 'NaOUCMe',
                     'NaH(23Na-1H)': 'Rivlin', 'AlH(27Al-1H)': 'AlHambra', 'CrH(52Cr-1H)': 'MoLLIST',
                     'BeH(9Be-1H)': 'Darby-Lewis', 'TiH(48Ti-1H)': 'MoLLIST', 'FeH(56Fe-1H)': 'MoLLIST',
-                    'LiH(7Li-1H)': 'CLT', 'ScH(45Sc-1H)': 'LYT', 'NaH(23Na-19F)': 'MoLLIST', 'SiH(28Si-1H)': 'SiGHTLY',
+                    'LiH(7Li-1H)': 'CLT', 'ScH(45Sc-1H)': 'LYT', 'NaH(23Na-1H)': 'MoLLIST', 
+                    'SiH(28Si-1H)': 'SiGHTLY', 'SiH2(28Si-1H2)': 'CATS', 'SiH4(28Si-1H4)': 'OY2T',
                     'SiS(28Si-32S)': 'UCTY', 'H2O(1H2-16O)': 'POKAZATEL', 'HCN(1H-12C-14N)': 'Harris',
                     'CH4(12C-1H4)': 'YT34to10', 'NH3(14N-1H3)': 'CoYuTe', 'H2S(1H2-32S)': 'AYT2',
-                    'SO2(32S-16O2)': 'ExoAmes', 'SO3(32S-16O3)': 'UYT2', 'PH3(31P-1H3)': 'SAlTY', 'CH3(12C-1H3)': 'AYYJ',
-                    'AsH3(75As-1H3)': 'CYT18', 'SiH2(28Si-1H2)': 'CATS', 'SiH4(28Si-1H4)': 'OY2T',
+                    'SO(32S-16O)': 'SOLIS', 'SO2(32S-16O2)': 'ExoAmes', 'SO3(32S-16O3)': 'UYT2', 
+                    'PH3(31P-1H3)': 'SAlTY', 'CH3(12C-1H3)': 'AYYJ', 'AsH3(75As-1H3)': 'CYT18', 
                     'SiO2(28Si-16O2)': 'OYT3', 'HNO3(1H-14N-16O3)': 'AIJS', 'H2O2(1H2-16O2)': 'APTY',
                     'H2CO(1H2-12C-16O)': 'AYTY', 'C2H2(12C2-1H2)': 'aCeTY', 'C2H4(12C2-1H4)': 'MaYTY',
                     'P2H2(31P2-1H2)': 'Trans', 'HPPH(1H-31P2-1H)': 'Cis', 'CH3F(12C-1H3-19F)': 'OYKYT',
-                    'CH3Cl(12C-1H3-35Cl)': 'OYT', 'CO2(12C-16O2)': 'UCL-4000'}
+                    'CH3Cl(12C-1H3-35Cl)': 'OYT', 'CO2(12C-16O2)': 'UCL-4000', 'HCl(1H-35Cl)': 'HITRAN-HCl',
+                    'LiOH(7Li-16O-1H)': 'OYT7', 'CaOH(40Ca-16O-1H)': 'OYT6',
+                    }
 
     linelist = default_list.get(structure)
 
