@@ -688,7 +688,11 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             J_max, gamma_0_air, n_L_air = broadening.read_air(input_directory)
             
         elif broad_type == 'SB07':
-            broadening.create_SB07(input_directory)
+
+            # Create Sharp & Burrows broadening file if it doesn't already exist
+            if os.path.isfile(input_directory + 'SB07.broad') == False:
+                broadening.create_SB07(input_directory)
+            
             J_max, gamma_0_SB07 = broadening.read_SB07(input_directory)
             
         elif broad_type == 'custom' and broadening_file in os.listdir(input_directory):
