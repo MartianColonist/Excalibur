@@ -26,7 +26,6 @@ import excalibur.calculate as calculate
 
 from excalibur.misc import write_output, check_molecule
 
-
 def mass(species, isotopologue, linelist):
     """
     Determine the mass of a given chemical species-isotopologue combination
@@ -164,6 +163,7 @@ def load_pf(input_directory):
 def interpolate_pf(T_pf_raw, Q_raw, T, T_ref):
     '''
     Interpolate partition function to the temperature of the cross section computation.
+    RYAN
 
     Parameters
     ----------
