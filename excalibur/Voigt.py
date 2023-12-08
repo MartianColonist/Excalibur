@@ -247,8 +247,9 @@ def Generate_Voigt_grid_atoms(Voigt_arr, atom, nu_compute, nu_0, nu_detune, nu_F
         nu = nu_compute[idx_left[i]:idx_right[i]+1] - nu_0[i]
  
         # Use sub-Lorentzian wings for Na and K
-        if (((atom == 'Na') and (int(nu_0[i]) in [16978, 16960])) or
-            ((atom == 'K') and (int(nu_0[i]) in [13046, 12988]))): 
+     #   if (((atom == 'Na') and (int(nu_0[i]) in [16978, 16960])) or
+     #       ((atom == 'K') and (int(nu_0[i]) in [13046, 12988]))): 
+        if (atom in ['Na', 'K']):
 
             # Approximate area outside cutoff for renormalisation
             norm = 0.998  #  ~ 0.998 out to +/- 500 Voigt HWHM
@@ -306,14 +307,22 @@ def precompute_atoms(atom, nu_compute, m, T, gamma, nu_0, Voigt_cutoff, cut_max)
     cutoffs = np.minimum((Voigt_cutoff * gamma_V), cut_max)
     
     # Special treatment of line wings for alkali resonant lines (see Baudino + 2015)
+  #  if (atom == 'Na'):
+  #      cutoffs[np.where(nu_0.astype(np.int64) == 16973)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+  #      cutoffs[np.where(nu_0.astype(np.int64) == 16956)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+  #      nu_detune = 30.0 * np.power((T/500.0), 0.6)   # Detuning frequency
+  #      nu_F = 5000.0                                 # Fit parameter
+  #  elif (atom == 'K'):
+  #      cutoffs[np.where(nu_0.astype(np.int64) == 13042)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+  #      cutoffs[np.where(nu_0.astype(np.int64) == 12985)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+  #      nu_detune = 20.0 * np.power((T/500.0), 0.6)   # Detuning frequency
+  #      nu_F = 1600.0                                 # Fit parameter
     if (atom == 'Na'):
-        cutoffs[np.where(nu_0.astype(np.int64) == 16973)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
-        cutoffs[np.where(nu_0.astype(np.int64) == 16956)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
-        nu_detune = 30.0 * np.power((T/500.0), 0.6)   # Detuning requency
+        cutoffs[:] = 9000.0  # Cutoff at 9000 cm^-1
+        nu_detune = 30.0 * np.power((T/500.0), 0.6)   # Detuning frequency
         nu_F = 5000.0                                 # Fit parameter
     elif (atom == 'K'):
-        cutoffs[np.where(nu_0.astype(np.int64) == 13042)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
-        cutoffs[np.where(nu_0.astype(np.int64) == 12985)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+        cutoffs[:] = 9000.0  # Cutoff at 9000 cm^-1
         nu_detune = 20.0 * np.power((T/500.0), 0.6)   # Detuning frequency
         nu_F = 1600.0                                 # Fit parameter
     else:
@@ -337,7 +346,7 @@ def precompute_atoms(atom, nu_compute, m, T, gamma, nu_0, Voigt_cutoff, cut_max)
     # Zeros are left for any points beyond the cutoff (local N_Voigt_nu) to preserve regular array shape
     Voigt_arr = np.empty(shape=(len(nu_0), np.max(N_Voigt)))  # dtype = np.float32
 
-    # TBD: more efficient mememroy usage for alkali resonance lines    
+    # TBD: more efficient memory usage for alkali resonance lines    
  
     # Precompute Voigt profiles for each line on computational grid
     Generate_Voigt_grid_atoms(Voigt_arr, atom, nu_compute, nu_0, nu_detune, nu_F, 

@@ -309,10 +309,13 @@ def create_nu_grid_atom_OLD(atom, T, m, gamma, nu_0, Voigt_sub_spacing,
         if (cutoffs[i] >= cut_max): cutoffs[i] = cut_max
                 
         # Special cases for alkali resonant lines
-        if ((atom == 'Na') and (int(nu_0[i]) in [16978, 16960])):
-            cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
-        elif ((atom == 'K') and  (int(nu_0[i]) in [13046, 12988])): 
-            cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
+  #      if ((atom == 'Na') and (int(nu_0[i]) in [16978, 16960])):
+  #          cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
+  #      elif ((atom == 'K') and  (int(nu_0[i]) in [13046, 12988])): 
+  #          cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
+    if (atom in ['Na', 'K']):
+        cutoffs[i] = 9000.0
+
       
     # Calculate detuning frequencies for Na and K resonance lines (after Baudino+2015)
     if (atom == 'Na'): 
