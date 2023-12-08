@@ -307,13 +307,13 @@ def precompute_atoms(atom, nu_compute, m, T, gamma, nu_0, Voigt_cutoff, cut_max)
     
     # Special treatment of line wings for alkali resonant lines (see Baudino + 2015)
     if (atom == 'Na'):
-        cutoffs[np.where(nu_0.astype(np.int64) == 16978)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
-        cutoffs[np.where(nu_0.astype(np.int64) == 16960)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+        cutoffs[np.where(nu_0.astype(np.int64) == 16973)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+        cutoffs[np.where(nu_0.astype(np.int64) == 16956)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
         nu_detune = 30.0 * np.power((T/500.0), 0.6)   # Detuning requency
         nu_F = 5000.0                                 # Fit parameter
     elif (atom == 'K'):
-        cutoffs[np.where(nu_0.astype(np.int64) == 13046)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
-        cutoffs[np.where(nu_0.astype(np.int64) == 12988)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+        cutoffs[np.where(nu_0.astype(np.int64) == 13042)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
+        cutoffs[np.where(nu_0.astype(np.int64) == 12985)[0][0]] = 9000.0  # Cutoff at 9000 cm^-1
         nu_detune = 20.0 * np.power((T/500.0), 0.6)   # Detuning frequency
         nu_F = 1600.0                                 # Fit parameter
     else:
