@@ -160,7 +160,8 @@ def filter_pf(molecule, ionization_state, line_list_folder, VALD_data_dir):
     
 def process_VALD_file(species, ionization_state, VALD_data_dir):
     '''
-    Used on developers' end to get the necessary data from a VALD line list 
+    Used on developers' end to transform a raw VALD line list into the format
+    used by EXCALIBUR. 
 
     Parameters
     ----------
@@ -186,7 +187,7 @@ def process_VALD_file(species, ionization_state, VALD_data_dir):
 
     trans_file = [filename for filename in os.listdir(directory) if filename == (species + '_' + roman_ion + '_VALD.trans')]
 
-    wl = []
+    nu = []
     log_gf = []
     E_low = []
     E_up = []
@@ -218,7 +219,7 @@ def process_VALD_file(species, ionization_state, VALD_data_dir):
                 if (line[0] == '* oscillator strengths were scaled by the solar isotopic ratios.'): break
                 if ('BIBTEX ERROR' in line[0]): break
                 
-                wl.append(float(line[1]))   # Convert wavelengths to um
+                nu.append(float(line[1]))
                 log_gf.append(float(line[2]))
                 E_low.append(float(line[3]))
                 J_low.append(float(line[4]))
@@ -238,7 +239,7 @@ def process_VALD_file(species, ionization_state, VALD_data_dir):
                     lowercase_letters = [c for c in line[2] if c.islower()]
                     last_lower = lowercase_letters[len(lowercase_letters) - 1]
                     
-                    # Orbital angular momentum quntum numbers
+                    # Orbital angular momentum quantum numbers
                     if last_lower == 's': l_low.append(0)
                     elif last_lower == 'p': l_low.append(1)
                     elif last_lower == 'd': l_low.append(2)
@@ -259,7 +260,7 @@ def process_VALD_file(species, ionization_state, VALD_data_dir):
                     lowercase_letters = [c for c in line[2] if c.islower()]
                     last_lower = lowercase_letters[len(lowercase_letters) - 1]
 
-                    # Orbital angular momentum quntum numbers
+                    # Orbital angular momentum quantum numbers
                     if last_lower == 's': l_up.append(0)
                     elif last_lower == 'p': l_up.append(1)
                     elif last_lower == 'd': l_up.append(2)
@@ -270,19 +271,16 @@ def process_VALD_file(species, ionization_state, VALD_data_dir):
     f_in.close()
 
     # Reverse array directions for increasing wavenumber
-    wl = np.array(wl[::-1]) * 1.0e-4       # Convert angstrom to um
-    log_gf = np.array(log_gf[::-1])
-    E_low = np.array(E_low[::-1]) * 8065.547574991239  # Convert eV to cm^-1
-    E_up = np.array(E_up[::-1]) * 8065.547574991239
-    l_low = np.array(l_low[::-1])
-    l_up = np.array(l_up[::-1])
-    J_low = np.array(J_low[::-1])
-    J_up = np.array(J_up[::-1])
-    log_gamma_nat = np.array(log_gamma_nat[::-1])
-    log_gamma_vdw = np.array(log_gamma_vdw[::-1])
-
-    # Compute transition wavenumbers
-    nu = 1.0e4/np.array(wl)
+    nu = np.array(nu)              # The 'wavelengths' in the raw files are already wavenumbers in cm^-1
+    log_gf = np.array(log_gf)
+    E_low = np.array(E_low)        # Energies are already in units of cm^-1
+    E_up = np.array(E_up)
+    l_low = np.array(l_low)
+    l_up = np.array(l_up)
+    J_low = np.array(J_low)
+    J_up = np.array(J_up)
+    log_gamma_nat = np.array(log_gamma_nat)
+    log_gamma_vdw = np.array(log_gamma_vdw)
 
     # Open output file
     f_out = open(directory + species + '_' + roman_ion + '.trans','w')
