@@ -20,7 +20,7 @@ def read_cross_section_grid(species, database, log_P, T, ionization_state,
     N_PT = len(log_P) * len(T)
 
     if (database.lower() == 'vald'):
-        ion_append = + '_' + int_to_roman(ionization_state)
+        ion_append = '_' + int_to_roman(ionization_state)
     else:
         ion_append = ''
 
