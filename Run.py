@@ -13,26 +13,25 @@ species = 'NO'
 database = 'hitran'
 database2 = 'exomol'
 
-'''
 
-summon(database=database, species = species)  # Download line list
-summon(database=database2, species = species)  # Download line list
+#summon(database=database, species = species)  # Download line list
+#summon(database=database2, species = species)  # Download line list
 #summon(database=database, species = species2, VALD_data_dir = './VALD Line Lists/') # Download line list
 #summon(database=database, species = species3, VALD_data_dir = './VALD Line Lists/')  # Download line list
 #summon(database=database, species = species4, VALD_data_dir = './VALD Line Lists/', ionization_state=2)  # Download line list
 
-'''
+
 P = 1  # Pressure in bars
 T = 300  # Temperature in Kelvin
 input_directory = './input/' # Top level directory containing line lists
 
 # Make cross section for 12C-16O
 compute_cross_section(species = species, database = database,
-                                  temperature = T, pressure = P, input_dir = input_directory)
+                      temperature = T, pressure = P, input_dir = input_directory)
 
 # Make cross section for 12C-16O
 compute_cross_section(species = species, database = database2,
-                                  temperature = T, pressure = P, input_dir = input_directory)
+                      temperature = T, pressure = P, input_dir = input_directory)
 
 # Make cross section for 13C-16O
 #compute_cross_section(species = species, database = database, isotope = '13C-16O', linelist = 'Li2015', temperature = T, pressure = P, input_dir = input_directory)
@@ -48,6 +47,7 @@ nu, sigma = read_cross_section_file(species = species, database = database,
 
 nu2, sigma2 = read_cross_section_file(species = species, database = database2,
                                     filename = 'NO_T300K_log_P0.0_air_sigma.txt')
+
 '''
 nu2, sigma2 = read_cross_section_file(species = species2, database = database, 
                                       filename = 'K_I_T1000K_log_P0.0_H2-He_sigma.txt')
