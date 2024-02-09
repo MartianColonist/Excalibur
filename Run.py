@@ -16,6 +16,7 @@ database2 = 'exomol'
 
 #summon(database=database, species = species)  # Download line list
 #summon(database=database2, species = species)  # Download line list
+
 #summon(database=database, species = species2, VALD_data_dir = './VALD Line Lists/') # Download line list
 #summon(database=database, species = species3, VALD_data_dir = './VALD Line Lists/')  # Download line list
 #summon(database=database, species = species4, VALD_data_dir = './VALD Line Lists/', ionization_state=2)  # Download line list
