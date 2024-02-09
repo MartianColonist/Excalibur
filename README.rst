@@ -9,10 +9,10 @@
 
 **A Python Package for Calculating Molecular and Atomic Cross Sections for Exoplanet Atmospheres**
 
-Excalibur is a python package that allows users to effortlessly produce molecular
-and atomic cross sections to aid in their own research (especially for the creation of
-accurate atmospheric retrieval models). Excalibur is able to download line lists, compute cross
-sections while varying several atmospheric parameters, and plot the results. 
+Excalibur is a user-friendly python package to effortlessly produce molecular
+and atomic cross sections for exoplanet atmosphere and brown dwarf models. 
+Excalibur can automate the process of downloading line lists, and supports 
+line list computations in ExoMol, HITRAN, HITEMP, and VALD formats.
 
 Documentation
 -------------
@@ -24,13 +24,13 @@ can be found in the
 Attribution
 -----------
 
-If you use Excalibur in your work, the best citation (for now) is [LINK]. A JOSS paper
-describing this open source release is currently in prep.
+If you use Excalibur in your work, the best citation (for now) is [LINK]. 
+A JOSS paper describing this open source release is currently in prep.
 
 License
 -------
 
-Copyright 2022 Ryan J. MacDonald, Arnav Agrawal
+Copyright 2024 Ryan J. MacDonald, Arnav Agrawal
 
 Excalibur is available under the BSD 3-Clause License.
 Please see the LICENSE file for more information.
