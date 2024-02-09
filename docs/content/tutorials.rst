@@ -8,3 +8,4 @@ Tutorials
    notebooks/cross_section_diff_iso
    notebooks/cross_section_broadening
    notebooks/cross_section_atomic
+   notebooks/slurm_tutorial
