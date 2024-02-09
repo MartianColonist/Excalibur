@@ -5,9 +5,9 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="excalibur", # Replace with your own username
-    version="0.1.2",
+    version="0.9.0",
     author="Ryan MacDonald, Arnav Agrawal",
-    author_email="rmacdonald@astro.cornell.edu, aa687@cornell.edu",
+    author_email="ryanjmac@umich.edu, aa687@cornell.edu",
     description="A python package to calculate atomic and molecular cross sections for exoplanet atmospheres.",
 
     long_description=long_description,
