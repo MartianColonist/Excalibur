@@ -88,8 +88,8 @@ def compute_line_intensity_EXOMOL(A_trans, g_state, E_state, nu_0_trans, T, Q_T,
 @jit(nopython=True)
 def compute_line_intensity_HITRAN(S_ref, Q_T, Q_ref, T_ref, T, E_low, nu_0):
     
-    S = S_ref * (Q_ref/Q_T) * np.exp(-1.0*c2*E_low*((1.0/T) - (1.0/T_ref))) * ((1.0 - np.exp(-1.0*c2*nu_0/T))/(1.0 - np.exp(-1.0*c2*nu_0/T_ref)))
-        
+    S = S_ref * ((Q_ref/Q_T) * np.exp(-1.0*c2*E_low*((1.0/T) - (1.0/T_ref))) * 
+                 ((1.0 - np.exp(-1.0*c2*nu_0/T))/(1.0 - np.exp(-1.0*c2*nu_0/T_ref))))        
     return S
 
 @jit(nopython=True)
@@ -337,7 +337,7 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
                          alpha_sampled, m, T, Q_T, g_arr, E_arr, J_arr, J_max, 
                          N_Voigt, cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut, verbose):
     
-    
+
     # Initialise counters for number of completed transitions
     nu_0_tot = 0
     nu_0_completed = 0
@@ -401,9 +401,10 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         # Compute line intensities        
         S = compute_line_intensity_EXOMOL(A_arr, g_arr, E_arr, nu_0, T, Q_T, 
                                           upper_state, lower_state)
-            
+
         # Apply intensity cutoff
         nu_0 = nu_0[np.where(S>S_cut)]
+        J_low = J_low[np.where(S>S_cut)]
         S = S[np.where(S>S_cut)]
         
         # Delete tempory variables 
@@ -503,6 +504,7 @@ def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma,
         
         # Apply intensity cutoff
         nu_0 = nu_0[np.where(S>S_cut)]
+        J_low = J_low[np.where(S>S_cut)]
         S = S[np.where(S>S_cut)]
         
         # Delete tempory variables 

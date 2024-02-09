@@ -10,10 +10,9 @@ from bs4 import BeautifulSoup
 from scipy.interpolate import UnivariateSpline as Interp
 from .hapi import molecularMass, moleculeName, isotopologueName
 
-from .calculate import produce_total_cross_section_VALD_atom, bin_cross_section_atom
+from .calculate import produce_total_cross_section_VALD_atom
 
-from excalibur.constants import c, kb, u, P_ref, T_ref, \
-                                gamma_0_fixed, n_L_fixed
+from excalibur.constants import c, kb, u, P_ref, T_ref
 
 import excalibur.ExoMol as ExoMol
 import excalibur.HITRAN as HITRAN
@@ -71,25 +70,34 @@ def mass(species, isotopologue, linelist):
         
         # Atomic masses - Weighted average based on isotopic natural abundances found here: 
         # https://www.chem.ualberta.ca/~massspec/atomic_mass_abund.pdf
-        mass_dict = {'H': 1.00794072, 'He': 4.00260165, 'Li': 6.94003706, 'Be': 9.012182, 'B': 10.81102777,
-                     'C': 12.0107359, 'N': 14.00674309, 'O': 15.9994053, 'F': 18.998403, 'Ne': 20.1800463,
-                     'Na': 22.989770, 'Mg': 24.30505187, 'Al': 26.981538, 'Si': 28.0853852, 'P': 30.973762,
-                     'S': 32.06608499, 'Cl': 35.45653261, 'Ar': 39.94767659, 'K': 39.09830144, 
-                     'Ca': 40.07802266, 'Sc': 44.955910, 'Ti': 47.86674971, 'Va': 50.941472, 'Cr': 51.99613764,
-                     'Mn': 54.938050, 'Fe': 55.84515013, 'Co': 58.933200, 'Ni': 58.69335646, 'Cu': 63.5456439, 
-                     'Zn': 65.3955669, 'Ga': 69.72307155, 'Ge': 72.61275896, 'As': 74.921596, 'Se': 78.95938897,
-                     'Br': 79.90352862, 'Kr': 83.79932508, 'Rb': 85.46766375, 'Sr': 87.61664598, 
-                     'Y': 88.905848, 'Zr': 91.22364739, 'Nb': 92.906378, 'Mo': 95.93129084, 'Ru': 101.06494511,
+        mass_dict = {'H': 1.00794072, 'He': 4.00260165, 'Li': 6.94003706, 'Be': 9.012182, 
+                     'B': 10.81102777, 'C': 12.0107359, 'N': 14.00674309, 'O': 15.9994053, 
+                     'F': 18.998403, 'Ne': 20.1800463, 'Na': 22.989770, 'Mg': 24.30505187, 
+                     'Al': 26.981538, 'Si': 28.0853852, 'P': 30.973762, 'S': 32.06608499,
+                     'Cl': 35.45653261, 'Ar': 39.94767659, 'K': 39.09830144, 'Ca': 40.07802266, 
+                     'Sc': 44.955910, 'Ti': 47.86674971, 'V': 50.941472, 'Cr': 51.99613764,
+                     'Mn': 54.938050, 'Fe': 55.84515013, 'Co': 58.933200, 'Ni': 58.69335646, 
+                     'Cu': 63.5456439, 'Zn': 65.3955669, 'Ga': 69.72307155, 'Ge': 72.61275896, 
+                     'As': 74.921596, 'Se': 78.95938897, 'Br': 79.90352862, 'Kr': 83.79932508, 
+                     'Rb': 85.46766375, 'Sr': 87.61664598, 'Y': 88.905848, 'Zr': 91.22364739, 
+                     'Nb': 92.906378, 'Mo': 95.93129084, 'Tc': 97.907216, 'Ru': 101.06494511, 
                      'Rh': 102.905504, 'Pd': 106.41532721, 'Ag': 107.8681507, 'Cd': 112.41155267, 
                      'In': 114.81808585, 'Sn': 118.71011064, 'Sb': 121.7597883, 'Te': 127.60312538, 
                      'I': 126.904468, 'Xe': 131.29248065, 'Cs': 132.905447, 'Ba': 137.32688569, 
                      'La': 138.90544868, 'Ce': 140.11572155, 'Pr': 140.907648, 'Nd': 144.23612698, 
-                     'Sm': 149.46629229, 'Eu': 151.96436622, 'Gd': 157.25211925, 'Tb': 158.925343, 
-                     'Dy': 162.49703004, 'Ho': 164.930319, 'Er': 167.25630107, 'Tm': 168.934211, 
-                     'Yb': 173.0376918, 'Lu': 174.96671757, 'Hf': 178.48497094, 'Ta': 180.94787594, 
-                     'W': 183.84177868, 'Re': 186.20670567, 'Os': 190.22755215, 'Ir': 192.21605379, 
-                     'Pt': 194.73875746, 'Au': 196.966552, 'Hg': 200.59914936, 'Tl': 204.38490867, 
-                     'Pb': 207.21689158, 'Bi': 208.980383, 'Th': 232.038050, 'Pa': 231.035879, 'U': 238.02891307
+                     'Pm': 144.912744, 'Sm': 149.46629229, 'Eu': 151.96436622, 'Gd': 157.25211925, 
+                     'Tb': 158.925343, 'Dy': 162.49703004, 'Ho': 164.930319, 'Er': 167.25630107, 
+                     'Tm': 168.934211, 'Yb': 173.0376918, 'Lu': 174.96671757, 'Hf': 178.48497094, 
+                     'Ta': 180.94787594, 'W': 183.84177868, 'Re': 186.20670567, 'Os': 190.22755215, 
+                     'Ir': 192.21605379, 'Pt': 194.73875746, 'Au': 196.966552, 'Hg': 200.59914936, 
+                     'Tl': 204.38490867, 'Pb': 207.21689158, 'Bi': 208.980383, 'Po': 208.980383,
+                     'At': 209.987131, 'Rn': 222.017570, 'Fr': 223.019731, 'Ra': 226.025403,
+                     'Ac': 227.027747, 'Th': 232.038050, 'Pa': 231.035879, 'U': 238.02891307,
+                     'Np': 237.048167, 'Pu': 244.064198, 'Am': 243.061373, 'Cm': 247.070347,
+                     'Bk': 247.070299, 'Cf': 251.079580, 'Es': 252.082972, 'Fm': 257.095099,
+                     'Md': 258.098425, 'No': 259.101024, 'Lr': 262.109692, 'Rf': 263.118313,
+                     'Db': 262.011437, 'Sg': 266.012238, 'Bh': 264.012496, 'Hs': 269.001341,
+                     'Mt': 268.001388, 
                      }
         
         return mass_dict.get(species)
@@ -101,14 +109,18 @@ def mass(species, isotopologue, linelist):
         isotopologue = isotopologue.replace(')', '')
 
         url = 'http://exomol.com/data/molecules/' + species + '/' + isotopologue + '/' + linelist + '/'
-        
+
         # Parse the webpage to find the .def file and read it
         web_content = requests.get(url).text
         soup = BeautifulSoup(web_content, "lxml")
         def_tag = soup.find('a', href = re.compile("def"))
-        #new_url = 'http://exomol.com' + def_tag.get('href') //// this code was prior to the href tag for the .def files changing randomly
-        new_url = 'http://www.exomol.com/db/' + species + '/' + isotopologue + '/' + linelist + '/' + def_tag.get_text()
-        #new_url = url + def_tag.get('href')  //// code that should work but I have no idea why it doesn't
+        new_url = url + def_tag.get('href')
+        
+        ### If the code above breaks again for some reason, one of these lines may fix the problem:
+                #new_url = 'http://exomol.com' + def_tag.get('href') //// this code was prior to the href tag for the .def files changing randomly
+                #new_url = 'http://www.exomol.com/db/' + species + '/' + isotopologue + '/' + linelist + '/' + def_tag.get_text()
+                #new_url = url + def_tag.get('href')  //// code that should work but I have no idea why it doesn't
+        
         
         out_file = './def'
         with requests.get(new_url, stream=True) as request:
@@ -303,10 +315,13 @@ def create_nu_grid_atom_OLD(atom, T, m, gamma, nu_0, Voigt_sub_spacing,
         if (cutoffs[i] >= cut_max): cutoffs[i] = cut_max
                 
         # Special cases for alkali resonant lines
-        if ((atom == 'Na') and (int(nu_0[i]) in [16978, 16960])):
-            cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
-        elif ((atom == 'K') and  (int(nu_0[i]) in [13046, 12988])): 
-            cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
+  #      if ((atom == 'Na') and (int(nu_0[i]) in [16978, 16960])):
+  #          cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
+  #      elif ((atom == 'K') and  (int(nu_0[i]) in [13046, 12988])): 
+  #          cutoffs[i] = 9000.0   # Cutoff @ +/- 9000 cm^-1
+    if (atom in ['Na', 'K']):
+        cutoffs[i] = 9000.0
+
       
     # Calculate detuning frequencies for Na and K resonance lines (after Baudino+2015)
     if (atom == 'Na'): 
@@ -499,11 +514,15 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
     print("\nLine list ready.\n")
     
     
-def compute_cross_section(input_dir, database, species, temperature, pressure = None, log_pressure = None, isotope = 'default', 
-                          ionization_state = 1, linelist = 'default', cluster_run = False, 
-                          nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, broad_type = 'default', broadening_file = '',
-                          X_H2 = 0.85, X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
-                          N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, N_cores = 1, verbose = True, **kwargs):
+def compute_cross_section(input_dir, database, species, temperature, pressure = None, 
+                          log_pressure = None, isotope = 'default', ionization_state = 1, 
+                          linelist = 'default', cluster_run = False, set_mass = None,
+                          nu_out_min = 200, nu_out_max = 25000, dnu_out = 0.01, 
+                          broad_type = 'default', broadening_file = '',
+                          gamma_0_fixed = 0.07, n_L_fixed = 0.50, X_H2 = 0.85, 
+                          X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
+                          N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, 
+                          N_cores = 1, verbose = True, **kwargs):
     '''
     
     Main function to compute cross section, given that the requisite line list has already been downloaded.
@@ -577,7 +596,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     # Configure numba to parallelise with the user specified number of cores
     numba.set_num_threads(N_cores)
     
-    if pressure == None and log_pressure == None:
+    if pressure is None and log_pressure is None:
         print("\nYou need to specify a pressure to run the cross section computation. Please try again.")
         sys.exit(0)
     
@@ -588,12 +607,13 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         log_pressure = np.array(log_pressure)
         pressure = np.power(10, log_pressure)
     else:
-        if not isinstance(pressure, list):  
+        if not isinstance(pressure, np.ndarray) and not isinstance(pressure, list):  
             pressure = [pressure]
         pressure = np.array(pressure)
+        log_pressure = np.log10(pressure)
     
-    if not isinstance(temperature, list):  
-        temperature = [temperature]
+    if not isinstance(temperature, np.ndarray) and not isinstance(temperature, list):  
+        temperature = np.array([temperature])
         
     # Cast all temperatures and pressures to floats
     for i in range(len(pressure) - 1):
@@ -638,7 +658,10 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     T_pf_raw, Q_raw = load_pf(input_directory)
     
     # Find mass of the species
-    m = mass(species, isotopologue, linelist) * u
+    if (set_mass is None):
+        m = mass(species, isotopologue, linelist) * u
+    else:
+        m = set_mass * u
     
     # Check if we have a molecule or an atom
     is_molecule = check_molecule(species)
@@ -674,7 +697,11 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             J_max, gamma_0_air, n_L_air = broadening.read_air(input_directory)
             
         elif broad_type == 'SB07':
-            broadening.create_SB07(input_directory)
+
+            # Create Sharp & Burrows broadening file if it doesn't already exist
+            if os.path.isfile(input_directory + 'SB07.broad') == False:
+                broadening.create_SB07(input_directory)
+            
             J_max, gamma_0_SB07 = broadening.read_SB07(input_directory)
             
         elif broad_type == 'custom' and broadening_file in os.listdir(input_directory):
@@ -702,8 +729,8 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                                               Gamma_vdw, alkali, m)
     
     #***** Load pressure and temperature for this calculation *****#
-    P_arr = pressure  # Pressure array (bar)
-    T_arr = np.array(temperature)  # Temperature array (K)
+    P_arr = pressure     # Pressure array (bar)
+    T_arr = temperature  # Temperature array (K)
     
     # If conducting a batch run on a cluster
     if (cluster_run == True):

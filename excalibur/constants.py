@@ -2,8 +2,8 @@ import scipy.constants as sc
 
 #***** Pressure broadening settings *****#
 
-gamma_0_fixed = 0.07    # If fixed broadening chosen, use this Lorentzian HWHM
-n_L_fixed = 0.50        # If fixed broadening chosen, use this temperature exponent
+#gamma_0_fixed = 0.07    # If fixed broadening chosen, use this Lorentzian HWHM
+#n_L_fixed = 0.50        # If fixed broadening chosen, use this temperature exponent
 
 T_ref = 296.0   # Reference temperature for broadening parameters
 P_ref = 1.0     # Reference temperature for EXOMOL broadening parameters (bar) - HITRAN conversion from atm already pre-handled
