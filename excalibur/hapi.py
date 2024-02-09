@@ -33469,7 +33469,7 @@ def BD_TIPS_2021_PYTHON(M,I,T):
     TT = TIPS_2021_ISOT_HASH[(M,I)]
     Tmin = min(TT); Tmax = max(TT)
 
-    print("Tmax ", Tmax)
+    #print("Tmax ", Tmax)
     # out of temperature range
     if T<Tmin or T>Tmax:
         raise Exception('TIPS2021: T(%.1fK) must be between %.1fK and %.1fK.'%(T,Tmin,Tmax))

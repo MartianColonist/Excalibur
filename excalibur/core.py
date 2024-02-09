@@ -25,7 +25,6 @@ import excalibur.calculate as calculate
 
 from excalibur.misc import write_output, check_molecule
 
-
 def mass(species, isotopologue, linelist):
     """
     Determine the mass of a given chemical species-isotopologue combination
@@ -117,6 +116,12 @@ def mass(species, isotopologue, linelist):
         def_tag = soup.find('a', href = re.compile("def"))
         new_url = url + def_tag.get('href')
         
+        ### If the code above breaks again for some reason, one of these lines may fix the problem:
+                #new_url = 'http://exomol.com' + def_tag.get('href') //// this code was prior to the href tag for the .def files changing randomly
+                #new_url = 'http://www.exomol.com/db/' + species + '/' + isotopologue + '/' + linelist + '/' + def_tag.get_text()
+                #new_url = url + def_tag.get('href')  //// code that should work but I have no idea why it doesn't
+        
+        
         out_file = './def'
         with requests.get(new_url, stream=True) as request:
             with open(out_file, 'wb') as file:
@@ -170,6 +175,7 @@ def load_pf(input_directory):
 def interpolate_pf(T_pf_raw, Q_raw, T, T_ref):
     '''
     Interpolate partition function to the temperature of the cross section computation.
+    RYAN
 
     Parameters
     ----------
