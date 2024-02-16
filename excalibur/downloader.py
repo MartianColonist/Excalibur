@@ -130,7 +130,8 @@ def HITEMP_table():
     Returns
     -------
     hitemp : DataFrame
-        Recreated version of the table seen on the HITEMP main page.
+        Recreated version of the table seen on the HITEMP main page 
+        (i.e., the table here: https://hitran.org/hitemp/)
 
     """
     
@@ -198,8 +199,8 @@ def HITEMP_table():
 
 
 def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
-    """
-    Download a line list(s) from the HITEMP database
+    '''
+    Download a line list from the HITEMP database
 
     Parameters
     ----------
@@ -214,7 +215,7 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
     -------
     None.
 
-    """
+    '''
     
     
     table = HITEMP_table() # Re-create HITEMP table in order to download the line list
@@ -276,7 +277,7 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
     
             fname = fnames[counter]
             
-            if check_HITEMP_file_exists(out_folder, fname) == ' par':
+            if check_HITEMP_file_exists(out_folder, fname) == 'par':
                 print("This file is already downloaded. Moving on.")
                 counter += 1
                 continue
@@ -325,6 +326,22 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
                 counter += 1
         
 def check_HITEMP_file_exists(folder, file):
+    '''
+    Check to see if a given HITEMP file already exists. This is to ensure that HITEMP downloads that stall midway 
+    through, for whatever reason, don't have to restart from the first line list.
+
+    Parameters
+    ----------
+    folder : String
+        Local directory where file is to be stored.
+    file : String
+        File name.
+
+    Returns
+    -------
+    String
+        Return a String which is either 'par', 'hdf', or 'neither' depending on which file type of this exists, if at all.
+    '''
     matches = re.search('\_([^_]*)', file)  # Everything in between the first 2 underscores (inclusive of the first underscore)
     match = matches.group() # Retrieve the match from match object
     match = match[1:] # Get rid of the first underscore
@@ -353,10 +370,26 @@ def check_HITEMP_file_exists(folder, file):
     else:
         return 'neither'
 
-def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False, 
-                   database = '', **kwargs):
-    """
+def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False, 
+                   database = ''):
+    '''
     Convert a given file to HDF5 format
+
+    Parameters
+    ----------
+    file : String, optional
+        File name. The default is ''.
+    mol_ID : int, optional
+        HITRAN/HITEMP molecule ID. The default is 0.
+    iso_ID : int, optional
+        HITRAN/HITEMP isotopologue ID. The default is 0.
+    alkali : bool, optional
+        Whether or not the species is an alkali metal. The default is False.
+    database : String, optional
+        Database that the line list came from. The default is ''.
+    '''
+    """
+    
 
     Parameters
     ----------
