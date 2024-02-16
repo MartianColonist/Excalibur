@@ -27,12 +27,12 @@ from excalibur.misc import write_output, check_molecule
 
 def mass(species, isotopologue, linelist):
     """
-    Determine the mass of a given chemical species-isotopologue combination
+    Determine the mass of a given chemical species-isotopologue combination in atomic mass units (amu).
 
     Parameters
     ----------
     species : String
-        Molecule we are calculating the mass for.
+        Molecule/atom we are calculating the mass for.
     isotopologue : String
         Isotopologue of the species we are calculating the mass for.
     linelist : String
@@ -41,12 +41,12 @@ def mass(species, isotopologue, linelist):
 
     Returns
     -------
-    int
-        Mass of the given species-isotopologue combination.
+    float
+        Mass in amu of the given species-isotopologue combination.
 
     """
     
-    # Determine the mass or HITRAN and HITEMP species by using built-in molecularMass() function in hapi.py
+    # Determine the mass of HITRAN and HITEMP species by using built-in molecularMass() function in hapi.py
     if linelist == 'hitran' or linelist == 'hitemp':
         mol_ID = 1
         while moleculeName(mol_ID) != species:
@@ -151,9 +151,9 @@ def load_pf(input_directory):
     Returns
     -------
     T_pf_raw : numpy array
-        DESCRIPTION.
+        RYAN.
     Q_raw : numpy array
-        DESCRIPTION.
+        RYAN.
 
     '''
     
@@ -180,20 +180,20 @@ def interpolate_pf(T_pf_raw, Q_raw, T, T_ref):
     Parameters
     ----------
     T_pf_raw : TYPE
-        DESCRIPTION.
+        RYAN.
     Q_raw : TYPE
-        DESCRIPTION.
+        RYAN.
     T : TYPE
-        DESCRIPTION.
+        RYAN.
     T_ref : TYPE
-        DESCRIPTION.
+        RYAN.
 
     Returns
     -------
     Q_T : TYPE
-        DESCRIPTION.
+        RYAN.
     Q_T_ref : TYPE
-        DESCRIPTION.
+        RYAN.
 
     '''
     
@@ -228,56 +228,56 @@ def create_nu_grid_atom_OLD(atom, T, m, gamma, nu_0, Voigt_sub_spacing,
     Parameters
     ----------
     atom : TYPE
-        DESCRIPTION.
+        RYAN.
     T : TYPE
-        DESCRIPTION.
+        RYAN.
     m : TYPE
-        DESCRIPTION.
+        RYAN.
     gamma : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_0 : TYPE
-        DESCRIPTION.
+        RYAN.
     Voigt_sub_spacing : TYPE
-        DESCRIPTION.
+        RYAN.
     dnu_out : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_out_min : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_out_max : TYPE
-        DESCRIPTION.
+        RYAN.
     Voigt_cutoff : TYPE
-        DESCRIPTION.
+        RYAN.
     cut_max : TYPE
-        DESCRIPTION.
+        RYAN.
 
     Returns
     -------
     sigma_fine : TYPE
-        DESCRIPTION.
+        RYAN.
     sigma_out : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_detune : TYPE
-        DESCRIPTION.
+        RYAN.
     N_points_fine : TYPE
-        DESCRIPTION.
+        RYAN.
     N_Voigt_points : TYPE
-        DESCRIPTION.
+        RYAN.
     alpha : TYPE
-        DESCRIPTION.
+        RYAN.
     cutoffs : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_min : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_max : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_fine_start : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_fine_end : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_out : TYPE
-        DESCRIPTION.
+        RYAN.
     N_points_out : TYPE
-        DESCRIPTION.
+        RYAN.
 
     '''
     
@@ -351,21 +351,21 @@ def create_nu_grid_atom_OLD(atom, T, m, gamma, nu_0, Voigt_sub_spacing,
 
 def create_nu_grid(nu_out_min, nu_out_max, dnu_out):
     '''
-    
+    RYAN
 
     Parameters
     ----------
     nu_out_min : TYPE
-        DESCRIPTION.
+        RYAN.
     nu_out_max : TYPE
-        DESCRIPTION.
+        RYAN.
     dnu_out : TYPE
-        DESCRIPTION.
+        RYAN.
 
     Returns
     -------
     nu_compute : TYPE
-        DESCRIPTION.
+        RYAN.
 
     '''
 
@@ -381,10 +381,9 @@ def create_nu_grid(nu_out_min, nu_out_max, dnu_out):
     
 
 def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
-           linelist = 'default', ionization_state = 1, **kwargs):
+           linelist = 'default', ionization_state = 1):
     '''
-    Makes calls to other downloader files to retrieve the data from the desired database
-
+    Makes calls to other downloader files to retrieve data from the desired database
 
     Parameters
     ----------
@@ -395,20 +394,21 @@ def summon(database = '', species = '', isotope = 'default', VALD_data_dir = '',
     isotope : String, optional
         Isotopologue of the molecular species. For ExoMol, this is specified on the webpage. For HITRAN/HITEMP use 
         1 for the most naturally abundant isotopologue, 2 for the next most abundant, etc. The default is 'default'.
+    VALD_data_dir : String, optional
+        Local directory where the VALD line list is stored. The default is ''.
     linelist : String, optional
         Species line list to download. Used mainly for ExoMol, where there are multiple line lists for the same species.
         For HITRAN/HITEMP/VALD, the line list is just the name of the database. The default is 'default'.
     ionization_state : int, optional
         Ionization state to be used, in case of an atomic species. A neutral atom corresponds to an ionization state
         of 1. The default is 1.
-    **kwargs : TYPE
-        DESCRIPTION.
 
     Returns
     -------
     None.
 
     '''
+
     
     # If the user has specified a chemical species and line list database, they do not want to be guided via the terminal
     # and we set user_prompt = False
@@ -522,7 +522,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                           gamma_0_fixed = 0.07, n_L_fixed = 0.50, X_H2 = 0.85, 
                           X_He = 0.15, Voigt_cutoff = 500, Voigt_sub_spacing = (1.0/6.0), 
                           N_alpha_samples = 500, S_cut = 1.0e-100, cut_max = 30.0, 
-                          N_cores = 1, verbose = True, **kwargs):
+                          N_cores = 1, verbose = True):
     '''
     
     Main function to compute cross section, given that the requisite line list has already been downloaded.
@@ -552,38 +552,47 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         For HITRAN/HITEMP/VALD, the line list is just the name of the database. The default is 'default'.
     cluster_run : bool, optional
         DESCRIPTION. The default is False.
-    nu_out_min : TYPE, optional
-        DESCRIPTION. The default is 200.
-    nu_out_max : TYPE, optional
-        DESCRIPTION. The default is 25000.
-    dnu_out : TYPE, optional
-        DESCRIPTION. The default is 0.01.
-    broad_type : TYPE, optional
-        DESCRIPTION. The default is 'default'.
-    X_H2 : TYPE, optional
-        DESCRIPTION. The default is 0.85.
-    X_He : TYPE, optional
-        DESCRIPTION. The default is 0.15.
-    Voigt_cutoff : TYPE, optional
-        DESCRIPTION. The default is 500.
-    Voigt_sub_spacing : TYPE, optional
-        DESCRIPTION. The default is (1.0/6.0).
-    N_alpha_samples : TYPE, optional
-        DESCRIPTION. The default is 500.
-    S_cut : TYPE, optional
-        DESCRIPTION. The default is 1.0e-100.
-    cut_max : TYPE, optional
-        DESCRIPTION. The default is 30.0.
-    N_cores : TYPE, optional
-        DESCRIPTION. The default is 1.
-    **kwargs : TYPE
-        DESCRIPTION.
+    set_mass : double, optional
+        Mass of the species in atomic mass units (amu). The default is None.
+    nu_out_min : double, optional
+        Minimum wavenumber for which the cross section is computed. The default is 200.
+    nu_out_max : double, optional
+        Maximum wavenumber for which the cross section is computed.. The default is 25000.
+    dnu_out : double, optional
+        RYAN. The default is 0.01.
+    broad_type : String, optional
+        Type of pressure broadening to be used in the computation. The default is 'default'.
+    broadening_file : String, optional
+        Broadening file to be used for the calculation. Usually used for custom broadening files. The default is ''.
+    gamma_0_fixed : double, optional
+        RYAN. The default is 0.07. 
+    n_L_fixed : double, optional
+        RYAN. The default is 0.50.
+    X_H2 : double, optional
+        RYAN. The default is 0.85.
+    X_He : double, optional
+        RYAN. The default is 0.15.
+    Voigt_cutoff : double, optional
+        RYAN. The default is 500.
+    Voigt_sub_spacing : double, optional
+        RYAN. The default is (1.0/6.0).
+    N_alpha_samples : RYAN, optional
+        RYAN. The default is 500.
+    S_cut : double, optional
+        RYAN. The default is 1.0e-100.
+    cut_max : double, optional
+        RYAN. The default is 30.0.
+    N_cores : int, optional
+        Number of parallel cores to be used in the computation. The default is 1.
+    verbose : bool, optional
+        Controls whether or not intermittent print statements are displayed relaying the status of the cross section computation.
+        The default is True.
 
     Returns
     -------
-    nu_out : TYPE
-        DESCRIPTION.
-    sigma_out : TYPE
+    nu_out : double
+        Wavenumber .
+    sigma_out : double
         DESCRIPTION.
 
     '''

@@ -55,11 +55,11 @@ def write_broadening_file(broadening_file, data, input_dir, species, database, i
         Name of molecule or atom.
     database : String
         Database line list was downloaded from.
-    isotope : String
+    isotope : String, optional
        Isotopologue of the species, if a molecule. The default is `default`. 
-    ionization_state : int
+    ionization_state : int, optional
         Ionization state of the species, if an atom. The default is 1. 
-    linelist : String
+    linelist : String, optional
         Line list of the species. ExoMol has named line lists, the other databases do not. The default is `default`. 
 
     Returns
@@ -130,16 +130,16 @@ def read_H2_He(input_directory):
 
     Returns
     -------
-    J_max : TYPE
-        DESCRIPTION.
-    gamma_0_H2 : TYPE
-        DESCRIPTION.
-    n_L_H2 : TYPE
-        DESCRIPTION.
-    gamma_0_He : TYPE
-        DESCRIPTION.
-    n_L_He : TYPE
-        DESCRIPTION.
+    J_max : float
+        RYAN.
+    gamma_0_H2 : numpy array
+        RYAN.
+    n_L_H2 : numpy array
+        RYAN.
+    gamma_0_He : numpy array
+        RYAN.
+    n_L_He : numpy array
+        RYAN.
 
     '''
 
@@ -189,12 +189,12 @@ def read_air(input_directory):
 
     Returns
     -------
-    J_max : TYPE
-        DESCRIPTION.
-    gamma_0_air : TYPE
-        DESCRIPTION.
-    n_L_air : TYPE
-        DESCRIPTION.
+    J_max : float
+        RYAN.
+    gamma_0_air : numpy array
+        RYAN.
+    n_L_air : numpy array
+        RYAN.
 
     '''
 
@@ -219,10 +219,10 @@ def read_SB07(input_directory):
 
     Returns
     -------
-    J_max : TYPE
-        DESCRIPTION.
-    gamma_0_SB07 : TYPE
-        DESCRIPTION.
+    J_max : float
+        RYAN.
+    gamma_0_SB07 : numpy array
+        RYAN.
 
     '''
 
@@ -247,12 +247,12 @@ def read_custom(input_directory, broadening_file):
 
     Returns
     -------
-    J_max : TYPE
-        DESCRIPTION.
-    gamma_0_air : TYPE
-        DESCRIPTION.
-    n_L_air : TYPE
-        DESCRIPTION.
+    J_max : float
+        RYAN.
+    gamma_0_air : numpy array
+        RYAN.
+    n_L_air : numpy array
+        RYAN.
 
     '''
 
@@ -274,11 +274,11 @@ def gamma_L_VALD(gamma_vdw, m_s, broadener):
     Parameters
     ----------
     gamma_vdw : float
-        van der Waals parameter from VALD.
+        Van der Waals parameter from VALD.
     m_s : float
-        mass of species whose spectral line is being broadened (u).
-    broadener : str
-        identity of broadening species (H2 or He).
+        Mass of species whose spectral line is being broadened (u).
+    broadener : String
+        Identity of broadening species (H2 or He).
 
     Returns
     -------
@@ -327,11 +327,11 @@ def gamma_L_impact(E_low, E_up, l_low, l_up, species, m_s, broadener):
         Lower level orbital angular momentum.
     l_up : int
         Upper level orbital angular momentum.
-    species : str
+    species : String
         Identity of species whose spectral line is being broadened.
     m_s : float
         Mass of species whose spectral line is being broadened (u).
-    broadener : str
+    broadener : String
         Identity of broadening species (H2 or He).
 
     Returns
@@ -387,34 +387,34 @@ def gamma_L_impact(E_low, E_up, l_low, l_up, species, m_s, broadener):
 def read_atom(species, nu_0, gf, E_low, E_up, J_low, l_low, l_up,
               gamma_nat, gamma_vdw, alkali, m):
     '''
-    DESCRIPTION
+    RYAN
 
     Parameters
     ----------
-    species : TYPE
-        DESCRIPTION.
+    species : String
+        Name of atomic species, i.e. 'H' for hydrogen.
     nu_0 : TYPE
-        DESCRIPTION.
+        RYAN.
     gf : TYPE
-        DESCRIPTION.
+        RYAN.
     E_low : TYPE
-        DESCRIPTION.
+        RYAN.
     E_up : TYPE
-        DESCRIPTION.
+        RYAN.
     J_low : TYPE
-        DESCRIPTION.
+        RYAN.
     l_low : TYPE
-        DESCRIPTION.
+        RYAN.
     l_up : TYPE
-        DESCRIPTION.
+        RYAN.
     gamma_nat : TYPE
-        DESCRIPTION.
+        RYAN.
     gamma_vdw : TYPE
-        DESCRIPTION.
+        RYAN.
     alkali : TYPE
-        DESCRIPTION.
+        RYAN.
     m : TYPE
-        DESCRIPTION.
+        RYAN.
 
     Returns
     -------
@@ -458,35 +458,35 @@ def read_atom(species, nu_0, gf, E_low, E_up, J_low, l_low, l_up,
 
 def compute_H2_He(gamma_0_H2, T_ref, T, n_L_H2, P, P_ref, X_H2, gamma_0_He, n_L_He, X_He):
     '''
-    DESCRIPTION
+    DESCRIPTION - RYAN
 
     Parameters
     ----------
     gamma_0_H2 : TYPE
-        DESCRIPTION.
+        RYAN.
     T_ref : TYPE
-        DESCRIPTION.
+        RYAN.
     T : TYPE
-        DESCRIPTION.
+        RYAN.
     n_L_H2 : TYPE
-        DESCRIPTION.
+        RYAN.
     P : TYPE
-        DESCRIPTION.
+        RYAN.
     P_ref : TYPE
-        DESCRIPTION.
+        RYAN.
     X_H2 : TYPE
-        DESCRIPTION.
+        RYAN.
     gamma_0_He : TYPE
-        DESCRIPTION.
+        RYAN.
     n_L_He : TYPE
-        DESCRIPTION.
+        RYAN.
     X_He : TYPE
-        DESCRIPTION.
+        RYAN.
 
     Returns
     -------
     gamma : TYPE
-        DESCRIPTION.
+        RYAN.
 
     '''
     gamma = (gamma_0_H2 * np.power((T_ref/T), n_L_H2) * (P/P_ref) * X_H2 +   # H2+He Lorentzian HWHM for given T, P, and J (ang. mom.)
@@ -496,27 +496,27 @@ def compute_H2_He(gamma_0_H2, T_ref, T, n_L_H2, P, P_ref, X_H2, gamma_0_He, n_L_
 
 def compute_air(gamma_0_air, T_ref, T, n_L_air, P, P_ref):
     '''
-    DESCRIPTION
+    DESCRIPTION - RYAN
 
     Parameters
     ----------
     gamma_0_air : TYPE
-        DESCRIPTION.
+        RYAN.
     T_ref : TYPE
-        DESCRIPTION.
+        RYAN.
     T : TYPE
-        DESCRIPTION.
+        RYAN.
     n_L_air : TYPE
-        DESCRIPTION.
+        RYAN.
     P : TYPE
-        DESCRIPTION.
+        RYAN.
     P_ref : TYPE
-        DESCRIPTION.
+        RYAN.
 
     Returns
     -------
     gamma : TYPE
-        DESCRIPTION.
+        RYAN.
 
     '''
     gamma = (gamma_0_air * np.power((T_ref/T), n_L_air) * (P/P_ref))      # Air-broadened Lorentzian HWHM for given T, P, and J (ang. mom.)
@@ -525,21 +525,21 @@ def compute_air(gamma_0_air, T_ref, T, n_L_air, P, P_ref):
 
 def compute_SB07(gamma_0_SB07, P, P_ref):
     '''
-    DESCRIPTION
+    DESCRIPTION - RYAN
 
     Parameters
     ----------
     gamma_0_SB07 : TYPE
-        DESCRIPTION.
+        RYAN.
     P : TYPE
-        DESCRIPTION.
+        RYAN.
     P_ref : TYPE
-        DESCRIPTION.
+        RYAN.
 
     Returns
     -------
     gamma : TYPE
-        DESCRIPTION.
+        RYAN.
 
     '''
     gamma = (gamma_0_SB07 * (P/P_ref))      # Equation (15) in Sharp & Burrows (2007)

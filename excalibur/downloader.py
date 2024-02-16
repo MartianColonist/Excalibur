@@ -130,7 +130,8 @@ def HITEMP_table():
     Returns
     -------
     hitemp : DataFrame
-        Recreated version of the table seen on the HITEMP main page.
+        Recreated version of the table seen on the HITEMP main page 
+        (i.e., the table here: https://hitran.org/hitemp/)
 
     """
     
@@ -198,8 +199,8 @@ def HITEMP_table():
 
 
 def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
-    """
-    Download a line list(s) from the HITEMP database
+    '''
+    Download a line list from the HITEMP database
 
     Parameters
     ----------
@@ -214,7 +215,7 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
     -------
     None.
 
-    """
+    '''
     
     
     table = HITEMP_table() # Re-create HITEMP table in order to download the line list
@@ -276,7 +277,7 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
     
             fname = fnames[counter]
             
-            if check_HITEMP_file_exists(out_folder, fname) == ' par':
+            if check_HITEMP_file_exists(out_folder, fname) == 'par':
                 print("This file is already downloaded. Moving on.")
                 counter += 1
                 continue
@@ -325,6 +326,22 @@ def download_HITEMP_line_list(mol_ID, iso_ID, out_folder):
                 counter += 1
         
 def check_HITEMP_file_exists(folder, file):
+    '''
+    Check to see if a given HITEMP file already exists. This is to ensure that HITEMP downloads that stall midway 
+    through, for whatever reason, don't have to restart from the first line list.
+
+    Parameters
+    ----------
+    folder : String
+        Local directory where file is to be stored.
+    file : String
+        File name.
+
+    Returns
+    -------
+    String
+        Return a String which is either 'par', 'hdf', or 'neither' depending on which file type of this exists, if at all.
+    '''
     matches = re.search('\_([^_]*)', file)  # Everything in between the first 2 underscores (inclusive of the first underscore)
     match = matches.group() # Retrieve the match from match object
     match = match[1:] # Get rid of the first underscore
@@ -353,21 +370,30 @@ def check_HITEMP_file_exists(folder, file):
     else:
         return 'neither'
 
-def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False, 
-                   database = '', **kwargs):
-    """
+def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False, 
+                   database = ''):
+    '''
     Convert a given file to HDF5 format
 
     Parameters
     ----------
-    file : String
-        Name of file to be converted to HDF5 format.
+    file : String, optional
+        File name. The default is ''.
+    mol_ID : int, optional
+        HITRAN/HITEMP molecule ID. The default is 0.
+    iso_ID : int, optional
+        HITRAN/HITEMP isotopologue ID. The default is 0.
+    alkali : bool, optional
+        Whether or not the species is an alkali metal. The default is False.
+    database : String, optional
+        Database that the line list came from. The default is ''.
 
     Returns
     -------
     None.
 
-    """
+    '''
+
     
     start_time = time.time()
     
@@ -503,8 +529,7 @@ def convert_to_hdf(file = '', mol_ID = '', iso_ID = '', alkali = False,
     
 
 def create_directories(molecule = '', isotopologue = '', line_list = '', database = '',
-                       mol_ID = 0, iso_ID = 0, ionization_state = 1, VALD_data_dir = '',
-                       **kwargs):
+                       mol_ID = 0, iso_ID = 0, ionization_state = 1, VALD_data_dir = ''):
     '''
     Create new folders on local machine to store the relevant data
 
@@ -512,18 +537,20 @@ def create_directories(molecule = '', isotopologue = '', line_list = '', databas
     ----------
     molecule : String, optional
         Molecule name. The default is ''.
-    isotope : String, optional
+    isotopologue : String, optional
         Isotopologue name. The default is ''.
     line_list : String, optional
         Species line list. For HITRAN, HITEMP, and VALD, the line list is the same as the database. The default is ''.
+    database : String, optional
+        Database the line list was derived from. The default is ''.
     mol_ID : int, optional
         Molecular ID number as specified on HITRAN / HITEMP. The default is 0.
     iso_ID : int, optional
         Isotopologue ID number as specified on HITRAN / HITEMP. The default is 0.
     ionization_state : int, optional
         Ionization state of atomic species. The default is 1.
-    **kwargs : TYPE
-        DESCRIPTION.
+    VALD_data_dir : String, optional
+        Local directory VALD line list is stored in. The default is ''.
 
     Returns
     -------
@@ -602,7 +629,7 @@ def create_directories(molecule = '', isotopologue = '', line_list = '', databas
      
 
 def calc_num_ExoMol_trans(html_tags):
-    """
+    '''
     Calculate the number of .trans files in the line list
 
     Parameters
@@ -615,7 +642,7 @@ def calc_num_ExoMol_trans(html_tags):
     counter : int
         Number of .trans files in the line list.
 
-    """
+    '''
     counter = 0
     for tag in html_tags:
         if tag.get('href').find('trans') != -1:
@@ -666,7 +693,7 @@ def iterate_ExoMol_tags(tags, l_folder, line_list):
     Parameters
     ----------
     tags : list
-        DESCRIPTION.
+        List containing all the html tags.
     l_folder : String
         Local directory where the line list is to be stored.
     line_list : String
@@ -703,20 +730,22 @@ def iterate_ExoMol_tags(tags, l_folder, line_list):
    
         
 def find_input_dir(input_dir, database, molecule, isotope, ionization_state, linelist):
-    """
+    '''
     Find the directory on a user's machine that contains the data needed to create a cross-section
 
     Parameters
     ----------
     input_dir : String
         'Prefix' of the directory containing the line list files. If the files were downloaded
-        using our Download_Line_List.py script, input_dir will end in '/input'
+        using our defaults scripts, input_dir will be './input' relative to the Excalibur main folder.
     database : String
         Database the line list was downloaded from.
     molecule : String
         Molecule for which the cross-section is to be created.
     isotope : String
         Isotopologue of the molecule for which the cross-section is to be created.
+    ionization_state : int
+        Ionization state of the atom (neutral atom is 1).
     linelist : String
         Line list that is being used. HITRAN/HITEMP/VALD used as the line list name for these 
         databases respectively. ExoMol has its own named line lists.
@@ -726,7 +755,7 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
     input_directory : String
         Local directory containing line list and other important data (e.g. broadening files) for computing cross section.
 
-    """
+    '''
     
     if database in ['hitran', 'hitemp']:
         molecule_dict = HITRAN.create_id_dict()
@@ -796,22 +825,24 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
 
 
 def parse_directory(directory, database):
-    """
+    '''
     Determine which linelist and isotopologue this directory contains data for (assumes data was downloaded using our script)
 
     Parameters
     ----------
     directory : String
-        Local directory containing the line list file[s], broadening data, and partition function
+        Local directory containing the line list file[s], broadening data, and partition function.
+    database : String
+        Database line list is derived from.
 
     Returns
     -------
-    molecule : String
-        Molecule for which the cross-section is to be calculated.
     linelist : String
         Line list for which the cross-section is to be calculated.
+    isotopologue : String
+        Molecular isotopologue for which the cross-section is to be calculated.
 
-    """
+    '''
     
     directory_name = os.path.abspath(directory)
     linelist = os.path.basename(directory_name)
