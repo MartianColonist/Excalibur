@@ -1,5 +1,5 @@
 ---
-title: '`Excalibur`: Description'
+title: '`Excalibur`: An Open Source Molecular and Atomic Cross Section Computation Code for Substellar Atmospheres'
 tags:
   - Python
   - astronomy
@@ -11,7 +11,7 @@ tags:
 authors:
   - name: Arnav Agrawal
     orcid:
-    affiliation: "4"
+    affiliation: "3"
   - name: Ryan J. MacDonald
     orcid: 0000-0003-4816-3469
     affiliation: "1, 2, 3"
@@ -22,23 +22,20 @@ affiliations:
     index: 2
   - name: Department of Astronomy and Carl Sagan Institute, Cornell University, 122 Sciences Drive, Ithaca, NY 14853, USA
     index: 3
-  - name: Cornell University, Ithaca, NY 14853, USA
-    index: 4
 date:
 bibliography: paper.bib
-
-aas-doi: 
-aas-journal: Astrophysical Journal
 
 --- 
 
 # Summary
 
-The field of exoplanet research is quickly growing and requires software that can keep up with the demands of new scientific data. Powerful new telescopes, such as the James Webb Space Telescope (JWST), are able to capture in detail the transmission spectra of exoplanets by measuring the fraction of light the planet blocks as it crosses in front of its host star. By comparing observed transmission spectra to known models, scientists are able to learn about the planet's atmosphere, chemical composition, and more.  However, in order for the spectra to be useful, scientists must have accurate models to compare to. The process for creating these models has historically been convoluted and inaccessible for researchers. The core input of these models is the effective size of an atom or molecule at different wavelengths, which we term the cross section. Atomic and molecular cross sections are derived from line lists- complex data sets that contain multitudes of quantitative information on the way an atom or molecule interacts with different wavelengths of light. Line lists, and the cross sections they generate, are essential in devising models to study exoplanetary atmospheres. 
+Atmospheric studies of exoplanets and brown dwarfs are a cutting-edge and rapidly-evolving area of astrophysics research. Powerful new telescopes, such as the James Webb Space Telescope (JWST) and the upcoming Extremely Large Telescopes (ELTs), are able to capture in detail spectra of planets and brown dwarfs and thereby probe their chemical composition and physical properties. Calculating models of exoplanet or brown dwarf spectra requires knowledge of the wavelength-dependent absorption of light (cross sections) by the molecules and atoms in the atmosphere. Without accurate cross sections, one cannot reliably measure the chemical composition of substellar atmospheres. 
 
-Excalibur is a Python package that opens up the world of cross sections for the average researcher. It allows scientists to download atomic and molecular line lists from online databases, compute cross sections with various factor spaces, and create beautiful plots of the cross sections. With in-depth tutorials and instructive scientific explanations, Excalibur is intended not just as a research package, but as an educational tool. 
+Cross sections are typically pre-computed on a grid of pressure and temperatures from large databases of quantum mechanical transitions (line lists), such as ExoMol [@Tennyson:2020], HITRAN [@Gordon:2022], HITEMP [@Rothman:2010], and VALD [@Pakhomov:2017]. However, the process of calculating cross sections from line lists is often computationally demanding and has required complex and specialized tools. We aim here to lower the access barrier for users to learn how to calculate molecular and atomic cross sections. 
 
-# Computing and Plotting Cross Sections with Excalibur
+`Excalibur` is a fully Python package that rapidly calculates cross sections from atomic and molecular line lists. `Excalibur` includes modules to automatically download molecular line lists from online databases and compute cross sections on a user-specified temperature, pressure, and wavenumber grid. `Excalibur` requires only CPUs and can run on a user's laptop (for smaller line lists) or on a large cluster in parallel (for billions of lines). `Excalibur` includes in-depth Jupyter tutorials in the online documentation. Finally, `Excalibur` is intended not only for research purposes, but as an educational tool to demystify the process of making cross sections for atmospheric models.
+
+# Computing Molecular and Atomic Cross Sections with Excalibur
  The overall architecture and workflow of the Excalibur package is diagrammed in \autoref{fig:EXCALIBUR_architecture}. We walk through this flowchart, describe each of the 3 major functions that Excalibur performs, and explain Excalibur's role in the broader process of modelling
  exoplanetary atmospheres.
 
