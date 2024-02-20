@@ -4,7 +4,7 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="excalibur", # Replace with your own username
+    name="Excalibur", # Replace with your own username
     version="0.9.0",
     author="Ryan MacDonald, Arnav Agrawal",
     author_email="ryanjmac@umich.edu, aa687@cornell.edu",
@@ -12,7 +12,7 @@ setuptools.setup(
 
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/arnav-agrawal/excalibur-alpha",
+    url="https://github.com/MartianColonist/Excalibur",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

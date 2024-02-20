@@ -1,9 +1,9 @@
-.. Excalibur-alpha documentation master file, created by
+.. Excalibur documentation master file, created by
    sphinx-quickstart on Thu Aug 27 17:19:57 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Excalibur-alpha's documentation.
+Excalibur's documentation.
 =============================================
 
 Welcome to Excalibur! 
@@ -22,7 +22,8 @@ Excalibur's features currently include:
 
 If this is your first time using Excalibur, please proceed to the Introduction page on the sidebar.
 
-Excalibur is available under the BSD 3-Clause License. If you use Excalibur in your own work, please cite [INSERT CITATION].
+Excalibur is available under the BSD 3-Clause License. If you use Excalibur in your own work, 
+please cite Agrawal & MacDonald (2024).
 
 .. toctree::
    :maxdepth: 1

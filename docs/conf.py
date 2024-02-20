@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Excalibur-alpha'
+project = 'Excalibur'
 copyright = '2024, Arnav Agrawal, Ryan MacDonald'
 author = 'Arnav Agrawal, Ryan MacDonald'
 master_doc = 'index'
