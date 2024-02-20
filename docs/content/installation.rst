@@ -1,15 +1,22 @@
 Installation
 ------------
 
-As a user, you only have to follow 3 steps, all of which can be done from the command line.
+You enter the room with great trepidation, fearing another tortuous installation process.
+
+Well fear not, ye brave knight of the round table, for only 3 steps must be followed 
+to wield the power of Excalbur.
 
 .. code-block:: bash
 
-    git clone https://github.com/arnav-agrawal/excalibur-alpha
-    cd excalibur-alpha
-    pip install .
+    git clone https://github.com/MartianColonist/Excalibur
+    cd Excalibur
+    pip install -e .
 
-These steps clone the package from GitHub, navigate the user into the correct directory, and install Excalibur
-using pip. Congratulations, you have installed Excalibur! You will now be able to run Excalibur on your local computer.
+These steps clone the package from GitHub, navigate the user into the correct directory, 
+and install Excalibur using pip. 
 
-For examples showing how to use Excalibur after the installation step, look at the `Getting Started <https://excalibur-alpha.readthedocs.io/en/latest/content/getting_started.html>`_ page.
+Congratulations, you have installed Excalibur!
+
+Should you be ready to face with courage the dragon of cross sections, proceed
+to 
+`Getting Started <https://excalibur-xsec.readthedocs.io/en/latest/content/getting_started.html>`_.
