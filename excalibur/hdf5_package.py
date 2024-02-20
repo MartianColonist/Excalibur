@@ -135,13 +135,16 @@ def make_single_species_HDF5(species, database, linelist, log_P, T,
     print(species + " done")
 
 
-def extend_HDF5_database(species):
+def extend_HDF5_database(database_name, species):
     '''
     Add a chemical species from an individual HDF5 file to the combined database.
     '''
     
-    # Load composite opacity HDF5 database
-    HDF5_database_all = h5py.File('./Opacity_database_0.01cm-1.hdf5', 'r+')
+    # If database doesn't already exist, create file, otherwise load existing database
+    if (os.path.isfile('./' + database_name)):
+        HDF5_database_all = h5py.File('./' + database_name, 'w')
+    else:
+        HDF5_database_all = h5py.File('./' + database_name, 'r+')
 
     # Load HDF5 file for species to add to composite database
     HDF5_database_species = h5py.File('./output/HDF5/' + species + '.hdf5', 'r')
