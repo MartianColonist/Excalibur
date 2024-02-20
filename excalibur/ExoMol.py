@@ -41,7 +41,7 @@ def check(molecule, isotope = '', linelist = ''):
 
 
 def get_default_iso(molecule):
-    """
+    '''
     Returns the default (most abundant on Earth) isotopologue given a molecule
 
     Parameters
@@ -54,7 +54,7 @@ def get_default_iso(molecule):
     default_iso : String
         Most abundant isotopologue of the given molecule.
 
-    """
+    '''
 
     if molecule == 'H2_p':  # Handle H2+ on ExoMol
         default_iso = '1H-2H_p'
@@ -160,7 +160,7 @@ def get_default_linelist(molecule, isotopologue):
 
 
 def determine_linelist():
-    """
+    '''
     Determines the desired molecular line list from ExoMol from user input
 
     Returns
@@ -174,7 +174,7 @@ def determine_linelist():
     website : String
         ExoMol website URL containing download links for the line list.
 
-    """
+    '''
 
     website = "http://exomol.com/data/molecules/"
 
@@ -233,7 +233,7 @@ def determine_linelist():
 
 
 def process_files(input_dir):
-    """
+    '''
     Processes the .broad and .pf files downloaded from ExoMol into a format that Excalibur can read to create cross-sections
 
     Parameters
@@ -245,7 +245,7 @@ def process_files(input_dir):
     -------
     None.
 
-    """
+    '''
 
     for file in os.listdir(input_dir):
         if file.endswith('.broad'): # Takes relevant data (the three arrays below) from the .broad file and reformats it
@@ -317,7 +317,7 @@ def process_files(input_dir):
 
 
 def load_states(input_directory):
-    """
+    '''
     Read in the '.states' file downloaded from ExoMol
 
     Parameters
@@ -328,14 +328,14 @@ def load_states(input_directory):
 
     Returns
     -------
-    E : TYPE
-        DESCRIPTION.
-    g : TYPE
-        DESCRIPTION.
-    J : TYPE
-        DESCRIPTION.
+    E : numpy array
+        RYAN.
+    g : numpy array
+        RYAN.
+    J : numpy array
+        RYAN.
 
-    """
+    '''
 
     # Read in states file (EXOMOL only)
     states_file_name = [filename for filename in os.listdir(input_directory) if filename.endswith('.states')]
@@ -350,7 +350,7 @@ def load_states(input_directory):
 
 
 def summon_ExoMol(molecule, isotopologue, line_list, URL):
-    """
+    '''
     Main function, uses calls to other functions to perform the download
 
     Parameters
@@ -368,7 +368,7 @@ def summon_ExoMol(molecule, isotopologue, line_list, URL):
     -------
     None.
 
-    """
+    '''
 
     line_list_folder = download.create_directories(molecule = molecule, isotopologue = isotopologue,
                                                    line_list = line_list, database = 'ExoMol')
