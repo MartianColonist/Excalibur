@@ -4,7 +4,7 @@ Installation
 You enter the room with great trepidation, fearing another tortuous installation process.
 
 Well fear not, ye brave knight of the round table, for only 3 steps must be followed 
-to wield the power of Excalbur.
+to wield the power of Excalibur.
 
 .. code-block:: bash
 
