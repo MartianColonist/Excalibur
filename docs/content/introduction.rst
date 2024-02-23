@@ -4,9 +4,9 @@ Introduction
 This page is split into two sections. The first part assumes that the user has
 little, if any, prior knowledge of molecular and atomic cross sections.
 It explains what a cross section is, how it is calculated, and why it is useful.
-The second part bullet points the many functions that the Excalibur package
-can perform. Even for more knowledgeable users, we recommend taking
-the extra few minutes to read both sections when working with Excalibur for the first time.
+The second part outlines the many functions that the Excalibur package
+can perform. Even for more knowledgeable users, we recommend taking a few minutes 
+to read both sections when working with Excalibur for the first time.
 
 Part 1: A Beginner's Guide to Cross Sections
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
