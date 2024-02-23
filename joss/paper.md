@@ -4,24 +4,28 @@ tags:
   - Python
   - astronomy
   - exoplanets
+  - cross sections
+  - line lists
+  - opacities
   - spectroscopy
-  - atmospheric retrieval
-  - atmospheric models
   - JWST
 authors:
   - name: Arnav Agrawal
-    orcid:
-    affiliation: "3"
+    orcid: 0000-0003-2944-0600
+    affiliation: "1, 2"
   - name: Ryan J. MacDonald
     orcid: 0000-0003-4816-3469
-    affiliation: "1, 2, 3"
+    affiliation: "3, 4, 2"
 affiliations:
-  - name: Department of Astronomy, University of Michigan, 1085 S. University Ave., Ann Arbor, MI 48109, USA
+  - name: Johns Hopkins Applied Physics Laboratory, 11100 Johns Hopkins Rd., Laurel, MD 20723, USA
     index: 1
-  - name: NHFP Sagan Fellow
-    index: 2
   - name: Department of Astronomy and Carl Sagan Institute, Cornell University, 122 Sciences Drive, Ithaca, NY 14853, USA
+    index: 2
+  - name: Department of Astronomy, University of Michigan, 1085 S. University Ave., Ann Arbor, MI 48109, USA
     index: 3
+  - name: NHFP Sagan Fellow
+    index: 4
+
 date:
 bibliography: paper.bib
 
