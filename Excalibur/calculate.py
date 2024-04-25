@@ -391,10 +391,10 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         lower_state = lower_state[order]  # Apply reordering to lower states
         A_arr = A_arr[order]              # Apply reordering to Einstein A coefficients
 
-        J_low = np.zeros(len(J_arr))
+        J_low = np.zeros(len(lower_state))
         
         # Store lower state J values for identifying appropriate broadening parameters
-        for i in range(len(J_arr)):
+        for i in range(len(lower_state)):
             J_low[i] = J_arr[np.where(states == lower_state[i])[0]]
         
     #   J_low = J_arr[lower_state-1]
