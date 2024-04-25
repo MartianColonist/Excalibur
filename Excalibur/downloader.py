@@ -417,40 +417,63 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
     elif (database in ['HITRAN', 'HITEMP']): # Read file downloaded from HITRAN/HITEMP, keep relevant data, 
                                              # and store data in a new HDF5 file
         
-        # Different HITRAN formats for different molecules leads us to read in .par files w/ different field widths
+        # Different HITRAN2020 formats for different molecules leads us to read in .par files with different field widths
+        # See https://hitran.org/media/refs/HITRAN_QN_formats.pdf
         
-        if mol_ID in {1, 3, 9, 12, 20, 21, 25, 29, 31, 32, 35, 37, 38}:  # Group 1
+        # Group 1
+        if mol_ID in {1, 3, 9, 10, 12, 20, 21, 25, 29, 31, 32, 33, 35, 37, 38, 49}:
             field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 3, 3, 5, 1, 6, 12, 1, 7, 7]
             J_col = 13
-            
-        elif mol_ID in {10, 33}:  # Group 1 - Handle HO2 and NO2 J_cols seperately, since HITRAN provides N instead of J
-            field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 3, 3, 5, 1, 6, 12, 1, 7, 7]
-            J_col = 13
-            Sym_col = 17
+            if mol_ID in {10, 33}:  # Handle HO2 and NO2 J_cols separately, since HITRAN provides N instead of J
+                Sym_col = 17
         
-        elif mol_ID in {2, 4, 5, 14, 15, 16, 17, 19, 22, 23, 26, 36}:  # Group 2
-            field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 5, 1, 3, 1, 5, 6, 12, 1, 7, 7]
-            J_col = 15
-            
-        elif (mol_ID == 6 and iso_ID in {1, 2}) or mol_ID == 30:  # Group 3
+        # Group 2
+        elif mol_ID in {2, 4, 5, 14, 15, 16, 17, 19, 22, 23, 26, 36, 44, 45, 46, 48, 53, 43}:
+            if mol_ID == 43:   # C4H2 format exception
+                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 2, 2, 2, 2, 1, 1, 3, 1, 1, 6, 12, 1, 7, 7]
+                J_col = 19
+            else:
+                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 5, 1, 3, 1, 5, 6, 12, 1, 7, 7]
+                J_col = 15
+
+        # Group 3 
+        elif (mol_ID == 6 and iso_ID in {1, 2}) or mol_ID in {30, 42, 52}:
             field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 2, 3, 2, 3, 5, 6, 12, 1, 7, 7]
             J_col = 14
             
-        elif mol_ID in {11, 24, 27, 28, 39} or (mol_ID == 6 and iso_ID in {3, 4}):  # Group 4
-            field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 3, 2, 2, 1, 4, 6, 12, 1, 7, 7]
-            J_col = 13
-            
-        elif mol_ID == 7:  # Group 5
+        # Group 4
+        elif mol_ID in {11, 24, 27, 28, 39, 40, 41, 51, 54, 55} or (mol_ID == 6 and iso_ID in {3, 4}):
+            if mol_ID == 11 and iso_ID == 1:   # 14-NH3 format exception
+                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 2, 3, 2, 1, 3, 3, 1, 6, 12, 1, 7, 7]
+                J_col = 13
+            elif mol_ID == 27:   # C2H6 format exception
+                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 3, 2, 3, 4, 6, 12, 1, 7, 7]
+                J_col = 13
+            else:
+                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 3, 2, 2, 1, 4, 6, 12, 1, 7, 7]
+                J_col = 13
+        
+        # Group 5
+        elif mol_ID == 47:
+            field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 3, 3, 2, 3, 1, 6, 12, 1, 7, 7]
+            J_col = 14
+
+        # Group 6
+        elif mol_ID in {7, 50}:  
             field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 1, 1, 3, 1, 3, 5, 1, 6, 12, 1, 7, 7]
             J_col = 17
             
-        elif mol_ID in {8, 18}:  # Group 6
-            field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 1, 5, 1, 5, 6, 12, 1, 7, 7]
-            J_col = 15
-        
-        elif mol_ID in {13}: # Group 7 - OH
-            field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 5, 2, 5, 6, 12, 1, 7, 7]
-            J_col = 14
+        # Group 7
+        elif mol_ID in {8, 18, 13}:
+            if mol_ID in {8, 18}:     # No and ClO formats
+                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 2, 2, 5, 1, 5, 6, 12, 1, 7, 7]
+                J_col = 15
+            elif mol_ID in {13}:      # OH format
+                field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 1, 2, 5, 2, 5, 6, 12, 1, 7, 7]
+                J_col = 15
+
+        else:
+            raise Exception("Error: the molecule symmetry for HITRAN ID " + str(mol_ID) + " is not currently implemented in Excalibur")
         
         trans_file = pd.read_fwf(file, widths=field_lengths, header=None)
             

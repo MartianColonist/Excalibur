@@ -22,7 +22,7 @@ def create_id_dict():
     mol_ID = []
     mol_name = []
     
-    for i in range(1, 50):
+    for i in range(1, 55):
         
         if i == 35: # Skip 35 since moleculeName(35) throws an error from hapi.py
             continue
