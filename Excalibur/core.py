@@ -8,22 +8,22 @@ import sys
 import numba
 from bs4 import BeautifulSoup
 from scipy.interpolate import UnivariateSpline as Interp
-from .hapi import molecularMass, moleculeName, isotopologueName
+from hapi.hapi import molecularMass, moleculeName, isotopologueName
 
 from .calculate import produce_total_cross_section_VALD_atom
 
-from excalibur.constants import c, kb, u, P_ref, T_ref
+from Excalibur.constants import c, kb, u, P_ref, T_ref
 
-import excalibur.ExoMol as ExoMol
-import excalibur.HITRAN as HITRAN
-import excalibur.HITEMP as HITEMP
-import excalibur.VALD as VALD
-import excalibur.downloader as download
-import excalibur.broadening as broadening
-import excalibur.Voigt as Voigt
-import excalibur.calculate as calculate
+import Excalibur.ExoMol as ExoMol
+import Excalibur.HITRAN as HITRAN
+import Excalibur.HITEMP as HITEMP
+import Excalibur.VALD as VALD
+import Excalibur.downloader as download
+import Excalibur.broadening as broadening
+import Excalibur.Voigt as Voigt
+import Excalibur.calculate as calculate
 
-from excalibur.misc import write_output, check_molecule
+from Excalibur.misc import write_output, check_molecule
 
 def mass(species, isotopologue, linelist):
     """

@@ -7,11 +7,11 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter, \
                               ScalarFormatter, NullFormatter, LogLocator
 from scipy.ndimage import gaussian_filter1d
 
-from excalibur.misc import round_sig_figs
+from Excalibur.misc import round_sig_figs
 
-from .hapi import isotopologueName
-import excalibur.HITRAN as HITRAN
-import excalibur.ExoMol as ExoMol
+from hapi.hapi import isotopologueName
+import Excalibur.HITRAN as HITRAN
+import Excalibur.ExoMol as ExoMol
 import sys
 import csv
 import re

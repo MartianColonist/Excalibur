@@ -5,10 +5,10 @@ import re
 import os
 import csv
 
-import excalibur.HITRAN as HITRAN
-import excalibur.ExoMol as ExoMol
+import Excalibur.HITRAN as HITRAN
+import Excalibur.ExoMol as ExoMol
 
-from .hapi import isotopologueName
+from hapi.hapi import isotopologueName
 
 def check_molecule(molecule):
     """

@@ -3,9 +3,9 @@ import os
 import numpy as np
 import h5py
 import re
-from excalibur.hapi import partitionSum, moleculeName, isotopologueName
+from hapi.hapi import partitionSum, moleculeName, isotopologueName
 
-import excalibur.downloader as download
+import Excalibur.downloader as download
 
 
 def create_id_dict():

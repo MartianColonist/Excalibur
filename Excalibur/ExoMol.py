@@ -6,7 +6,7 @@ import shutil
 import pandas as pd
 import numpy as np
 
-import excalibur.downloader as download
+import Excalibur.downloader as download
 
 
 

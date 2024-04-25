@@ -2,8 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 
-from excalibur.constants import Ryd, u
-from excalibur.downloader import find_input_dir
+from Excalibur.constants import Ryd, u
+from Excalibur.downloader import find_input_dir
 
 def det_broad(input_directory):
     '''

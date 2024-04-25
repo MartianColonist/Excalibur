@@ -1,1 +1,1 @@
-__name__ = 'excalibur'
+__name__ = 'Excalibur'

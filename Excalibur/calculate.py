@@ -20,8 +20,8 @@ from numba import prange
 import time
 import h5py
 
-from excalibur.constants import kb, c, c2, m_e, pi, T_ref
-import excalibur.Voigt as Voigt
+from Excalibur.constants import kb, c, c2, m_e, pi, T_ref
+import Excalibur.Voigt as Voigt
    
 
 @jit(nopython=True)

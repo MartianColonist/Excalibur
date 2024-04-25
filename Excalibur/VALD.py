@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import h5py
 
-import excalibur.downloader as download
+import Excalibur.downloader as download
 
 
 def check(atom, ion, VALD_data_dir):

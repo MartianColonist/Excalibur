@@ -7,7 +7,7 @@ import h5py
 from tqdm import tqdm
 from datetime import date
 
-from excalibur.misc import read_cross_section_file, int_to_roman
+from Excalibur.misc import read_cross_section_file, int_to_roman
 
 
 def read_cross_section_grid(species, database, log_P, T, ionization_state,
