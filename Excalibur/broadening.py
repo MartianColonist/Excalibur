@@ -101,10 +101,10 @@ def create_SB07(input_directory):
 
     # Initialise total arrays
     J = np.arange(31.0)          # Total angular momentum
-    gamma_L_0 = np.zeros(31)     # Lorentizian HWHM at P_ref and T_ref
+    gamma_L_0 = np.zeros(31)     # Lorentzian HWHM at P_ref and T_ref
     n_L = np.zeros(31)           # Temperature exponent
 
-    # Implement Eq. 15 from S&B07 (wihout division by 2, as already HWHM)
+    # Implement Eq. 15 from S&B07 (without division by 2, as already HWHM)
     for i in range(len(J)):
         gamma_L_0[i] = (0.1 - min(J[i], 30) * 0.002) / 1.01325
 
@@ -147,6 +147,7 @@ def read_H2_He(input_directory):
     broad_file_H2 = pd.read_csv(input_directory + 'H2.broad',
                                 sep = ' ', header=None, skiprows=1)
     J_max_H2 = int(np.max(np.array(broad_file_H2[0])))
+    J_broad_all_H2 = np.array(broad_file_H2[0])
     gamma_0_H2 = np.array(broad_file_H2[1])
     n_L_H2 = np.array(broad_file_H2[2])
 
@@ -154,6 +155,7 @@ def read_H2_He(input_directory):
     broad_file_He = pd.read_csv(input_directory + 'He.broad',
                                 sep = ' ', header=None, skiprows=1)
     J_max_He = int(np.max(np.array(broad_file_He[0])))
+    J_broad_all_He = np.array(broad_file_He[0])
     gamma_0_He = np.array(broad_file_He[1])
     n_L_He = np.array(broad_file_He[2])
 
@@ -163,19 +165,23 @@ def read_H2_He(input_directory):
     # If broadening files not of same length, extend shortest file to same length as longest
     if (J_max_H2 < J_max):
 
+        J_broad_all = J_broad_all_He
+
         for i in range (J_max_H2, J_max):
 
-            gamma_0_H2 = np.append(gamma_0_H2, gamma_0_H2[-1])    # Extended values equal to final value
-            n_L_H2 = np.append(n_L_H2, n_L_H2[-1])                # Extended values equal to final value
+            gamma_0_H2 = np.append(gamma_0_H2, gamma_0_H2[-1])   # Extended values equal to final value
+            n_L_H2 = np.append(n_L_H2, n_L_H2[-1])               # Extended values equal to final value
 
     if (J_max_He < J_max):
+
+        J_broad_all = J_broad_all_H2
 
         for i in range (J_max_He, J_max):
 
             gamma_0_He = np.append(gamma_0_He, gamma_0_He[-1])    # Extended values equal to final value
             n_L_He = np.append(n_L_He, n_L_He[-1])                # Extended values equal to final value
 
-    return J_max, gamma_0_H2, n_L_H2, gamma_0_He, n_L_He
+    return J_max, J_broad_all, gamma_0_H2, n_L_H2, gamma_0_He, n_L_He
 
 
 def read_air(input_directory):
@@ -201,11 +207,13 @@ def read_air(input_directory):
     # Read in air broadening file
     broad_file_air = pd.read_csv(input_directory + 'air.broad',
                                  sep = ' ', header=None, skiprows = 1)
+
     J_max = int(np.max(np.array(broad_file_air[0])))
+    J_broad_all = np.array(broad_file_air[0])
     gamma_0_air = np.array(broad_file_air[1])
     n_L_air = np.array(broad_file_air[2])
 
-    return J_max, gamma_0_air, n_L_air
+    return J_max, J_broad_all, gamma_0_air, n_L_air
 
 
 def read_SB07(input_directory):
@@ -230,10 +238,11 @@ def read_SB07(input_directory):
     broad_file_SB07 = pd.read_csv(input_directory + 'SB07.broad',
                                            sep = ' ', header=None, skiprows=1)
     J_max = int(np.max(np.array(broad_file_SB07[0])))
+    J_broad_all = np.array(broad_file_SB07[0])
     gamma_0_SB07 = np.array(broad_file_SB07[1])
     #n_L_SB07 = np.array(broad_file_SB07[2])       # Not really needed, as temperature exponent = 0 for all J''
 
-    return J_max, gamma_0_SB07
+    return J_max, J_broad_all, gamma_0_SB07
 
 
 def read_custom(input_directory, broadening_file):
@@ -260,10 +269,11 @@ def read_custom(input_directory, broadening_file):
     broad_file_custom = pd.read_csv(input_directory + broadening_file,
                                     sep = ' ', header=None, skiprows = 1)
     J_max = int(np.max(np.array(broad_file_custom[0])))
+    J_broad_all = np.array(broad_file_custom[0])
     gamma_0_air = np.array(broad_file_custom[1])
     n_L_air = np.array(broad_file_custom[2])
 
-    return J_max, gamma_0_air, n_L_air
+    return J_max, J_broad_all, gamma_0_air, n_L_air
 
 
 def gamma_L_VALD(gamma_vdw, m_s, broadener):

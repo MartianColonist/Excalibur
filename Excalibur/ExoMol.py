@@ -340,13 +340,14 @@ def load_states(input_directory):
     # Read in states file (EXOMOL only)
     states_file_name = [filename for filename in os.listdir(input_directory) if filename.endswith('.states')]
     states_file = pd.read_csv(input_directory + states_file_name[0], sep = '\s+', header=None, usecols=[0,1,2,3])
+    states = np.array(states_file[0])
     E = np.array(states_file[1])
     g = np.array(states_file[2])
-    J = np.array(states_file[3]).astype(np.int64)
+    J = np.array(states_file[3]) #.astype(np.int64)
 
     del states_file  # Delete file to free up memory
 
-    return E, g, J
+    return states, E, g, J
 
 
 def summon_ExoMol(molecule, isotopologue, line_list, URL):

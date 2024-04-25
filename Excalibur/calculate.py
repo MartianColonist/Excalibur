@@ -118,40 +118,43 @@ def compute_line_intensity(A, g_upper, E_lower, nu_0, T, Q):
 
     
 @jit(nopython=True, parallel=True)
-def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, alpha, 
-                          log_alpha, alpha_sampled, log_alpha_sampled,
+def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all, 
+                          alpha, log_alpha, alpha_sampled, log_alpha_sampled,
                           N_Voigt, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, dnu_out):
     
-    # Store variables that are constant acros all lines to save lookup time
+    # Store variables that are constant across all lines to save lookup time
     N_grid = len(nu_grid)
     nu_grid_min = nu_grid[0]
     nu_grid_max = nu_grid[-1]
     log_alpha_sampled_min = log_alpha_sampled[0]
     log_alpha_sampled_max = log_alpha_sampled[-1]
     N_log_alpha_sampled = len(log_alpha_sampled)
-    
+
     # For each transition
     for i in prange(len(nu_0)):
-        
-        # Store commonly used quantities as variabls to save lookup time
+
+        # Store commonly used quantities as variables to save lookup time
         J_i = J_lower[i]
         S_i = S[i]
         nu_0_i = nu_0[i]
-        
+
         # Find index in sampled alpha array closest to actual alpha (approximate thermal broadening)        
         idx_alpha = find_index(log_alpha[i], log_alpha_sampled_min, 
                                log_alpha_sampled_max, N_log_alpha_sampled)
         
+        # Find index in lower J broadening file array corresponding the lower J of this transition 
+        idx_J_i = np.where(J_broad_all == J_i)[0][0]
+
         # Store wing cutoff for this transition
-        cutoff = cutoffs[J_i,idx_alpha]
+        cutoff = cutoffs[idx_J_i, idx_alpha]
     
-        # Load template Voigt function and derivatives for this gamma (J_i) and closest vaue of alpha
-        Voigt_0 = Voigt_arr[J_i,idx_alpha,:]
-        dV_da_0 = dV_da_arr[J_i,idx_alpha,:]
-        dV_dnu_0 = dV_dnu_arr[J_i,idx_alpha,:]
+        # Load template Voigt function and derivatives for this gamma (J_i) and closest value of alpha
+        Voigt_0 = Voigt_arr[idx_J_i, idx_alpha,:]
+        dV_da_0 = dV_da_arr[idx_J_i, idx_alpha,:]
+        dV_dnu_0 = dV_dnu_arr[idx_J_i, idx_alpha,:]
         
         # Load number of template Voigt function wavenumber points and grid spacing
-        dnu_Voigt_line = dnu_Voigt[J_i,idx_alpha]
+        dnu_Voigt_line = dnu_Voigt[idx_J_i, idx_alpha]
             
         # Find difference between true alpha and closest pre-computed value
         d_alpha = (alpha[i] - alpha_sampled[idx_alpha])
@@ -334,7 +337,7 @@ def compute_cross_section_atom_OLD(sigma, N_grid, nu_0, nu_detune, nu_fine_start
 
     
 def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma, 
-                         alpha_sampled, m, T, Q_T, g_arr, E_arr, J_arr, J_max, 
+                         alpha_sampled, m, T, Q_T, states, g_arr, E_arr, J_arr, J_max, J_broad_all,
                          N_Voigt, cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut, verbose):
     
 
@@ -343,7 +346,7 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
     nu_0_completed = 0
     
     # Store variables to be used in future loops
-    nu_min = nu_grid[0]   # Minimum wavenumner on computational grid
+    nu_min = nu_grid[0]   # Minimum wavenumber on computational grid
     nu_max = nu_grid[-1]  # Maximum wavenumber on computational grid
     dnu_out = nu_grid[1] - nu_grid[0]
     log_alpha_sampled = np.log10(alpha_sampled)   # Array of template Doppler HWHM
@@ -387,9 +390,14 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         upper_state = upper_state[order]  # Apply reordering to upper states
         lower_state = lower_state[order]  # Apply reordering to lower states
         A_arr = A_arr[order]              # Apply reordering to Einstein A coefficients
+
+        J_low = np.zeros(len(J_arr))
         
         # Store lower state J values for identifying appropriate broadening parameters
-        J_low = J_arr[lower_state-1]
+        for i in range(len(J_arr)):
+            J_low[i] = J_arr[np.where(states == lower_state[i])[0]]
+        
+    #   J_low = J_arr[lower_state-1]
             
         # For J'' above the tabulated maximum, treat broadening same as the maximum J''
         J_low[np.where(J_low > J_max)] = J_max
@@ -407,15 +415,15 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         J_low = J_low[np.where(S>S_cut)]
         S = S[np.where(S>S_cut)]
         
-        # Delete tempory variables 
+        # Delete temporary variables 
         del nu_0_in, A, A_arr, upper_state, lower_state  
         
         # Proceed if any transitions in this file satisfy the grid boundaries and intensity cutoff
         if (len(nu_0)>0): 
                    
             # Add the contributions of these lines to the cross section array (sigma)             
-            compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_low, alpha, 
-                                  log_alpha, alpha_sampled, log_alpha_sampled,
+            compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_low, J_broad_all, 
+                                  alpha, log_alpha, alpha_sampled, log_alpha_sampled,
                                   N_Voigt, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, dnu_out)
         
         # Print time to compute transitions from this file
@@ -441,7 +449,7 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
     
 
 def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma, 
-                         alpha_sampled, m, T, Q_T, Q_ref, J_max, N_Voigt, 
+                         alpha_sampled, m, T, Q_T, Q_ref, J_max, J_broad_all, N_Voigt, 
                          cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut, verbose):
     
     # Initialise counters for number of completed transitions
@@ -449,14 +457,14 @@ def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma,
     nu_0_completed = 0
     
     # Store variables to be used in future loops
-    nu_min = nu_grid[0]   # Minimum wavenumner on computational grid
+    nu_min = nu_grid[0]   # Minimum wavenumber on computational grid
     nu_max = nu_grid[-1]  # Maximum wavenumber on computational grid
     dnu_out = nu_grid[1] - nu_grid[0]
     log_alpha_sampled = np.log10(alpha_sampled)   # Array of template Doppler HWHM
     
     # Start timer for cross section computation
     t_begin_calc = time.perf_counter()
-    
+
     # Begin loop over line list files
     for n in range(len(linelist_files)):      
         
@@ -469,12 +477,12 @@ def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma,
         
         # Start running timer for transition computation time terminal output
         t_running = time.perf_counter()
-        
+
         # Load variables from line list
         nu_0_in = np.array(trans_file['Transition Wavenumber'])
         S_ref_in = np.power(10.0, np.array(trans_file['Log Line Intensity']))
         E_low_in = np.array(trans_file['Lower State E'])
-        J_low_in = np.array(trans_file['Lower State J']).astype(np.int64)
+        J_low_in = np.array(trans_file['Lower State J']) # .astype(np.int64)
 
         # Remove transitions outside computational grid
         nu_0 = nu_0_in[np.where((nu_0_in >= nu_min) & (nu_0_in <= nu_max))]   
@@ -507,14 +515,14 @@ def cross_section_HITRAN(linelist_files, input_directory, nu_grid, sigma,
         J_low = J_low[np.where(S>S_cut)]
         S = S[np.where(S>S_cut)]
         
-        # Delete tempory variables 
+        # Delete temporary variables 
         del nu_0_in, S_ref_in, S_ref, E_low_in, E_low, J_low_in
-        
+
         # Proceed if any transitions in this file satisfy the grid boundaries and intensity cutoff
         if (len(nu_0)>0): 
                    
             # Add the contributions of these lines to the cross section array (sigma)             
-            compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_low, alpha, 
+            compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_low, J_broad_all, alpha, 
                                   log_alpha, alpha_sampled, log_alpha_sampled,
                                   N_Voigt, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, dnu_out)
         

@@ -639,7 +639,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     # Use the input directory to define parameters right at the start
     linelist, isotopologue = download.parse_directory(input_directory, database)
     
-    # HITRAN, HITEMP, and VALD do not have seperate line list names
+    # HITRAN, HITEMP, and VALD do not have separate line list names
     if database != 'exomol':
         linelist = database
     
@@ -648,7 +648,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     
     if database == 'exomol':
         print("Loading ExoMol format")
-        E, g, J = ExoMol.load_states(input_directory)  # Load from .states file
+        states, E, g, J = ExoMol.load_states(input_directory)  # Load from .states file
     
     elif database == 'hitran':
         print("Loading HITRAN format")
@@ -687,23 +687,23 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         broad_type = broadening.det_broad(input_directory)
         
         if broad_type == 'H2-He':
-            J_max, gamma_0_H2, n_L_H2, gamma_0_He, n_L_He = broadening.read_H2_He(input_directory)
+            J_max, J_broad_all, gamma_0_H2, n_L_H2, gamma_0_He, n_L_He = broadening.read_H2_He(input_directory)
             
         elif broad_type == 'air':
-            J_max, gamma_0_air, n_L_air = broadening.read_air(input_directory)
+            J_max, J_broad_all, gamma_0_air, n_L_air = broadening.read_air(input_directory)
             
         elif broad_type == 'SB07':
-            J_max, gamma_0_SB07 = broadening.read_SB07(input_directory)
+            J_max, J_broad_all, gamma_0_SB07 = broadening.read_SB07(input_directory)
             
-    # If user specifed a pressure broadening prescription, proceed to load the relevant broadening file
+    # If user specified a pressure broadening prescription, proceed to load the relevant broadening file
     elif is_molecule and broad_type != 'default':
         
         if (broad_type == 'H2-He' and 'H2.broad' in os.listdir(input_directory) 
                                   and 'He.broad' in os.listdir(input_directory)):
-            J_max, gamma_0_H2, n_L_H2, gamma_0_He, n_L_He = broadening.read_H2_He(input_directory)
+            J_max, J_broad_all, gamma_0_H2, n_L_H2, gamma_0_He, n_L_He = broadening.read_H2_He(input_directory)
         
         elif broad_type == 'air' and 'air.broad' in os.listdir(input_directory):
-            J_max, gamma_0_air, n_L_air = broadening.read_air(input_directory)
+            J_max, J_broad_all, gamma_0_air, n_L_air = broadening.read_air(input_directory)
             
         elif broad_type == 'SB07':
 
@@ -711,18 +711,19 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             if os.path.isfile(input_directory + 'SB07.broad') == False:
                 broadening.create_SB07(input_directory)
             
-            J_max, gamma_0_SB07 = broadening.read_SB07(input_directory)
+            J_max, J_broad_all, gamma_0_SB07 = broadening.read_SB07(input_directory)
             
         elif broad_type == 'custom' and broadening_file in os.listdir(input_directory):
-            J_max, gamma_0_air, n_L_air = broadening.read_custom(input_directory, broadening_file)
+            J_max, J_broad_all, gamma_0_air, n_L_air = broadening.read_custom(input_directory, broadening_file)
         
         elif broad_type == 'fixed':
             J_max = 0
+            J_broad_all = np.array([0])
         
         else:
             print("\nYou did not enter a valid type of pressure broadening. Please try again.")
             sys.exit(0)
-            
+   
     # For atoms, only H2-He pressure broadening is currently supported
     elif is_molecule == False:
         
@@ -805,9 +806,9 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                     gamma = broadening.compute_air(gamma_0_air, T_ref, T,    # Computation step is the same as for air broadening
                                                    n_L_air, P, P_ref)
                 elif broad_type == 'fixed':
-                    gamma = np.array([(gamma_0_fixed * np.power((T_ref/T), n_L_fixed) * (P/P_ref))])  # Fixed Lorentizian HWHM (1 element array)
+                    gamma = np.array([(gamma_0_fixed * np.power((T_ref/T), n_L_fixed) * (P/P_ref))])  # Fixed Lorentzian HWHM (1 element array)
                     
-                # Create wavenumber grid for cross section compuation
+                # Create wavenumber grid for cross section computation
                 nu_compute = create_nu_grid(nu_out_min, nu_out_max, dnu_out)
                                                                                                                             
                 # Initialise cross section arrays for computations
@@ -883,14 +884,14 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             if database == 'exomol':    
                 calculate.cross_section_EXOMOL(linelist_files, input_directory, 
                                                nu_compute, sigma_compute, alpha_sampled, 
-                                               m, T, Q_T, g, E, J, J_max, N_Voigt, cutoffs,
+                                               m, T, Q_T, states, g, E, J, J_max, J_broad_all, N_Voigt, cutoffs,
                                                Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut,
                                                verbose)
                 
             elif database in ['hitran', 'hitemp']:
                 calculate.cross_section_HITRAN(linelist_files, input_directory, 
                                                nu_compute, sigma_compute, alpha_sampled, 
-                                               m, T, Q_T, Q_T_ref, J_max, N_Voigt, cutoffs,
+                                               m, T, Q_T, Q_T_ref, J_max, J_broad_all, N_Voigt, cutoffs,
                                                Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut,
                                                verbose)
                 
