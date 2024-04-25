@@ -40,7 +40,7 @@ extensions = ['sphinx_rtd_theme',
     'autoapi.extension']
 
 #autoapi_type = 'python'
-autoapi_dirs = ['../excalibur']
+autoapi_dirs = ['../Excalibur']
 autoapi_ignore = ["*/hapi*.py"]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -68,5 +68,5 @@ html_logo = "_static/Excalibur_logo.png"
 html_static_path = ['_static']
 nbsphinx_prolog = """
 {% set docname = env.doc2path(env.docname, base=None) %}
-.. note::  `Download full notebook here <https://github.com/arnav-agrawal/excalibur-alpha/tree/main/docs/{{ docname }}>`_
+.. note::  `Download full notebook here <https://github.com/MartianColonist/Excalibur/tree/main/docs/{{ docname }}>`_
 """
