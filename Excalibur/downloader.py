@@ -12,8 +12,9 @@ import h5py
 import time
 import shutil
 import zipfile
-
-from hapi.hapi import db_begin, fetch, abundance, moleculeName, isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import db_begin, fetch, abundance, moleculeName, isotopologueName
 
 import Excalibur.ExoMol as ExoMol
 import Excalibur.HITRAN as HITRAN

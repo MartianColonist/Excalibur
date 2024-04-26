@@ -9,7 +9,9 @@ from scipy.ndimage import gaussian_filter1d
 
 from Excalibur.misc import round_sig_figs
 
-from hapi.hapi import isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import isotopologueName
 import Excalibur.HITRAN as HITRAN
 import Excalibur.ExoMol as ExoMol
 import sys
