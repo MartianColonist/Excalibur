@@ -200,13 +200,13 @@ def interpolate_pf(T_pf_raw, Q_raw, T, T_ref):
     '''
     
     # Interpolate partition function onto a fine grid using a 5th order spline
-    pf_spline = Interp(T_pf_raw, Q_raw, k=5)
+    pf_spline = Interp(T_pf_raw, Q_raw, k=3)
     
     # Define a new temperature grid (extrapolated to 10,000K)
     T_pf_fine = np.linspace(1.0, 10000.0, 9999)      
     
     # Using spline, interpolate and extrapolate the partition function to the new T grid
-    Q_fine = pf_spline(T_pf_fine)                    
+    Q_fine = pf_spline(T_pf_fine)  
     
     # Find the indices in the fine temperature grid closest to the user specified and reference temperatures
     idx_T = np.argmin(np.abs(T_pf_fine - T))
@@ -673,6 +673,8 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         m = mass(species, isotopologue, linelist) * u
     else:
         m = set_mass * u
+
+    print("here1")
     
     # Check if we have a molecule or an atom
     is_molecule = check_molecule(species)
@@ -726,6 +728,8 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             print("\nYou did not enter a valid type of pressure broadening. Please try again.")
             sys.exit(0)
    
+        print("here2")
+
     # For atoms, only H2-He pressure broadening is currently supported
     elif is_molecule == False:
         
@@ -778,6 +782,8 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     # Bool which is used to see if more than one (P,T) pair is 
     grid = True if N_P * N_T > 1 else False
 
+    print("here3")
+
     # Compute cross section for each pressure and temperature point
     for p in range(N_P):
         for t in range(N_T):
@@ -787,9 +793,18 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                 
                 P = P_arr[p]   # Atmospheric pressure (bar)
                 T = T_arr[t]   # Atmospheric temperature (K)
+
+            print(T_pf_raw)
+            print(Q_raw)
+            print(T)
+            print(T_ref)
             
             # Interpolate the tabulated partition function to the desired temperature and reference temperature
             Q_T, Q_T_ref = interpolate_pf(T_pf_raw, Q_raw, T, T_ref)
+
+            print(Q_T)
+            print(Q_T_ref)
+            print("here4")
             
             # Handle pressure broadening, wavenumber grid creation and Voigt profile pre-computation for molecules
             if is_molecule:
@@ -815,6 +830,8 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                                                                                                                             
                 # Initialise cross section arrays for computations
                 sigma_compute = np.zeros(len(nu_compute))    # Computational grid
+
+                print(gamma)
                 
                 #***** Pre-compute Voigt function array for molecules *****#
     
