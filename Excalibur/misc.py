@@ -8,7 +8,9 @@ import csv
 import Excalibur.HITRAN as HITRAN
 import Excalibur.ExoMol as ExoMol
 
-from hapi.hapi import isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import isotopologueName
 
 def check_molecule(molecule):
     """

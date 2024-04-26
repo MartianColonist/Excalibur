@@ -8,7 +8,9 @@ import sys
 import numba
 from bs4 import BeautifulSoup
 from scipy.interpolate import UnivariateSpline as Interp
-from hapi.hapi import molecularMass, moleculeName, isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import molecularMass, moleculeName, isotopologueName
 
 from .calculate import produce_total_cross_section_VALD_atom
 

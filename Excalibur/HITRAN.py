@@ -3,7 +3,9 @@ import os
 import numpy as np
 import h5py
 import re
-from hapi.hapi import partitionSum, moleculeName, isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import partitionSum, moleculeName, isotopologueName
 
 import Excalibur.downloader as download
 
@@ -238,7 +240,7 @@ def summon_HITRAN(molecule, isotopologue):
 
     """
     
-    print("\nFetching data from HITRAN. This could take [x amount of time] so do not stop the download. \nMolecule:", moleculeName(molecule), "\nIsotopologue", isotopologueName(molecule, isotopologue), "\n")
+    print("\nFetching data from HITRAN. This could take up to an hour so do not stop the download. \nMolecule:", moleculeName(molecule), "\nIsotopologue", isotopologueName(molecule, isotopologue), "\n")
                        
     output_folder = download.create_directories(mol_ID = molecule, iso_ID = isotopologue,
                                                 database = 'HITRAN')
