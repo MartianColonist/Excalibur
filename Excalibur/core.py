@@ -673,8 +673,6 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         m = mass(species, isotopologue, linelist) * u
     else:
         m = set_mass * u
-
-    print("here1")
     
     # Check if we have a molecule or an atom
     is_molecule = check_molecule(species)
@@ -727,8 +725,6 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         else:
             print("\nYou did not enter a valid type of pressure broadening. Please try again.")
             sys.exit(0)
-   
-        print("here2")
 
     # For atoms, only H2-He pressure broadening is currently supported
     elif is_molecule == False:
@@ -782,8 +778,6 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
     # Bool which is used to see if more than one (P,T) pair is 
     grid = True if N_P * N_T > 1 else False
 
-    print("here3")
-
     # Compute cross section for each pressure and temperature point
     for p in range(N_P):
         for t in range(N_T):
@@ -793,18 +787,9 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                 
                 P = P_arr[p]   # Atmospheric pressure (bar)
                 T = T_arr[t]   # Atmospheric temperature (K)
-
-            print(T_pf_raw)
-            print(Q_raw)
-            print(T)
-            print(T_ref)
             
             # Interpolate the tabulated partition function to the desired temperature and reference temperature
             Q_T, Q_T_ref = interpolate_pf(T_pf_raw, Q_raw, T, T_ref)
-
-            print(Q_T)
-            print(Q_T_ref)
-            print("here4")
             
             # Handle pressure broadening, wavenumber grid creation and Voigt profile pre-computation for molecules
             if is_molecule:
@@ -830,8 +815,6 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                                                                                                                             
                 # Initialise cross section arrays for computations
                 sigma_compute = np.zeros(len(nu_compute))    # Computational grid
-
-                print(gamma)
                 
                 #***** Pre-compute Voigt function array for molecules *****#
     
@@ -883,9 +866,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                 time_precompute = t2-t1
             
                 print('Voigt profiles computed in ' + str(time_precompute) + ' s')  
-                
-
-                                                                                                                                        
+                                                                                                                                       
             print("Pre-computation steps complete")
             
             if is_molecule:
