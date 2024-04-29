@@ -39,7 +39,7 @@ def find_index(val, grid_start, grid_end, N_grid):
             return int(i)
         else:
             return int(i)+1
-        
+
 @jit(nopython=True)
 def prior_index(val, grid_start, grid_end, N_grid):
     
@@ -53,7 +53,45 @@ def prior_index(val, grid_start, grid_end, N_grid):
         i = (N_grid-1) * ((val - grid_start) / (grid_end - grid_start))
         return int(i)
 
+
+@jit(nopython=True)
+def prior_index_generic(value, grid, start = 0):
+    ''' 
+    Search a grid to find the previous index closest to a specified value (i.e. 
+    the index of the grid where the grid value is last less than the value). 
+    This function assumes the input grid monotonically increases.
+
+    Args:
+        value (float):
+            Value for which the prior grid index is desired.
+        grid (np.array of float):
+            Input grid.
+        start (int):
+            Optional start index when existing knowledge is available.
+
+    Returns:
+        index (int):
+            Prior index of the grid corresponding to the value.
+
+    '''
         
+    if (value > grid[-1]):
+        return (len(grid) - 1)
+    
+    # Check if value out of bounds, if so set to edge value
+    if (value < grid[0]): value = grid[0]
+    if (value > grid[-2]): value = grid[-2]
+    
+    index = start
+    
+    for i in range(len(grid)-start):
+        if (grid[i+start] > value): 
+            index = (i+start) - 1
+            break
+            
+    return index
+
+
 @jit(nopython=True)
 def compute_transition_frequencies(E, upper_state, lower_state):
         
@@ -143,7 +181,8 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
                                log_alpha_sampled_max, N_log_alpha_sampled)
         
         # Find index in lower J broadening file array corresponding the lower J of this transition 
-        idx_J_i = np.where(J_broad_all == J_i)[0][0]
+      #  idx_J_i = np.where(J_broad_all == J_i)[0][0]
+        idx_J_i = prior_index_generic(J_i, J_broad_all, 0)
 
         # Store wing cutoff for this transition
         cutoff = cutoffs[idx_J_i, idx_alpha]
@@ -332,10 +371,36 @@ def compute_cross_section_atom_OLD(sigma, N_grid, nu_0, nu_detune, nu_fine_start
                     
                 sigma[idx+k] += opac_val    # Forward direction
                 sigma[idx-k] += opac_val    # Backward direction 
-            
-            
 
-    
+
+@jit(nopython=True)
+def find_J_low(J, states, lower_state):
+    '''
+    Find the lower angular momentum quantum number corresponding to each lower
+    state.
+    '''
+
+    J_low = np.zeros(len(lower_state))
+
+    # If the number of states is complete
+    if (states[-1] == len(states)):
+        condition = 1
+
+    # If there are gaps in the states file (e.g. for the ExoMol SO SOLLIS line list)
+    else:
+        condition = 2
+
+    for i in range(len(lower_state)):
+
+        if (condition == 1):
+            J_low[i] = J[lower_state[i]-1]   # Fastest, but only works with complete states
+
+        else:
+            J_low[i] = J[prior_index_generic(lower_state[i], states, 0)]  # Slower, but general
+
+    return J_low      
+
+
 def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma, 
                          alpha_sampled, m, T, Q_T, states, g_arr, E_arr, J_arr, J_max, J_broad_all,
                          N_Voigt, cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut, verbose):
@@ -391,13 +456,16 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         lower_state = lower_state[order]  # Apply reordering to lower states
         A_arr = A_arr[order]              # Apply reordering to Einstein A coefficients
 
-        J_low = np.zeros(len(lower_state))
+    #    J_low = np.zeros(len(lower_state))
         
         # Store lower state J values for identifying appropriate broadening parameters
-        for i in range(len(lower_state)):
-            J_low[i] = J_arr[np.where(states == lower_state[i])[0]]
+    #    for i in range(len(lower_state)):
+    #        J_low[i] = J_arr[np.where(states == lower_state[i])[0]]
         
     #   J_low = J_arr[lower_state-1]
+
+        # Load the lower quantum number J for each transition's lower state 
+        J_low = find_J_low(J_arr, states, lower_state)
             
         # For J'' above the tabulated maximum, treat broadening same as the maximum J''
         J_low[np.where(J_low > J_max)] = J_max
