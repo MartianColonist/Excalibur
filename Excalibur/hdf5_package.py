@@ -142,9 +142,9 @@ def extend_HDF5_database(database_name, species):
     
     # If database doesn't already exist, create file, otherwise load existing database
     if (os.path.isfile('./' + database_name)):
-        HDF5_database_all = h5py.File('./' + database_name, 'w')
-    else:
         HDF5_database_all = h5py.File('./' + database_name, 'r+')
+    else:
+        HDF5_database_all = h5py.File('./' + database_name, 'w')
 
     # Load HDF5 file for species to add to composite database
     HDF5_database_species = h5py.File('./output/HDF5/' + species + '.hdf5', 'r')
