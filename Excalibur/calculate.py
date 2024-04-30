@@ -186,7 +186,7 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
 
         # Store wing cutoff for this transition
         cutoff = cutoffs[idx_J_i, idx_alpha]
-    
+
         # Load template Voigt function and derivatives for this gamma (J_i) and closest value of alpha
         Voigt_0 = Voigt_arr[idx_J_i, idx_alpha,:]
         dV_da_0 = dV_da_arr[idx_J_i, idx_alpha,:]
@@ -202,28 +202,175 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
         R_nu = dnu_out / dnu_Voigt_line
             
         # Find index range on computational grid within line wing cutoff          
-        idx_left = prior_index((nu_0_i - cutoff), nu_grid_min, nu_grid_max, N_grid) + 1
-        idx_right = prior_index((nu_0_i + cutoff), nu_grid_min, nu_grid_max, N_grid)
+     #   idx_left = prior_index((nu_0_i - cutoff), nu_grid_min, nu_grid_max, N_grid) + 1
+     #   idx_right = prior_index((nu_0_i + cutoff), nu_grid_min, nu_grid_max, N_grid)
+
+        left_cut_loc = ((nu_0_i - cutoff) - nu_grid_min)/dnu_out
+        right_cut_loc = ((nu_0_i + cutoff) - nu_grid_min)/dnu_out
         
         # Compute exact location of line core (float in output grid units) 
         core_loc = (nu_0_i - nu_grid_min)/dnu_out
 
-        # The first index on the right wing is the core, rounded down, + 1 index
-        idx_right_start = int(core_loc) + 1
+        # If line core through both left and right cutoffs don't intersect grid points
+        if ((left_cut_loc > int(core_loc)) and (right_cut_loc < (int(core_loc)+1))):
+             
+            # No contribution to cross section at grid values
+            pass
+
+        # If a grid point lies within left cutoff but not within the right cutoff
+        elif ((left_cut_loc < int(core_loc)) and (right_cut_loc < (int(core_loc)+1))):
+
+            # Here only one grid point on the left wing contributes to the cross section 
+
+            # Find leftmost grid point within left wing cutoff
+            idx_left = int(left_cut_loc) + 1   # Round down then add 1 to find desired grid point
+
+            # Cover edge case: the lowest idx_right is the left edge of the grid
+            if (idx_left <= 0):
+                idx_left = 0
+
+            # Compute exact location of first grid point within left wing cutoff (float in template grid units) 
+            k_ref_exact = (core_loc - idx_left)*R_nu   # R_nu maps from output grid to template grid spacing
+
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
         
-        #***** Initiate cross section calculation at left wing cutoff *****#
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_left] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                       (dV_dnu_0[k_ref] * d_Delta_nu))
         
-        # Note: the cross section calculation is unpacked from a single loop
-        #       into multiple regions to increase computation efficiency 
+        # If a grid point lies within right cutoff but not within the left cutoff
+        elif ((left_cut_loc > int(core_loc)) and (right_cut_loc > (int(core_loc)+1))):
+
+            # Here only one grid point on the right wing contributes to the cross section 
+
+            # Find rightmost grid point within right wing cutoff
+            idx_right = int(right_cut_loc)    # Round down to find desired grid point
+
+            # Cover edge case: the highest idx_right is the right edge of the grid
+            if (idx_right >= N_grid):
+                idx_right = N_grid-1
+
+            # Compute exact location of first grid point within right wing cutoff (float in template grid units) 
+            k_ref_exact = (idx_right - core_loc)*R_nu
+                
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+            
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+        
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_right] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                        (dV_dnu_0[k_ref] * d_Delta_nu))
+            
+        # General case where grid points sample both the left and right wings
+        else:
+
+            # Find leftmost grid point within left wing cutoff
+            idx_left = int(left_cut_loc) + 1      # Round down then add 1 to find desired grid point
+
+            # Cover edge case: the lowest idx_right is the left edge of the grid
+            if (idx_left <= 0):
+                idx_left = 0
+        
+            # Find first grid point within the right wing cutoff
+            idx_right_start = int(core_loc) + 1   # Exact core (rounded down to grid) plus 1
+
+            # Find rightmost grid point within right wing cutoff
+            idx_right = int(right_cut_loc)        # Round down to find desired grid point
+
+            # Cover edge case: the highest idx_right is the right edge of the grid
+            if (idx_right >= N_grid):
+                idx_right = N_grid-1
+
+            #***** Initiate cross section calculation at left wing cutoff *****#
+            
+            # Note: the cross section calculation is unpacked from a single loop
+            #       into multiple regions to increase computation efficiency 
+
+            # Compute exact location of left wing cutoff (float in template grid units) 
+            k_ref_exact = (core_loc - idx_left)*R_nu   # R_nu maps from output grid to template grid spacing
+        
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+        
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref)*dnu_Voigt_line
+
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_left] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                    (dV_dnu_0[k_ref] * d_Delta_nu))
+        
+            #***** Proceed along the left wing towards core *****#
+        
+            # Add cross section contribution from the left wing
+            for k in range(idx_left+1, idx_right_start):   
+                
+                # Increment k_ref_exact by the relative spacing between the k and k_ref grids
+                k_ref_exact -= R_nu        # Stepping closer to the line core 
+
+                # Round to find nearest point on template grid
+                k_ref = int(k_ref_exact + 0.5)
+                
+                # Compute wavenumber difference between true wavenumber and closest template point
+                d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+            
+                # 1st order Taylor expansion in alpha and Delta_nu
+                sigma[k] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                    (dV_dnu_0[k_ref] * d_Delta_nu))
+
+            #***** Initiate cross section calculation on the right wing *****#
+            
+            # Reflect once crossed into the right wing
+            k_ref_exact = abs(k_ref_exact - R_nu)
+                
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+            
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+        
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_right_start] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                            (dV_dnu_0[k_ref] * d_Delta_nu))    
+                
+            #***** Proceed along the right wing towards the cutoff *****#
+            
+            # Add cross section contribution from the right wing
+            for k in range(idx_right_start+1, idx_right+1):    # +1 to include end index
+                
+                # Increment k_ref_exact by the relative spacing between the k and k_ref grids
+                k_ref_exact += R_nu        # Stepping away from the line core
+
+                # Round to find nearest point on template grid
+                k_ref = int(k_ref_exact + 0.5)
+                
+                # Compute wavenumber difference between true wavenumber and closest template point
+                d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+            
+                # 1st order Taylor expansion in alpha and Delta_nu
+                sigma[k] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                    (dV_dnu_0[k_ref] * d_Delta_nu))
+        
+
+        '''
         
         # Compute exact location of left wing cutoff (float in template grid units) 
         k_ref_exact = (core_loc - idx_left)*R_nu   # R_nu maps from output grid to template grid spacing
         
+        print(k_ref_exact)
+
         # Round to find nearest point on template grid
         k_ref = int(k_ref_exact + 0.5)
         
         # Compute wavenumber difference between true wavenumber and closest template point
         d_Delta_nu = (k_ref_exact - k_ref)*dnu_Voigt_line
+
+        print(k_ref)
        
         # 1st order Taylor expansion in alpha and Delta_nu
         sigma[idx_left] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
@@ -280,6 +427,8 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
             sigma[k] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
                                                 (dV_dnu_0[k_ref] * d_Delta_nu))
             
+        '''
+
 
 @jit(nopython=True, parallel=True)
 def compute_cross_section_atom(sigma, nu_grid, nu_0, S, cutoffs, N_Voigt, Voigt_arr):

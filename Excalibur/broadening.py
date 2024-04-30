@@ -162,8 +162,11 @@ def read_H2_He(input_directory):
     # Take maximum J'' value for which broadening is a function of J to be lowest for which complete data available
     J_max = np.max(np.array([J_max_H2, J_max_He]))
 
+    if (J_max_H2 == J_max_He):
+        J_broad_all = J_broad_all_H2
+
     # If broadening files not of same length, extend shortest file to same length as longest
-    if (J_max_H2 < J_max):
+    elif (J_max_H2 < J_max):
 
         J_broad_all = J_broad_all_He
 
@@ -172,7 +175,7 @@ def read_H2_He(input_directory):
             gamma_0_H2 = np.append(gamma_0_H2, gamma_0_H2[-1])   # Extended values equal to final value
             n_L_H2 = np.append(n_L_H2, n_L_H2[-1])               # Extended values equal to final value
 
-    if (J_max_He < J_max):
+    elif (J_max_He < J_max):
 
         J_broad_all = J_broad_all_H2
 
