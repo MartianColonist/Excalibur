@@ -223,7 +223,10 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
             # Here only one grid point on the left wing contributes to the cross section 
 
             # Find leftmost grid point within left wing cutoff
-            idx_left = int(left_cut_loc) + 1   # Round down then add 1 to find desired grid point
+            if (left_cut_loc > 0.0):
+                idx_left = int(left_cut_loc) + 1     # Round down then add 1 to find desired grid point
+            else:     # Exception for lines near lower edge boundary
+                idx_left = int(left_cut_loc-1) + 1  # Round down then add 1 to find desired grid point
 
             # Cover edge case: the lowest idx_right is the left edge of the grid
             if (idx_left <= 0):
@@ -271,7 +274,10 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
         else:
 
             # Find leftmost grid point within left wing cutoff
-            idx_left = int(left_cut_loc) + 1      # Round down then add 1 to find desired grid point
+            if (left_cut_loc > 0.0):
+                idx_left = int(left_cut_loc) + 1     # Round down then add 1 to find desired grid point
+            else:     # Exception for lines near lower edge boundary
+                idx_left = int(left_cut_loc-1) + 1  # Round down then add 1 to find desired grid point
 
             # Cover edge case: the lowest idx_right is the left edge of the grid
             if (idx_left <= 0):
