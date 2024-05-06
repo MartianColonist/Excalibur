@@ -191,6 +191,8 @@ def read_cross_section_file(species, database, filename, isotope = 'default',
         isotope = HITRAN.replace_iso_name(isotope)
 
     if database == 'exomol':
+        species = re.sub('[+]', '_p', species)  # Handle ions
+        isotope = re.sub('[+]', '_p', isotope)  # Handle ions
         if isotope == 'default':
             isotope = ExoMol.get_default_iso(species)
 

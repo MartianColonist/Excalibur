@@ -634,6 +634,11 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         temperature[i] = float(temperature[i])
     
     database = database.lower()
+
+    if database == 'exomol':
+    
+        species = re.sub('[+]', '_p', species)  # Handle ions
+        isotope = re.sub('[+]', '_p', isotope)  # Handle ions
     
     # Locate the input_directory where the line list is stored
     input_directory = download.find_input_dir(input_dir, database, species, isotope, ionization_state, linelist)

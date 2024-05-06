@@ -4,6 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 import h5py
+import re
 from tqdm import tqdm
 from datetime import date
 
@@ -79,8 +80,12 @@ def make_single_species_HDF5(species, database, linelist, log_P, T,
 
     # Find ionisation state
     if ('+' in species):
-        ionization_state = 2
-        species_no_charge = species[:-1]   # Remove charge from string
+        if (database.lower() == 'vald'):
+            ionization_state = 2
+            species_no_charge = species[:-1]   # Remove charge from string
+        elif (database.lower() == 'exomol'):
+            ionization_state = 2
+            species_no_charge = re.sub('[+]', '_p', species)
     else:
         ionization_state = 1
         species_no_charge = species
