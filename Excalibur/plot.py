@@ -27,7 +27,8 @@ matplotlib.rcParams['figure.facecolor'] = 'white'
 def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
                        x_min = None, x_max = None, y_min = None, y_max = None,
                        color_list = [], smooth_data = False, std = 1000,
-                       x_unit = 'micron', x_axis_scale = 'log', **kwargs):
+                       x_unit = 'micron', x_axis_scale = 'log', 
+                       save_fig = True, **kwargs):
     """
     Generate a plot of cross section file[s], in both wavelength and wavenumber
 
@@ -157,7 +158,9 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
         legline.set_linewidth(1.0)
 
     plt.tight_layout()
-    plt.savefig('./plots/' + filename, dpi = 300)
+
+    if (save_fig == True):
+        plt.savefig('./plots/' + filename, dpi = 300)
 
     print("\nPlotting complete.")
 
