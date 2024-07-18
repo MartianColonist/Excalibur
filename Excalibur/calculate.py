@@ -120,14 +120,28 @@ def compute_transition_frequencies(E, states, upper_state, lower_state):
     return nu_trans
 
 @jit(nopython=True)
-def compute_line_intensity_EXOMOL(A_trans, g_state, E_state, nu_0_trans, T, Q_T, upper_state, lower_state):
+def compute_line_intensity_EXOMOL(A_trans, g_state, E_state, nu_0_trans, T, Q_T, states, upper_state, lower_state):
         
     S = np.zeros(len(upper_state))   # Line strength for transition from initial to final state
+
+    # If the number of states is complete
+    if (states[-1] == len(states)):
+        condition = 1
+
+    # If there are gaps in the states file (e.g. for the ExoMol SO SOLLIS line list)
+    else:
+        condition = 2
         
     for i in range(len(upper_state)):
-            
-        g_upper = float(g_state[upper_state[i]-1])   # Note: state 1 is index 0 in state file, hence the -1
-        E_lower = E_state[lower_state[i]-1]          # Note: state 1 is index 0 in state file, hence the -1
+        
+        if (condition == 1):
+            g_upper = float(g_state[upper_state[i]-1])   # Note: state 1 is index 0 in state file, hence the -1
+            E_lower = E_state[lower_state[i]-1]          # Note: state 1 is index 0 in state file, hence the -1
+
+        else:
+            g_upper = float(g_state[prior_index_generic(upper_state[i], states, 0)] ) # Slower, but general
+            E_lower = E_state[prior_index_generic(lower_state[i], states, 0)]         # Slower, but general
+
         A = A_trans[i]
         nu_0 = nu_0_trans[i]
     
@@ -644,7 +658,7 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         
         # Compute line intensities        
         S = compute_line_intensity_EXOMOL(A_arr, g_arr, E_arr, nu_0, T, Q_T, 
-                                          upper_state, lower_state)
+                                          states, upper_state, lower_state)
 
         # Apply intensity cutoff
         nu_0 = nu_0[np.where(S>S_cut)]
