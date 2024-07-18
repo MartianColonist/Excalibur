@@ -93,14 +93,27 @@ def prior_index_generic(value, grid, start = 0):
 
 
 @jit(nopython=True)
-def compute_transition_frequencies(E, upper_state, lower_state):
+def compute_transition_frequencies(E, states, upper_state, lower_state):
         
     nu_trans = np.zeros(len(upper_state))
+
+    # If the number of states is complete
+    if (states[-1] == len(states)):
+        condition = 1
+
+    # If there are gaps in the states file (e.g. for the ExoMol SO SOLLIS line list)
+    else:
+        condition = 2
         
     for i in range(len(upper_state)):
             
-        E_upper = E[upper_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
-        E_lower = E[lower_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
+        if (condition == 1):
+            E_upper = E[upper_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
+            E_lower = E[lower_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
+
+        else:
+            E_upper = E[prior_index_generic(upper_state[i], states, 0)]  # Slower, but general
+            E_lower = E[prior_index_generic(lower_state[i], states, 0)]  # Slower, but general
             
         nu_trans[i] = (E_upper-E_lower)   # Transition frequency
         
@@ -593,8 +606,8 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         A = np.power(10.0, np.array(trans_file['Log Einstein A']))
         
         # Compute transition frequencies (line core wavenumbers)
-        nu_0_in = compute_transition_frequencies(E_arr, upper_state, lower_state)
-    
+        nu_0_in = compute_transition_frequencies(E_arr, states, upper_state, lower_state)
+
         # Remove transitions outside computational grid
         nu_0 = nu_0_in[np.where((nu_0_in >= nu_min) & (nu_0_in <= nu_max))]   
         upper_state = upper_state[np.where((nu_0_in >= nu_min) & (nu_0_in <= nu_max))]
