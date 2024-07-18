@@ -404,7 +404,7 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
         
         upper_state = np.array(trans_file[0])
         lower_state = np.array(trans_file[1])
-        log_Einstein_A = np.log10(np.array(trans_file[2]))   
+        log_Einstein_A = np.log10(np.array(trans_file[2]+1.0e-250))   
         
         hdf_file_path = os.path.splitext(file)[0] + '.h5'
         
