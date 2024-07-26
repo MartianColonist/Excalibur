@@ -72,7 +72,10 @@ def make_single_species_HDF5(species, database, linelist, log_P, T,
     Save cross section grid for a single chemical species as a HDF5 file.
     '''
 
-    print("Now preparing HDF5 file for: " + species)
+    if (isotope == 'default'):
+        print("Now preparing HDF5 file for: " + species)
+    else:
+        print("Now preparing HDF5 file for: " + species + " (" + isotope + ")")
     
     # Make output directory
     if not os.path.exists(output_dir):
@@ -93,11 +96,21 @@ def make_single_species_HDF5(species, database, linelist, log_P, T,
     # Get current date (for file metadata)
     today = date.today()
 
-    # Create new empty HDF5 file
-    HDF5_database = h5py.File(output_dir + species + '.hdf5', 'w')
+    if (isotope == 'default'):
 
-    # Create new group
-    g = HDF5_database.create_group(species)
+        # Create new empty HDF5 file
+        HDF5_database = h5py.File(output_dir + species + '.hdf5', 'w')
+
+        # Create new group
+        g = HDF5_database.create_group(species)
+
+    else:
+
+        # Create new empty HDF5 file
+        HDF5_database = h5py.File(output_dir + isotope + '.hdf5', 'w')    
+
+        # Create new group
+        g = HDF5_database.create_group(isotope)
 
     # Store opacity characteristics
     g.attrs["Source"] = database

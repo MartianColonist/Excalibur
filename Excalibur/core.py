@@ -874,16 +874,21 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                                                                                                                                        
             print("Pre-computation steps complete")
             
+            if (isotope == 'default'):
+                label = species
+            else:
+                label = species + ' (' + isotope + ')'
+
             if is_molecule:
                 if grid:
                     index = p * N_T + (t + 1)
                     
-                    print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + 
+                    print('Generating cross section for ' + label + ' at P = ' + str(P) + ' bar, T = ' + str(T) + 
                           ' K' + '   [' + str(index) + ' of ' + str(N_P * N_T) + ']')
                 else:
-                    print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
+                    print('Generating cross section for ' + label + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
             else:
-                print('Generating cross section for ' + species + ' ' + roman_num + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
+                print('Generating cross section for ' + label + ' ' + roman_num + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
 
             # Call relevant cross section computation function for given line list
             if database == 'exomol':    
