@@ -259,7 +259,7 @@ def process_files(input_dir):
                 line = line.strip()
                 line = line.split()
 
-                if (len(line) == 4):
+                if ((len(line) == 4) and (line[0] == 'a0')):
 
                     gamma_L_0.append(float(line[1]))
                     n_L.append(float(line[2]))
