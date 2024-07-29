@@ -146,7 +146,7 @@ def read_H2_He(input_directory):
     # Read in H2 broadening file
     broad_file_H2 = pd.read_csv(input_directory + 'H2.broad',
                                 sep = ' ', header=None, skiprows=1)
-    J_max_H2 = int(np.max(np.array(broad_file_H2[0])))
+    J_max_H2 = np.max(np.array(broad_file_H2[0]))
     J_broad_all_H2 = np.array(broad_file_H2[0])
     gamma_0_H2 = np.array(broad_file_H2[1])
     n_L_H2 = np.array(broad_file_H2[2])
@@ -154,7 +154,7 @@ def read_H2_He(input_directory):
     # Read in He broadening file
     broad_file_He = pd.read_csv(input_directory + 'He.broad',
                                 sep = ' ', header=None, skiprows=1)
-    J_max_He = int(np.max(np.array(broad_file_He[0])))
+    J_max_He = np.max(np.array(broad_file_He[0]))
     J_broad_all_He = np.array(broad_file_He[0])
     gamma_0_He = np.array(broad_file_He[1])
     n_L_He = np.array(broad_file_He[2])
@@ -162,21 +162,24 @@ def read_H2_He(input_directory):
     # Take maximum J'' value for which broadening is a function of J to be lowest for which complete data available
     J_max = np.max(np.array([J_max_H2, J_max_He]))
 
+    if (int(J_max_H2) == int(J_max_He)):
+        J_broad_all = J_broad_all_H2
+
     # If broadening files not of same length, extend shortest file to same length as longest
-    if (J_max_H2 < J_max):
+    elif (J_max_H2 < J_max):
 
         J_broad_all = J_broad_all_He
 
-        for i in range (J_max_H2, J_max):
+        for i in range (int(J_max_H2), int(J_max)):
 
             gamma_0_H2 = np.append(gamma_0_H2, gamma_0_H2[-1])   # Extended values equal to final value
             n_L_H2 = np.append(n_L_H2, n_L_H2[-1])               # Extended values equal to final value
 
-    if (J_max_He < J_max):
+    elif (J_max_He < J_max):
 
         J_broad_all = J_broad_all_H2
 
-        for i in range (J_max_He, J_max):
+        for i in range (int(J_max_He), int(J_max)):
 
             gamma_0_He = np.append(gamma_0_He, gamma_0_He[-1])    # Extended values equal to final value
             n_L_He = np.append(n_L_He, n_L_He[-1])                # Extended values equal to final value
@@ -208,7 +211,7 @@ def read_air(input_directory):
     broad_file_air = pd.read_csv(input_directory + 'air.broad',
                                  sep = ' ', header=None, skiprows = 1)
 
-    J_max = int(np.max(np.array(broad_file_air[0])))
+    J_max = np.max(np.array(broad_file_air[0]))
     J_broad_all = np.array(broad_file_air[0])
     gamma_0_air = np.array(broad_file_air[1])
     n_L_air = np.array(broad_file_air[2])
@@ -237,7 +240,7 @@ def read_SB07(input_directory):
     # Read in Sharp & Burrows (2007) broadening file
     broad_file_SB07 = pd.read_csv(input_directory + 'SB07.broad',
                                            sep = ' ', header=None, skiprows=1)
-    J_max = int(np.max(np.array(broad_file_SB07[0])))
+    J_max = np.max(np.array(broad_file_SB07[0]))
     J_broad_all = np.array(broad_file_SB07[0])
     gamma_0_SB07 = np.array(broad_file_SB07[1])
     #n_L_SB07 = np.array(broad_file_SB07[2])       # Not really needed, as temperature exponent = 0 for all J''
@@ -268,7 +271,7 @@ def read_custom(input_directory, broadening_file):
     # Read in custom broadening file
     broad_file_custom = pd.read_csv(input_directory + broadening_file,
                                     sep = ' ', header=None, skiprows = 1)
-    J_max = int(np.max(np.array(broad_file_custom[0])))
+    J_max = np.max(np.array(broad_file_custom[0]))
     J_broad_all = np.array(broad_file_custom[0])
     gamma_0_air = np.array(broad_file_custom[1])
     n_L_air = np.array(broad_file_custom[2])

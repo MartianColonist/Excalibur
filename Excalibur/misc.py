@@ -8,7 +8,9 @@ import csv
 import Excalibur.HITRAN as HITRAN
 import Excalibur.ExoMol as ExoMol
 
-from hapi.hapi import isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import isotopologueName
 
 def check_molecule(molecule):
     """
@@ -189,6 +191,8 @@ def read_cross_section_file(species, database, filename, isotope = 'default',
         isotope = HITRAN.replace_iso_name(isotope)
 
     if database == 'exomol':
+        species = re.sub('[+]', '_p', species)  # Handle ions
+        isotope = re.sub('[+]', '_p', isotope)  # Handle ions
         if isotope == 'default':
             isotope = ExoMol.get_default_iso(species)
 

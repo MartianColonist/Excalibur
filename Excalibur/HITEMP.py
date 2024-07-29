@@ -2,7 +2,9 @@ import sys
 import os
 import numpy as np
 import h5py
-from hapi.hapi import partitionSum, moleculeName, isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import partitionSum, moleculeName, isotopologueName
 
 import Excalibur.downloader as download
 

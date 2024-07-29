@@ -39,7 +39,7 @@ def find_index(val, grid_start, grid_end, N_grid):
             return int(i)
         else:
             return int(i)+1
-        
+
 @jit(nopython=True)
 def prior_index(val, grid_start, grid_end, N_grid):
     
@@ -53,30 +53,95 @@ def prior_index(val, grid_start, grid_end, N_grid):
         i = (N_grid-1) * ((val - grid_start) / (grid_end - grid_start))
         return int(i)
 
-        
+
 @jit(nopython=True)
-def compute_transition_frequencies(E, upper_state, lower_state):
+def prior_index_generic(value, grid, start = 0):
+    ''' 
+    Search a grid to find the previous index closest to a specified value (i.e. 
+    the index of the grid where the grid value is last less than the value). 
+    This function assumes the input grid monotonically increases.
+
+    Args:
+        value (float):
+            Value for which the prior grid index is desired.
+        grid (np.array of float):
+            Input grid.
+        start (int):
+            Optional start index when existing knowledge is available.
+
+    Returns:
+        index (int):
+            Prior index of the grid corresponding to the value.
+
+    '''
+        
+    if (value > grid[-1]):
+        return (len(grid) - 1)
+    
+    # Check if value out of bounds, if so set to edge value
+    if (value < grid[0]): value = grid[0]
+    if (value > grid[-2]): value = grid[-2]
+    
+    index = start
+    
+    for i in range(len(grid)-start):
+        if (grid[i+start] > value): 
+            index = (i+start) - 1
+            break
+            
+    return index
+
+
+@jit(nopython=True)
+def compute_transition_frequencies(E, states, upper_state, lower_state):
         
     nu_trans = np.zeros(len(upper_state))
+
+    # If the number of states is complete
+    if (states[-1] == len(states)):
+        condition = 1
+
+    # If there are gaps in the states file (e.g. for the ExoMol SO SOLLIS line list)
+    else:
+        condition = 2
         
     for i in range(len(upper_state)):
             
-        E_upper = E[upper_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
-        E_lower = E[lower_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
+        if (condition == 1):
+            E_upper = E[upper_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
+            E_lower = E[lower_state[i]-1]   # Note: state 1 is index 0 in state file, hence the -1
+
+        else:
+            E_upper = E[prior_index_generic(upper_state[i], states, 0)]  # Slower, but general
+            E_lower = E[prior_index_generic(lower_state[i], states, 0)]  # Slower, but general
             
         nu_trans[i] = (E_upper-E_lower)   # Transition frequency
         
     return nu_trans
 
 @jit(nopython=True)
-def compute_line_intensity_EXOMOL(A_trans, g_state, E_state, nu_0_trans, T, Q_T, upper_state, lower_state):
+def compute_line_intensity_EXOMOL(A_trans, g_state, E_state, nu_0_trans, T, Q_T, states, upper_state, lower_state):
         
     S = np.zeros(len(upper_state))   # Line strength for transition from initial to final state
+
+    # If the number of states is complete
+    if (states[-1] == len(states)):
+        condition = 1
+
+    # If there are gaps in the states file (e.g. for the ExoMol SO SOLLIS line list)
+    else:
+        condition = 2
         
     for i in range(len(upper_state)):
-            
-        g_upper = float(g_state[upper_state[i]-1])   # Note: state 1 is index 0 in state file, hence the -1
-        E_lower = E_state[lower_state[i]-1]          # Note: state 1 is index 0 in state file, hence the -1
+        
+        if (condition == 1):
+            g_upper = float(g_state[upper_state[i]-1])   # Note: state 1 is index 0 in state file, hence the -1
+            E_lower = E_state[lower_state[i]-1]          # Note: state 1 is index 0 in state file, hence the -1
+
+        else:
+            g_upper = float(g_state[prior_index_generic(upper_state[i], states, 0)] ) # Slower, but general
+            E_lower = E_state[prior_index_generic(lower_state[i], states, 0)]         # Slower, but general
+
         A = A_trans[i]
         nu_0 = nu_0_trans[i]
     
@@ -143,11 +208,12 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
                                log_alpha_sampled_max, N_log_alpha_sampled)
         
         # Find index in lower J broadening file array corresponding the lower J of this transition 
-        idx_J_i = np.where(J_broad_all == J_i)[0][0]
+      #  idx_J_i = np.where(J_broad_all == J_i)[0][0]
+        idx_J_i = prior_index_generic(J_i, J_broad_all, 0)
 
         # Store wing cutoff for this transition
         cutoff = cutoffs[idx_J_i, idx_alpha]
-    
+
         # Load template Voigt function and derivatives for this gamma (J_i) and closest value of alpha
         Voigt_0 = Voigt_arr[idx_J_i, idx_alpha,:]
         dV_da_0 = dV_da_arr[idx_J_i, idx_alpha,:]
@@ -163,28 +229,181 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
         R_nu = dnu_out / dnu_Voigt_line
             
         # Find index range on computational grid within line wing cutoff          
-        idx_left = prior_index((nu_0_i - cutoff), nu_grid_min, nu_grid_max, N_grid) + 1
-        idx_right = prior_index((nu_0_i + cutoff), nu_grid_min, nu_grid_max, N_grid)
+     #   idx_left = prior_index((nu_0_i - cutoff), nu_grid_min, nu_grid_max, N_grid) + 1
+     #   idx_right = prior_index((nu_0_i + cutoff), nu_grid_min, nu_grid_max, N_grid)
+
+        left_cut_loc = ((nu_0_i - cutoff) - nu_grid_min)/dnu_out
+        right_cut_loc = ((nu_0_i + cutoff) - nu_grid_min)/dnu_out
         
         # Compute exact location of line core (float in output grid units) 
         core_loc = (nu_0_i - nu_grid_min)/dnu_out
 
-        # The first index on the right wing is the core, rounded down, + 1 index
-        idx_right_start = int(core_loc) + 1
+        # If line core through both left and right cutoffs don't intersect grid points
+        if ((left_cut_loc > int(core_loc)) and (right_cut_loc < (int(core_loc)+1))):
+             
+            # No contribution to cross section at grid values
+            pass
+
+        # If a grid point lies within left cutoff but not within the right cutoff
+        elif ((left_cut_loc < int(core_loc)) and (right_cut_loc < (int(core_loc)+1))):
+
+            # Here only one grid point on the left wing contributes to the cross section 
+
+            # Find leftmost grid point within left wing cutoff
+            if (left_cut_loc > 0.0):
+                idx_left = int(left_cut_loc) + 1     # Round down then add 1 to find desired grid point
+            else:     # Exception for lines near lower edge boundary
+                idx_left = int(left_cut_loc-1) + 1  # Round down then add 1 to find desired grid point
+
+            # Cover edge case: the lowest idx_right is the left edge of the grid
+            if (idx_left <= 0):
+                idx_left = 0
+
+            # Compute exact location of first grid point within left wing cutoff (float in template grid units) 
+            k_ref_exact = (core_loc - idx_left)*R_nu   # R_nu maps from output grid to template grid spacing
+
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
         
-        #***** Initiate cross section calculation at left wing cutoff *****#
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_left] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                       (dV_dnu_0[k_ref] * d_Delta_nu))
         
-        # Note: the cross section calculation is unpacked from a single loop
-        #       into multiple regions to increase computation efficiency 
+        # If a grid point lies within right cutoff but not within the left cutoff
+        elif ((left_cut_loc > int(core_loc)) and (right_cut_loc > (int(core_loc)+1))):
+
+            # Here only one grid point on the right wing contributes to the cross section 
+
+            # Find rightmost grid point within right wing cutoff
+            idx_right = int(right_cut_loc)    # Round down to find desired grid point
+
+            # Cover edge case: the highest idx_right is the right edge of the grid
+            if (idx_right >= N_grid):
+                idx_right = N_grid-1
+
+            # Compute exact location of first grid point within right wing cutoff (float in template grid units) 
+            k_ref_exact = (idx_right - core_loc)*R_nu
+                
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+            
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+        
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_right] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                        (dV_dnu_0[k_ref] * d_Delta_nu))
+            
+        # General case where grid points sample both the left and right wings
+        else:
+
+            # Find leftmost grid point within left wing cutoff
+            if (left_cut_loc > 0.0):
+                idx_left = int(left_cut_loc) + 1     # Round down then add 1 to find desired grid point
+            else:     # Exception for lines near lower edge boundary
+                idx_left = int(left_cut_loc-1) + 1  # Round down then add 1 to find desired grid point
+
+            # Cover edge case: the lowest idx_right is the left edge of the grid
+            if (idx_left <= 0):
+                idx_left = 0
+        
+            # Find first grid point within the right wing cutoff
+            idx_right_start = int(core_loc) + 1   # Exact core (rounded down to grid) plus 1
+
+            # Find rightmost grid point within right wing cutoff
+            idx_right = int(right_cut_loc)        # Round down to find desired grid point
+
+            # Cover edge case: the highest idx_right is the right edge of the grid
+            if (idx_right >= N_grid):
+                idx_right = N_grid-1
+
+            #***** Initiate cross section calculation at left wing cutoff *****#
+            
+            # Note: the cross section calculation is unpacked from a single loop
+            #       into multiple regions to increase computation efficiency 
+
+            # Compute exact location of left wing cutoff (float in template grid units) 
+            k_ref_exact = (core_loc - idx_left)*R_nu   # R_nu maps from output grid to template grid spacing
+        
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+        
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref)*dnu_Voigt_line
+
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_left] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                    (dV_dnu_0[k_ref] * d_Delta_nu))
+        
+            #***** Proceed along the left wing towards core *****#
+        
+            # Add cross section contribution from the left wing
+            for k in range(idx_left+1, idx_right_start):   
+                
+                # Increment k_ref_exact by the relative spacing between the k and k_ref grids
+                k_ref_exact -= R_nu        # Stepping closer to the line core 
+
+                # Round to find nearest point on template grid
+                k_ref = int(k_ref_exact + 0.5)
+                
+                # Compute wavenumber difference between true wavenumber and closest template point
+                d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+            
+                # 1st order Taylor expansion in alpha and Delta_nu
+                sigma[k] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                    (dV_dnu_0[k_ref] * d_Delta_nu))
+
+            #***** Initiate cross section calculation on the right wing *****#
+            
+            # Reflect once crossed into the right wing
+            k_ref_exact = abs(k_ref_exact - R_nu)
+                
+            # Round to find nearest point on template grid
+            k_ref = int(k_ref_exact + 0.5)
+            
+            # Compute wavenumber difference between true wavenumber and closest template point
+            d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+        
+            # 1st order Taylor expansion in alpha and Delta_nu
+            sigma[idx_right_start] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                            (dV_dnu_0[k_ref] * d_Delta_nu))    
+                
+            #***** Proceed along the right wing towards the cutoff *****#
+            
+            # Add cross section contribution from the right wing
+            for k in range(idx_right_start+1, idx_right+1):    # +1 to include end index
+                
+                # Increment k_ref_exact by the relative spacing between the k and k_ref grids
+                k_ref_exact += R_nu        # Stepping away from the line core
+
+                # Round to find nearest point on template grid
+                k_ref = int(k_ref_exact + 0.5)
+                
+                # Compute wavenumber difference between true wavenumber and closest template point
+                d_Delta_nu = (k_ref_exact - k_ref) * dnu_Voigt_line
+            
+                # 1st order Taylor expansion in alpha and Delta_nu
+                sigma[k] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
+                                                    (dV_dnu_0[k_ref] * d_Delta_nu))
+        
+
+        '''
         
         # Compute exact location of left wing cutoff (float in template grid units) 
         k_ref_exact = (core_loc - idx_left)*R_nu   # R_nu maps from output grid to template grid spacing
         
+        print(k_ref_exact)
+
         # Round to find nearest point on template grid
         k_ref = int(k_ref_exact + 0.5)
         
         # Compute wavenumber difference between true wavenumber and closest template point
         d_Delta_nu = (k_ref_exact - k_ref)*dnu_Voigt_line
+
+        print(k_ref)
        
         # 1st order Taylor expansion in alpha and Delta_nu
         sigma[idx_left] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
@@ -241,6 +460,8 @@ def compute_cross_section(sigma, nu_grid, nu_0, cutoffs, S, J_lower, J_broad_all
             sigma[k] += S_i * (Voigt_0[k_ref] + (dV_da_0[k_ref] * d_alpha) +
                                                 (dV_dnu_0[k_ref] * d_Delta_nu))
             
+        '''
+
 
 @jit(nopython=True, parallel=True)
 def compute_cross_section_atom(sigma, nu_grid, nu_0, S, cutoffs, N_Voigt, Voigt_arr):
@@ -332,10 +553,36 @@ def compute_cross_section_atom_OLD(sigma, N_grid, nu_0, nu_detune, nu_fine_start
                     
                 sigma[idx+k] += opac_val    # Forward direction
                 sigma[idx-k] += opac_val    # Backward direction 
-            
-            
 
-    
+
+@jit(nopython=True)
+def find_J_low(J, states, lower_state):
+    '''
+    Find the lower angular momentum quantum number corresponding to each lower
+    state.
+    '''
+
+    J_low = np.zeros(len(lower_state))
+
+    # If the number of states is complete
+    if (states[-1] == len(states)):
+        condition = 1
+
+    # If there are gaps in the states file (e.g. for the ExoMol SO SOLLIS line list)
+    else:
+        condition = 2
+
+    for i in range(len(lower_state)):
+
+        if (condition == 1):
+            J_low[i] = J[lower_state[i]-1]   # Fastest, but only works with complete states
+
+        else:
+            J_low[i] = J[prior_index_generic(lower_state[i], states, 0)]  # Slower, but general
+
+    return J_low      
+
+
 def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma, 
                          alpha_sampled, m, T, Q_T, states, g_arr, E_arr, J_arr, J_max, J_broad_all,
                          N_Voigt, cutoffs, Voigt_arr, dV_da_arr, dV_dnu_arr, dnu_Voigt, S_cut, verbose):
@@ -373,8 +620,8 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         A = np.power(10.0, np.array(trans_file['Log Einstein A']))
         
         # Compute transition frequencies (line core wavenumbers)
-        nu_0_in = compute_transition_frequencies(E_arr, upper_state, lower_state)
-    
+        nu_0_in = compute_transition_frequencies(E_arr, states, upper_state, lower_state)
+
         # Remove transitions outside computational grid
         nu_0 = nu_0_in[np.where((nu_0_in >= nu_min) & (nu_0_in <= nu_max))]   
         upper_state = upper_state[np.where((nu_0_in >= nu_min) & (nu_0_in <= nu_max))]
@@ -391,13 +638,16 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         lower_state = lower_state[order]  # Apply reordering to lower states
         A_arr = A_arr[order]              # Apply reordering to Einstein A coefficients
 
-        J_low = np.zeros(len(lower_state))
+    #    J_low = np.zeros(len(lower_state))
         
         # Store lower state J values for identifying appropriate broadening parameters
-        for i in range(len(lower_state)):
-            J_low[i] = J_arr[np.where(states == lower_state[i])[0]]
+    #    for i in range(len(lower_state)):
+    #        J_low[i] = J_arr[np.where(states == lower_state[i])[0]]
         
     #   J_low = J_arr[lower_state-1]
+
+        # Load the lower quantum number J for each transition's lower state 
+        J_low = find_J_low(J_arr, states, lower_state)
             
         # For J'' above the tabulated maximum, treat broadening same as the maximum J''
         J_low[np.where(J_low > J_max)] = J_max
@@ -408,7 +658,7 @@ def cross_section_EXOMOL(linelist_files, input_directory, nu_grid, sigma,
         
         # Compute line intensities        
         S = compute_line_intensity_EXOMOL(A_arr, g_arr, E_arr, nu_0, T, Q_T, 
-                                          upper_state, lower_state)
+                                          states, upper_state, lower_state)
 
         # Apply intensity cutoff
         nu_0 = nu_0[np.where(S>S_cut)]

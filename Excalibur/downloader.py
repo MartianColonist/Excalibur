@@ -12,8 +12,9 @@ import h5py
 import time
 import shutil
 import zipfile
-
-from hapi.hapi import db_begin, fetch, abundance, moleculeName, isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import db_begin, fetch, abundance, moleculeName, isotopologueName
 
 import Excalibur.ExoMol as ExoMol
 import Excalibur.HITRAN as HITRAN
@@ -403,7 +404,7 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
         
         upper_state = np.array(trans_file[0])
         lower_state = np.array(trans_file[1])
-        log_Einstein_A = np.log10(np.array(trans_file[2]))   
+        log_Einstein_A = np.log10(np.array(trans_file[2]+1.0e-250))   
         
         hdf_file_path = os.path.splitext(file)[0] + '.h5'
         
@@ -424,7 +425,7 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
         if mol_ID in {1, 3, 9, 10, 12, 20, 21, 25, 29, 31, 32, 33, 35, 37, 38, 49}:
             field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 3, 3, 3, 5, 1, 6, 12, 1, 7, 7]
             J_col = 13
-            if mol_ID in {10, 33}:  # Handle HO2 and NO2 J_cols separately, since HITRAN provides N instead of J
+            if mol_ID in {10, 33}:  # Handle NO2 and HO2 J_cols separately, since HITRAN provides N instead of J
                 Sym_col = 17
         
         # Group 2
@@ -465,7 +466,7 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
             
         # Group 7
         elif mol_ID in {8, 18, 13}:
-            if mol_ID in {8, 18}:     # No and ClO formats
+            if mol_ID in {8, 18}:     # NO and ClO formats
                 field_lengths = [2, 1, 12, 10, 10, 5, 5, 10, 4, 8, 15, 15, 15, 2, 2, 5, 1, 5, 6, 12, 1, 7, 7]
                 J_col = 15
             elif mol_ID in {13}:      # OH format
@@ -486,15 +487,15 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
         gamma_L_0_air = np.array(trans_file[5]) / 1.01325   # Convert from cm^-1 / atm -> cm^-1 / bar
         E_lower = np.array(trans_file[7])
         n_L_air = np.array(trans_file[8])
-        J_lower = np.array(trans_file[J_col])
-        
+        J_lower = np.array(trans_file[J_col]).astype(np.float64)
+
         if mol_ID in {10, 33}:  # Handle creation of NO2 and HO2 J_lower columns, as the given value is N on HITRAN not J
             Sym = np.array(trans_file[Sym_col])
             for i in range(len(J_lower)):
                 if Sym[i] == '+':
-                    J_lower[i] += 1/2
+                    J_lower[i] += 0.5
                 else:
-                    J_lower[i] -= 1/2
+                    J_lower[i] -= 0.5
         
         hdf_file_path = os.path.splitext(file)[0] + '.h5'
         

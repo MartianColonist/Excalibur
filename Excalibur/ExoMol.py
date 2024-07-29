@@ -114,15 +114,11 @@ def get_default_linelist(molecule, isotopologue):
 
     structure = molecule + '(' + isotopologue + ')'
 
-    if (molecule in ['MgH', 'CaH']):
-        print("\n No single default line list for MgH and CaH. Please specify either 'MoLLIST' or 'Yadin', depending on the desired wavelength range.")
-        sys.exit(0)
-
     # Dictionary that defines the default
     default_list = {'H2(1H2)': 'RACPPK', 'N2(14N2)': 'WCCRMT', 'C2(12C2)': '8states', 
                     'CO(12C-16O)': 'Li2015', 'NO(14N-16O)': 'XABC', 'PO(31P-16O)': 'POPS',
                     'VO(51V-16O)': 'VOMYT', 'YO(89Y-16O)': 'SSYT', 'CN(12C-14N)': 'MoLLIST',
-                    'NH(14N-1H)': 'MoLLIST', 'CH(12C-1H)': 'MoLLIST', 'OH(16O-1H)': 'MoLLIST',
+                    'NH(14N-1H)': 'kNigHt', 'CH(12C-1H)': 'MoLLIST', 'OH(16O-1H)': 'MoLLIST',
                     'SH(32S-1H)': 'GYT', 'HF(1H-19F)': 'Coxon-Hajig', 'CS(12C-32S)': 'JnK', 
                     'NS(14N-32S)': 'SNaSH', 'PS(31P-32S)': 'POPS', 'PH(31P-1H)': 'LaTY', 
                     'PN(31P-14N)': 'YYLT', 'CP(12C-31P)': 'MoLLIST', 'H2_p(1H-2H_p)': 'ADJSAAM', 
@@ -135,19 +131,20 @@ def get_default_linelist(molecule, isotopologue):
                     'TiO(47Ti-16O)': 'Toto', 'AlO(27Al-16O)': 'ATP', 'SiO(28Si-16O)': 'SiOUVenIR', 
                     'CaO(40Ca-16O)': 'VBATHY', 'MgO(24Mg-16O)': 'LiTY', 'LaO(139La-16O)': 'BDL', 
                     'ZrO(90Zr-16O)': 'ZorrO', 'YO(89Y-16O)': 'BRYTS', 'NaO(23Na-16O)': 'NaOUCMe',
-                    'NaH(23Na-1H)': 'Rivlin', 'AlH(27Al-1H)': 'AlHambra', 'CrH(52Cr-1H)': 'MoLLIST',
-                    'BeH(9Be-1H)': 'Darby-Lewis', 'TiH(48Ti-1H)': 'MoLLIST', 'FeH(56Fe-1H)': 'MoLLIST',
-                    'LiH(7Li-1H)': 'CLT', 'ScH(45Sc-1H)': 'LYT', 'NaH(23Na-1H)': 'MoLLIST', 
-                    'SiH(28Si-1H)': 'SiGHTLY', 'SiH2(28Si-1H2)': 'CATS', 'SiH4(28Si-1H4)': 'OY2T',
-                    'SiS(28Si-32S)': 'UCTY', 'H2O(1H2-16O)': 'POKAZATEL', 'HCN(1H-12C-14N)': 'Harris',
-                    'CH4(12C-1H4)': 'YT34to10', 'NH3(14N-1H3)': 'CoYuTe', 'H2S(1H2-32S)': 'AYT2',
-                    'SO(32S-16O)': 'SOLIS', 'SO2(32S-16O2)': 'ExoAmes', 'SO3(32S-16O3)': 'UYT2', 
-                    'PH3(31P-1H3)': 'SAlTY', 'CH3(12C-1H3)': 'AYYJ', 'AsH3(75As-1H3)': 'CYT18', 
-                    'SiO2(28Si-16O2)': 'OYT3', 'HNO3(1H-14N-16O3)': 'AIJS', 'H2O2(1H2-16O2)': 'APTY',
-                    'H2CO(1H2-12C-16O)': 'AYTY', 'C2H2(12C2-1H2)': 'aCeTY', 'C2H4(12C2-1H4)': 'MaYTY',
-                    'P2H2(31P2-1H2)': 'Trans', 'HPPH(1H-31P2-1H)': 'Cis', 'CH3F(12C-1H3-19F)': 'OYKYT',
-                    'CH3Cl(12C-1H3-35Cl)': 'OYT', 'CO2(12C-16O2)': 'UCL-4000', 'HCl(1H-35Cl)': 'HITRAN-HCl',
-                    'LiOH(7Li-16O-1H)': 'OYT7', 'CaOH(40Ca-16O-1H)': 'OYT6',
+                    'MgH(24Mg-1H)': 'XAB', 'NaH(23Na-1H)': 'Rivlin', 'AlH(27Al-1H)': 'AloHa',
+                    'CrH(52Cr-1H)': 'MoLLIST', 'CaH(40Ca-1H)': 'XAB', 'BeH(9Be-1H)': 'Darby-Lewis', 
+                    'TiH(48Ti-1H)': 'MoLLIST', 'FeH(56Fe-1H)': 'MoLLIST', 'LiH(7Li-1H)': 'CLT', 
+                    'ScH(45Sc-1H)': 'LYT', 'SiH(28Si-1H)': 'SiGHTLY', 'SiH2(28Si-1H2)': 'CATS', 
+                    'SiH4(28Si-1H4)': 'OY2T', 'SiS(28Si-32S)': 'UCTY', 'H2O(1H2-16O)': 'POKAZATEL', 
+                    'HCN(1H-12C-14N)': 'Harris', 'CH4(12C-1H4)': 'MM', 'NH3(14N-1H3)': 'CoYuTe', 
+                    'H2S(1H2-32S)': 'AYT2', 'SO(32S-16O)': 'SOLIS', 'SO2(32S-16O2)': 'ExoAmes', 
+                    'SO3(32S-16O3)': 'UYT2', 'PH3(31P-1H3)': 'SAlTY', 'CH3(12C-1H3)': 'AYYJ',
+                    'AsH3(75As-1H3)': 'CYT18', 'SiO2(28Si-16O2)': 'OYT3', 'HNO3(1H-14N-16O3)': 'AIJS',
+                    'H2O2(1H2-16O2)': 'APTY', 'H2CO(1H2-12C-16O)': 'AYTY', 'C2H2(12C2-1H2)': 'aCeTY',
+                    'C2H4(12C2-1H4)': 'MaYTY', 'P2H2(31P2-1H2)': 'Trans', 'HPPH(1H-31P2-1H)': 'Cis',
+                    'CH3F(12C-1H3-19F)': 'OYKYT', 'CH3Cl(12C-1H3-35Cl)': 'OYT', 'CO2(12C-16O2)': 'UCL-4000', 
+                    'HCl(1H-35Cl)': 'HITRAN-HCl', 'LiOH(7Li-16O-1H)': 'OYT7', 'CaOH(40Ca-16O-1H)': 'OYT6',
+                    'OCS(16O-12C-32S)': 'OYT8',
                     }
 
     linelist = default_list.get(structure)
@@ -262,7 +259,7 @@ def process_files(input_dir):
                 line = line.strip()
                 line = line.split()
 
-                if (len(line) == 4):
+                if ((len(line) == 4) and (line[0] == 'a0')):
 
                     gamma_L_0.append(float(line[1]))
                     n_L.append(float(line[2]))

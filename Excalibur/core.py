@@ -8,7 +8,9 @@ import sys
 import numba
 from bs4 import BeautifulSoup
 from scipy.interpolate import UnivariateSpline as Interp
-from hapi.hapi import molecularMass, moleculeName, isotopologueName
+import contextlib
+with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
+    from hapi.hapi import molecularMass, moleculeName, isotopologueName
 
 from .calculate import produce_total_cross_section_VALD_atom
 
@@ -198,13 +200,13 @@ def interpolate_pf(T_pf_raw, Q_raw, T, T_ref):
     '''
     
     # Interpolate partition function onto a fine grid using a 5th order spline
-    pf_spline = Interp(T_pf_raw, Q_raw, k=5)
+    pf_spline = Interp(T_pf_raw, Q_raw, k=3)
     
     # Define a new temperature grid (extrapolated to 10,000K)
     T_pf_fine = np.linspace(1.0, 10000.0, 9999)      
     
     # Using spline, interpolate and extrapolate the partition function to the new T grid
-    Q_fine = pf_spline(T_pf_fine)                    
+    Q_fine = pf_spline(T_pf_fine)  
     
     # Find the indices in the fine temperature grid closest to the user specified and reference temperatures
     idx_T = np.argmin(np.abs(T_pf_fine - T))
@@ -632,6 +634,11 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         temperature[i] = float(temperature[i])
     
     database = database.lower()
+
+    if database == 'exomol':
+    
+        species = re.sub('[+]', '_p', species)  # Handle ions
+        isotope = re.sub('[+]', '_p', isotope)  # Handle ions
     
     # Locate the input_directory where the line list is stored
     input_directory = download.find_input_dir(input_dir, database, species, isotope, ionization_state, linelist)
@@ -723,7 +730,7 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
         else:
             print("\nYou did not enter a valid type of pressure broadening. Please try again.")
             sys.exit(0)
-   
+
     # For atoms, only H2-He pressure broadening is currently supported
     elif is_molecule == False:
         
@@ -864,21 +871,24 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
                 time_precompute = t2-t1
             
                 print('Voigt profiles computed in ' + str(time_precompute) + ' s')  
-                
-
-                                                                                                                                        
+                                                                                                                                       
             print("Pre-computation steps complete")
             
+            if (isotope == 'default'):
+                label = species
+            else:
+                label = species + ' (' + isotope + ')'
+
             if is_molecule:
                 if grid:
                     index = p * N_T + (t + 1)
                     
-                    print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + 
+                    print('Generating cross section for ' + label + ' at P = ' + str(P) + ' bar, T = ' + str(T) + 
                           ' K' + '   [' + str(index) + ' of ' + str(N_P * N_T) + ']')
                 else:
-                    print('Generating cross section for ' + species + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
+                    print('Generating cross section for ' + label + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
             else:
-                print('Generating cross section for ' + species + ' ' + roman_num + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
+                print('Generating cross section for ' + label + ' ' + roman_num + ' at P = ' + str(P) + ' bar, T = ' + str(T) + ' K')
 
             # Call relevant cross section computation function for given line list
             if database == 'exomol':    
