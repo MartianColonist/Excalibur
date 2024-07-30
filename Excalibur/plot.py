@@ -28,7 +28,7 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
                        x_min = None, x_max = None, y_min = None, y_max = None,
                        color_list = [], smooth_data = False, std = 1000,
                        x_unit = 'micron', x_axis_scale = 'log', 
-                       save_fig = True, **kwargs):
+                       save_fig = True, ax = None, **kwargs):
     """
     Generate a plot of cross section file[s], in both wavelength and wavenumber
 
@@ -106,7 +106,11 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
     xminorFormatter = NullFormatter()
 
     fig = plt.figure()
-    ax = plt.gca()
+
+    if (ax == None):
+        ax = plt.gca()
+    else:
+        ax = ax
 
     # Set x axis to be linear or logarithmic
     ax.set_yscale('log')
