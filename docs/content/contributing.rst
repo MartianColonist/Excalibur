@@ -1,5 +1,5 @@
-Contributing to POSEIDON
-========================
+Contributing to Excalibur
+=========================
 
 Interested in contributing to Excalibur? Welcome, we're excited to have you onboard!
 
