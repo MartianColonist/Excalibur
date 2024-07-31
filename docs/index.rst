@@ -20,7 +20,7 @@ Excalibur's features currently include:
 * Completely written in Python, making it easy for researchers to use and adapt the code
 * Designed to be used from a personal laptop, no supercomputers needed
 
-If this is your first time using Excalibur, please proceed to the Introduction page on the sidebar.
+If this is your first time using Excalibur, please proceed to the `Introduction <https://excalibur-xsec.readthedocs.io/en/latest/content/introduction.html>`_ page on the sidebar.
 
 Excalibur is available under the BSD 3-Clause License. If you use Excalibur in your own work, 
 please cite Agrawal & MacDonald (2024).
@@ -43,4 +43,5 @@ please cite Agrawal & MacDonald (2024).
  :maxdepth: 2
  :caption: Code Documentation:
 
+ content/contributing
  autoapi/index
