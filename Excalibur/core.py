@@ -875,9 +875,15 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             print("Pre-computation steps complete")
             
             if (isotope == 'default'):
-                label = species
+                if database == 'exomol':
+                    label = re.sub('_p', '+', species)
+                else:
+                    label = species
             else:
-                label = species + ' (' + isotope + ')'
+                if database == 'exomol':
+                    label = re.sub('_p', '+', species) + ' (' + isotope + ')'
+                else:
+                    label = species + ' (' + isotope + ')'
 
             if is_molecule:
                 if grid:
@@ -920,6 +926,10 @@ def compute_cross_section(input_dir, database, species, temperature, pressure = 
             if not os.path.exists(output_directory):
                 os.makedirs(output_directory)
     
+            # Restore charge notation for output files
+            if (database == 'exomol'):
+                species = re.sub('_p', '+', species)
+
             # Write cross section to file
             write_output(output_directory, species, roman_num, 
                          T, np.log10(P), broad_type, broadening_file, nu_out, sigma_out)
