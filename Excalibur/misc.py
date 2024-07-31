@@ -32,7 +32,8 @@ def check_molecule(molecule):
     else: return True        # We did not get a match, therefore must have a molecule
 
     
-def write_output(output_directory, species, roman_num, T, log_P, broad_type, broadening_file, nu_out, sigma_out):
+def write_output(output_directory, species, roman_num, T, log_P, 
+                 broad_type, broadening_file, nu_out, sigma_out):
     """
     Parameters
     ----------

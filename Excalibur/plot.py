@@ -166,7 +166,7 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
     if (save_fig == True):
         plt.savefig('./plots/' + filename, dpi = 300)
 
-    print("\nPlotting complete.")
+    # print("\nPlotting complete.")
 
 
 def find_min_max_nu_sigma(spectra):
