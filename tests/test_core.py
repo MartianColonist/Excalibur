@@ -6,7 +6,7 @@ Created on Tue Jun 28 13:56:11 2022
 @author: arnav
 """
 
-from excalibur import core
+import Excalibur.core as core
 
 def test_mass():
     # Tests the mass of a species from VALD, HITRAN, HITEMP, and ExoMol

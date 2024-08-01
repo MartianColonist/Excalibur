@@ -6,7 +6,7 @@ Created on Sun Jun  5 13:37:31 2022
 @author: arnav
 """
 
-from excalibur import VALD
+from Excalibur import VALD
 import os
 import re
 import numpy as np

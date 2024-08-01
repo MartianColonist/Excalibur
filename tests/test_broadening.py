@@ -6,8 +6,8 @@ Created on Mon Jun 27 21:05:43 2022
 @author: arnav
 """
 
-from excalibur import broadening
-from excalibur import ExoMol
+import Excalibur.broadening as broadening
+import Excalibur.ExoMol as ExoMol
 import os
 
 def test_det_broad():
