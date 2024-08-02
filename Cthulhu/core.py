@@ -14,18 +14,18 @@ with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statemen
 
 from .calculate import produce_total_cross_section_VALD_atom
 
-from Excalibur.constants import c, kb, u, P_ref, T_ref
+from Cthulhu.constants import c, kb, u, P_ref, T_ref
 
-import Excalibur.ExoMol as ExoMol
-import Excalibur.HITRAN as HITRAN
-import Excalibur.HITEMP as HITEMP
-import Excalibur.VALD as VALD
-import Excalibur.downloader as download
-import Excalibur.broadening as broadening
-import Excalibur.Voigt as Voigt
-import Excalibur.calculate as calculate
+import Cthulhu.ExoMol as ExoMol
+import Cthulhu.HITRAN as HITRAN
+import Cthulhu.HITEMP as HITEMP
+import Cthulhu.VALD as VALD
+import Cthulhu.downloader as download
+import Cthulhu.broadening as broadening
+import Cthulhu.Voigt as Voigt
+import Cthulhu.calculate as calculate
 
-from Excalibur.misc import write_output, check_molecule
+from Cthulhu.misc import write_output, check_molecule
 
 def mass(species, isotopologue, linelist):
     """

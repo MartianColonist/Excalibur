@@ -16,8 +16,8 @@ import contextlib
 with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
     from hapi.hapi import db_begin, fetch, abundance, moleculeName, isotopologueName
 
-import Excalibur.ExoMol as ExoMol
-import Excalibur.HITRAN as HITRAN
+import Cthulhu.ExoMol as ExoMol
+import Cthulhu.HITRAN as HITRAN
 
 
 def download_ExoMol_file(url, f, l_folder):
@@ -474,7 +474,7 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
                 J_col = 15
 
         else:
-            raise Exception("Error: the molecule symmetry for HITRAN ID " + str(mol_ID) + " is not currently implemented in Excalibur")
+            raise Exception("Error: the molecule symmetry for HITRAN ID " + str(mol_ID) + " is not currently implemented in Cthulhu")
         
         trans_file = pd.read_fwf(file, widths=field_lengths, header=None)
             
@@ -761,7 +761,7 @@ def find_input_dir(input_dir, database, molecule, isotope, ionization_state, lin
     ----------
     input_dir : String
         'Prefix' of the directory containing the line list files. If the files were downloaded
-        using our defaults scripts, input_dir will be './input' relative to the Excalibur main folder.
+        using our defaults scripts, input_dir will be './input' relative to the Cthulhu main folder.
     database : String
         Database the line list was downloaded from.
     molecule : String

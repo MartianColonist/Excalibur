@@ -7,7 +7,7 @@ import contextlib
 with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
     from hapi.hapi import partitionSum, moleculeName, isotopologueName
 
-import Excalibur.downloader as download
+import Cthulhu.downloader as download
 
 
 def create_id_dict():

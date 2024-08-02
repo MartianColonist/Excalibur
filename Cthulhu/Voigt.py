@@ -18,7 +18,7 @@ else:
     from numba.decorators import jit
 #*****
 
-from Excalibur.constants import kb, c, c2
+from Cthulhu.constants import kb, c, c2
 
 @jit(nopython=True)
 def prior_index(val, grid_start, grid_end, N_grid):

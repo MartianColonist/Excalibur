@@ -5,8 +5,8 @@ import re
 import os
 import csv
 
-import Excalibur.HITRAN as HITRAN
-import Excalibur.ExoMol as ExoMol
+import Cthulhu.HITRAN as HITRAN
+import Cthulhu.ExoMol as ExoMol
 
 import contextlib
 with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
