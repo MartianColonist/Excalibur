@@ -18,6 +18,9 @@ import sys
 import csv
 import re
 
+import warnings
+warnings.filterwarnings("ignore", message="UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.\nax.set_xlim([1e4/nu_max, 1e4/nu_min]) # Convert wavenumber (in cm^-1) to wavelength (in um)")
+
 plt.style.use('classic')
 plt.rc('font', family = 'serif')
 matplotlib.rcParams['svg.fonttype'] = 'none'
@@ -158,7 +161,7 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
 
     legend = ax.legend(loc='upper right', shadow=False, frameon=False, prop={'size':10})
 
-    for legline in legend.legendHandles:
+    for legline in legend.legend_handles:
         legline.set_linewidth(1.0)
 
     plt.tight_layout()
