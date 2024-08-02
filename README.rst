@@ -19,7 +19,7 @@ Documentation
 
 The installation guide and a wide-range of tutorials for different applications
 can be found in the
-`Cthulhu documentation <https://cthulhu-xsec.readthedocs.io/en/latest/>`_.
+`Cthulhu documentation <https://cthulhu.readthedocs.io/en/latest/>`_.
 
 Attribution
 -----------
