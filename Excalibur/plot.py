@@ -7,13 +7,13 @@ from matplotlib.ticker import MultipleLocator, FormatStrFormatter, \
                               ScalarFormatter, NullFormatter, LogLocator
 from scipy.ndimage import gaussian_filter1d
 
-from Excalibur.misc import round_sig_figs
+from Cthulhu.misc import round_sig_figs
 
 import contextlib
 with contextlib.redirect_stdout(None): #suppress HITRAN automatic print statement
     from hapi.hapi import isotopologueName
-import Excalibur.HITRAN as HITRAN
-import Excalibur.ExoMol as ExoMol
+import Cthulhu.HITRAN as HITRAN
+import Cthulhu.ExoMol as ExoMol
 import sys
 import csv
 import re

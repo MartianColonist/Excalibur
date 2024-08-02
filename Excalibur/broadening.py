@@ -2,8 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 
-from Excalibur.constants import Ryd, u
-from Excalibur.downloader import find_input_dir
+from Cthulhu.constants import Ryd, u
+from Cthulhu.downloader import find_input_dir
 
 def det_broad(input_directory):
     '''

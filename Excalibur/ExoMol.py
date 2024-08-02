@@ -6,7 +6,7 @@ import shutil
 import pandas as pd
 import numpy as np
 
-import Excalibur.downloader as download
+import Cthulhu.downloader as download
 
 
 
@@ -231,7 +231,7 @@ def determine_linelist():
 
 def process_files(input_dir):
     '''
-    Processes the .broad and .pf files downloaded from ExoMol into a format that Excalibur can read to create cross-sections
+    Processes the .broad and .pf files downloaded from ExoMol into a format that Cthulhu can read to create cross-sections
 
     Parameters
     ----------

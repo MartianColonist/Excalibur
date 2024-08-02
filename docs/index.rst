@@ -1,18 +1,13 @@
-.. Excalibur documentation master file, created by
-   sphinx-quickstart on Thu Aug 27 17:19:57 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Excalibur's documentation.
+Cthulhu's documentation.
 =============================================
 
-Welcome to Excalibur! 
+Welcome to Cthulhu! 
 
-Excalibur is a Python package that allows users to effortlessly create molecular
+Cthulhu is a Python package that allows users to effortlessly create molecular
 and atomic cross sections to aid in their own research, including for the creation of
 accurate atmospheric retrieval models. 
 
-Excalibur's features currently include:
+Cthulhu's features currently include:
 
 * Capability to download line lists from online databases, including ExoMol, HITRAN, HITEMP, and VALD
 * Cross section computations performed at high speeds (≈ 10,000 transition per second)
@@ -20,9 +15,9 @@ Excalibur's features currently include:
 * Completely written in Python, making it easy for researchers to use and adapt the code
 * Designed to be used from a personal laptop, no supercomputers needed
 
-If this is your first time using Excalibur, please proceed to the Introduction page on the sidebar.
+If this is your first time using Cthulhu, please proceed to the Introduction page on the sidebar.
 
-Excalibur is available under the BSD 3-Clause License. If you use Excalibur in your own work, 
+Cthulhu is available under the BSD 3-Clause License. If you use Cthulhu in your own work, 
 please cite Agrawal & MacDonald (2024).
 
 .. toctree::

@@ -1,4 +1,4 @@
-name: "Build Excalibur Paper Draft"
+name: "Build Cthulhu Paper Draft"
 
 on:
   push:

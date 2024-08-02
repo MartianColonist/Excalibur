@@ -4,9 +4,9 @@ Introduction
 This page is split into two sections. The first part assumes that the user has
 little, if any, prior knowledge of molecular and atomic cross sections.
 It explains what a cross section is, how it is calculated, and why it is useful.
-The second part outlines the many functions that the Excalibur package
+The second part outlines the many functions that the Cthulhu package
 can perform. Even for more knowledgeable users, we recommend taking a few minutes 
-to read both sections when working with Excalibur for the first time.
+to read both sections when working with Cthulhu for the first time.
 
 Part 1: A Beginner's Guide to Cross Sections
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -35,7 +35,7 @@ a cross-section for an atom at 1000K `Hargreaves & Gordon <https://meetingorgani
 Secondly, it is vital to keep in mind that the wavelengths at which electron transitions take place are not quite 
 singular values as may appear in a line list, but a small range centered around those values.
 There are thus many factors that can lead to broadening of the atomic spectra; the two biggest causes of spectral broadening are
-pressure and temperature, which is why Excalibur computes cross sections at a certain pressure and temperature 
+pressure and temperature, which is why Cthulhu computes cross sections at a certain pressure and temperature 
 `NIST <https://www.nist.gov/pml/atomic-spectroscopy-compendium-basic-ideas-notation-data-and-formulas/atomic-spectroscopy-6>`_.
 
 Cross sections are used extensively, especially in atmospheric and climate science. Their most prominent purpose in astronomy
@@ -44,23 +44,23 @@ crosses in front of its host star, part of the star's light is blocked by the ex
 how much light is blocked at different wavelengths and comparing that to molecular cross section models, scientists can determine the
 molecular composition of the exoplanet's atmosphere.
 
-Part 2: Excalibur's Features
+Part 2: Cthulhu's Features
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Now that we understand the importance of cross sections to exoplanet research, we elaborate on what Excalibur is and what
-it does. We highlight the many unique features that allow Excalibur to help us achieve our science goals.
+Now that we understand the importance of cross sections to exoplanet research, we elaborate on what Cthulhu is and what
+it does. We highlight the many unique features that allow Cthulhu to help us achieve our science goals.
 
 Functionality
 """""""""""""
 
-* With Excalibur, users can download a line list from an online database, compute an atomic, molecular, or ionic cross section at a certain pressure and temperature, and then plot the cross section.
+* With Cthulhu, users can download a line list from an online database, compute an atomic, molecular, or ionic cross section at a certain pressure and temperature, and then plot the cross section.
 * Line list databases currently supported are ExoMol, HITRAN, HITEMP, and VALD.
-* Excalibur plotting scripts offer the ability to create beautiful, organized plots to include in research papers and presentations.
+* Cthulhu plotting scripts offer the ability to create beautiful, organized plots to include in research papers and presentations.
 
 User-Friendly
 """""""""""""
 
 * Requires minimal coding knowledge
-* Detailed, step-by-step tutorials provided for every feature of Excalibur
+* Detailed, step-by-step tutorials provided for every feature of Cthulhu
 * Written in Python, making it easy for users to understand the underlying code
 * Thorough, well-maintained documentation
 
