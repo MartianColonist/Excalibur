@@ -1,10 +1,10 @@
-Contributing to Excalibur
+Contributing to Cthulhu
 =========================
 
-Interested in contributing to Excalibur? Welcome, we're excited to have you onboard!
+Interested in contributing to Cthulhu? Welcome, we're excited to have you onboard!
 
 If you'd like to make us aware of a bug, or request a new feature, the 
-best option is to `open an issue <https://github.com/MartianColonist/Excalibur/issues>`_
+best option is to `open an issue <https://github.com/MartianColonist/Cthulhu/issues>`_
 on GitHub.
 
 To become more actively involved, feel free to browse the issues page and decide
@@ -20,16 +20,16 @@ ryanjamc@umich.edu
    VS Code provides a friendly interface to edit code, make git commits, send 
    pull requests, and more, all without needing to use git terminal commands.
 
-Excalibur uses the following development process (inspired by a graphic from 
+Cthulhu uses the following development process (inspired by a graphic from 
 Natasha Batalha):
 
 .. image:: ../_static/Git_Workflow.png
 
-When you first install Excalibur, you'll be on the :code:`main` branch. The main
+When you first install Cthulhu, you'll be on the :code:`main` branch. The main
 branch contains the current official release of the code.
 
 All major developments happen on the :code:`dev` branch, where new versions of 
-Excalibur are developed and tested before being merged into :code:`main`.
+Cthulhu are developed and tested before being merged into :code:`main`.
 
 The one exception is fixes for any major bugs, for which a temporary branch is
 created and merged into main.
@@ -38,7 +38,7 @@ To work on a new feature, you'll first want to switch from :code:`main` to
 :code:`dev`. You can then create a branch off :code:`dev` called something like 
 :code:`tremble_at_my_amazing_new_feature`. While you code, please make regular 
 commits as you flesh out the feature. Once you're done, open a `Pull Request 
-<https://github.com/MartianColonist/Excalibur/pulls>`_ on GitHub to request
+<https://github.com/MartianColonist/Cthulhu/pulls>`_ on GitHub to request
 merging your new feature into :code:`dev`. This will trigger an automatic suite
 of tests to verify that your new feature didn't accidentally break something.
 
