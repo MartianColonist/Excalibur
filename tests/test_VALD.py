@@ -6,7 +6,7 @@ Created on Sun Jun  5 13:37:31 2022
 @author: arnav
 """
 
-from excalibur import VALD
+from Excalibur import VALD
 import os
 import re
 import numpy as np
@@ -14,8 +14,9 @@ import shutil
 
 def test_summon_VALD():
     # tests that the partition function exists at the end of running summon function
+    # this test is intended to be run out of the main folder, not tests. Relevant for the file paths otherwise it will fail.
     
-    VALD.summon_VALD('O', 1, '../VALD Line Lists/')
+    VALD.summon_VALD('O', 1, './VALD Line Lists/')
     pf_exists = os.path.exists('./input/O  ~  (I)/VALD/O_I.pf')  # True if path exists to air broadening file
     assert pf_exists == True
     #check that the partition function exists at the end of this
