@@ -6,7 +6,7 @@ Created on Tue Apr 19 12:03:57 2022
 @author: arnav
 """
 
-from excalibur import ExoMol
+from Excalibur import ExoMol
 import os
 import numpy as np
 
@@ -20,7 +20,7 @@ def test_get_default_iso():
     
     
 def test_get_default_linelist():
-    assert ExoMol.get_default_linelist('CH4', '12C-1H4') == 'YT34to10'
+    assert ExoMol.get_default_linelist('CH4', '12C-1H4') == 'MM'
     
 def test_summon_ExoMol():
     # test that there is a .pf file at the end of this

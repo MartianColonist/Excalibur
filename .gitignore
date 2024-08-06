@@ -143,4 +143,5 @@ docs/content/notebooks/input/
 docs/content/notebooks/output/
 docs/content/notebooks/plots/
 VALD Line Lists/
+tests/test_VALD.py
 Run.py

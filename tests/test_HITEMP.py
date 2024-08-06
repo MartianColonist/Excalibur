@@ -6,7 +6,7 @@ Created on Thu Apr 28 12:06:47 2022
 @author: arnav
 """
 
-from excalibur import HITEMP
+from Excalibur import HITEMP
 import os
 import numpy as np
 import shutil

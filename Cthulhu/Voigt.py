@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.special import wofz as Faddeeva
-from scipy.integrate import trapz, simps, quad
+from scipy.integrate import trapezoid, simpson, quad
 import numba
 import re
 

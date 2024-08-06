@@ -30,6 +30,7 @@ setuptools.setup(
                         'tqdm',
                         'pandas',
                         'lxml',
-                        'hitran-api'],
+                        'hitran-api',
+                        'pytest'],
     zip_safe=False
 )
