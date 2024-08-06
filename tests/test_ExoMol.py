@@ -6,7 +6,7 @@ Created on Tue Apr 19 12:03:57 2022
 @author: arnav
 """
 
-from Excalibur import ExoMol
+from Cthulhu import ExoMol
 import os
 import numpy as np
 

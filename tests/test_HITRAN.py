@@ -5,7 +5,7 @@ Created on Sun Jun  5 13:37:11 2022
 
 @author: arnav
 """
-from Excalibur import HITRAN
+from Cthulhu import HITRAN
 
 import numpy as np
 import os

@@ -6,7 +6,7 @@ Created on Wed Jun 29 12:51:11 2022
 @author: arnav
 """
 
-from Excalibur import misc
+from Cthulhu import misc
 
 def test_check_molecule():
     assert misc.check_molecule('H2O') == True

@@ -46,7 +46,7 @@ jobs:
         echo "begin: PATH=$PATH;"
         conda create --name test_install python=${{ matrix.python-version }} -y
 
-    - name: Install Excalibur
+    - name: Install Cthulhu
       run: |
         conda activate test_install || true
         python -m pip install --upgrade pip

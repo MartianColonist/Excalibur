@@ -6,8 +6,8 @@ Created on Mon Jun 27 21:05:43 2022
 @author: arnav
 """
 
-from Excalibur import broadening
-from Excalibur import ExoMol
+from Cthulhu import broadening
+from Cthulhu import ExoMol
 import os
 
 def test_det_broad():
