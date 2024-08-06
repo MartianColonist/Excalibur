@@ -134,7 +134,7 @@ dmypy.json
 # VSCode
 .vscode/
 
-# EXCALIBUR downloaded line lists, output cross sections, and plots
+# Cthulhu downloaded line lists, output cross sections, and plots
 input/
 output/
 plots/

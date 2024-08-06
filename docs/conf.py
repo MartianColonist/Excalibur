@@ -18,13 +18,13 @@ sys.path.insert(0, os.path.abspath('../'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'Excalibur'
+project = 'Cthulhu'
 copyright = '2024, Arnav Agrawal, Ryan MacDonald'
 author = 'Arnav Agrawal, Ryan MacDonald'
 master_doc = 'index'
 
 # The full version, including alpha/beta/rc tags
-release = '0.9.0'
+release = '0.9.5'
 
 
 # -- General configuration ---------------------------------------------------
@@ -40,7 +40,7 @@ extensions = ['sphinx_rtd_theme',
     'autoapi.extension']
 
 #autoapi_type = 'python'
-autoapi_dirs = ['../Excalibur']
+autoapi_dirs = ['../Cthulhu']
 autoapi_ignore = ["*/hapi*.py"]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -60,13 +60,13 @@ nbsphinx_allow_errors = True
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-html_logo = "_static/Excalibur_logo.png"
+html_logo = "_static/Cthulhu_logo.png"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ['_static', '_static/notebook_images']
 nbsphinx_prolog = """
 {% set docname = env.doc2path(env.docname, base=None) %}
-.. note::  `Download full notebook here <https://github.com/MartianColonist/Excalibur/tree/main/docs/{{ docname }}>`_
+.. note::  `Download full notebook here <https://github.com/MartianColonist/Cthulhu/tree/main/docs/{{ docname }}>`_
 """

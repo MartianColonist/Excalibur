@@ -4,15 +4,15 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="Excalibur", # Replace with your own username
-    version="0.9.1",
+    name="Cthulhu", # Replace with your own username
+    version="0.9.5",
     author="Ryan MacDonald, Arnav Agrawal",
     author_email="ryanjmac@umich.edu, aa687@cornell.edu",
     description="A python package to calculate atomic and molecular cross sections for substellar atmospheres.",
 
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/MartianColonist/Excalibur",
+    url="https://github.com/MartianColonist/Cthulhu",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
