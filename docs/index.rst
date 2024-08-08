@@ -20,7 +20,11 @@ Cthulhu's features currently include:
 * Produce visually-appealing plots out of the box. 
 * Runs on your laptop (for smaller line lists) or on a supercomputer.
 
-If this is your first time using Cthulhu, please proceed to the Introduction page on the sidebar.
+If this is your first time working with cross sections, please check out the
+`Introduction <https://cthulhu.readthedocs.io/en/latest/content/introduction.html>`_.
+If you are familiar with cross sections already and want to explore Cthulhu'scaling
+capabilities, the best place to begin in the `Quick Start Guide 
+<https://cthulhu.readthedocs.io/en/latest/content/notebooks/quick_start.html>`_.
 
 Cthulhu is available under the BSD 3-Clause License. If you use Cthulhu in your own work, 
 please cite Agrawal & MacDonald (2024).
