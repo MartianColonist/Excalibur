@@ -17,9 +17,7 @@ import Cthulhu.ExoMol as ExoMol
 import sys
 import csv
 import re
-
 import warnings
-warnings.filterwarnings("ignore", message="UserWarning: Attempt to set non-positive xlim on a log-scaled axis will be ignored.\nax.set_xlim([1e4/nu_max, 1e4/nu_min]) # Convert wavenumber (in cm^-1) to wavelength (in um)")
 
 plt.style.use('classic')
 plt.rc('font', family = 'serif')
@@ -149,8 +147,10 @@ def plot_cross_section(collection, labels, filename, plot_dir = './plots/',
     if (y_max == None):
         y_max = sigma_max
 
-    ax.set_xlim([1e4/nu_max, 1e4/nu_min]) # Convert wavenumber (in cm^-1) to wavelength (in um)
-    ax.set_ylim([y_min, y_max * 10])
+    with warnings.catch_warnings(): # Ignore the UserWarning with setting some axes limits for log plots
+        warnings.simplefilter("ignore")
+        ax.set_xlim([1e4/nu_max, 1e4/nu_min]) # Convert wavenumber (in cm^-1) to wavelength (in um)
+        ax.set_ylim([y_min, y_max * 10])
 
     ax.set_xlabel(r'Wavelength (μm)', fontsize = 14)
     ax.set_ylabel(r'Cross Section (cm$^2$)', fontsize = 14)
