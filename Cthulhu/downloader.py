@@ -400,7 +400,8 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
     
     if (database == 'ExoMol'):  # Read the .trans file downloaded from ExoMol, keep relevant data, and store data in a new HDF5 file
     
-        trans_file = pd.read_csv(file, delim_whitespace = True, header=None, usecols = [0,1,2])
+        trans_file = pd.read_csv(file, sep = '[\\s]{1,20}', engine = 'python', 
+                                 header=None, usecols = [0,1,2])
         
         upper_state = np.array(trans_file[0])
         lower_state = np.array(trans_file[1])
@@ -512,7 +513,7 @@ def convert_to_hdf(file = '', mol_ID = 0, iso_ID = 0, alkali = False,
 
     elif (database == 'VALD'):
         
-        trans_file = pd.read_csv(file, delim_whitespace = True, header=None, skiprows = 1)
+        trans_file = pd.read_csv(file, sep = '[\\s]{1,20}', engine = 'python', header=None, skiprows = 1)
         
         nu_0 = np.array(trans_file[0])
         log_gf = np.array(trans_file[1])
