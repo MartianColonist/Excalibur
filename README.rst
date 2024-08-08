@@ -29,22 +29,34 @@ If you use Cthulhu in your work, please cite Agrawal & MacDonald (submitted to J
 License
 -------
 
-Copyright 2024 Ryan J. MacDonald, Arnav Agrawal
+Copyright 2024: Ryan J. MacDonald, Arnav Agrawal
 
 Cthulhu is available under the BSD 3-Clause License.
 Please see the LICENSE file for more information.
 
-Support
--------
+Contributing to Cthulhu
+------------------------
 
-Cthulhu is currently in the open beta stage of testing, so any feedback, bug reports,
-or questions are certainly welcome! Please reach out to aa687@cornell.edu 
+For bug reports or feature requests, please raise an issue.
+
+Interesting in joining the Cult of the Great Old One? Please see the 
+`contribution guide 
+<https://cthulhu.readthedocs.io/en/latest/content/contributing.html>`_.
+
+Questions and Support
+---------------------
+
+Feel free to reach out to aa687@cornell.edu or ryanjmac@umich.edu
 
 
-.. image:: https://readthedocs.org/projects/cthulhu-xsec/badge/?version=latest
-    :target: https://cthulhu-xsec.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/cthulhu/badge/?version=latest
+    :target: https://cthulhu.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/badge/License-BSD_3--Clause-blue.svg
-   :target: https://github.com/MartianColonist/cthulhu-xsec/blob/main/LICENSE
+   :target: https://github.com/MartianColonist/cthulhu/blob/main/LICENSE
    :alt: GitHub License
+
+.. image:: https://github.com/MartianColonist/Cthulhu/actions/workflows/pytest_testing.yml/badge.svg
+   :target: https://github.com/MartianColonist/Cthulhu/actions/workflows/pytest_testing.yml
+   :alt: Pytest Test Suite Status
